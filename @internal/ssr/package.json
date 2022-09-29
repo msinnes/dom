@@ -1,0 +1,28 @@
+{
+  "name": "@internal/ssr",
+  "version": "0.0.0",
+  "description": "ssr",
+  "keywords": [
+    "ssr"
+  ],
+  "author": "msinnes <michael.sinnes@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "./",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@internal/app": "^0.0.0",
+    "@internal/base": "^0.0.0",
+    "@internal/dom": "^0.0.0",
+    "@internal/infra": "^0.0.0",
+    "@internal/oop": "^0.0.0",
+    "@internal/utils": "^0.0.0",
+    "jsdom": "^20.0.0"
+  },
+  "devDependencies": {
+    "@msinnes/dom": "^0.0.0"
+  }
+}

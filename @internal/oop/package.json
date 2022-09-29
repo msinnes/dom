@@ -1,0 +1,19 @@
+{
+  "name": "@internal/oop",
+  "version": "0.0.0",
+  "description": "oop lib",
+  "keywords": [
+    "oop"
+  ],
+  "author": "msinnes <michael.sinnes@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "./index.js",
+  "private": true,
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  }
+}

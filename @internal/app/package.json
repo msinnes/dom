@@ -1,0 +1,25 @@
+{
+  "name": "@internal/app",
+  "version": "0.0.0",
+  "description": "app",
+  "keywords": [
+    "app"
+  ],
+  "author": "msinnes <michael.sinnes@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "./",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@internal/base": "^0.0.0",
+    "@internal/dom": "^0.0.0",
+    "@internal/is": "^0.0.0",
+    "@internal/oop": "^0.0.0"
+  },
+  "devDependencies": {
+    "@internal/utils": "^0.0.0"
+  }
+}

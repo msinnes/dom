@@ -1,0 +1,21 @@
+{
+  "name": "@internal/dom",
+  "version": "0.0.0",
+  "description": "dom renderer",
+  "keywords": [
+    "dom"
+  ],
+  "author": "msinnes <michael.sinnes@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "./",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@internal/base": "^0.0.0",
+    "@internal/is": "^0.0.0",
+    "@internal/oop": "^0.0.0"
+  }
+}

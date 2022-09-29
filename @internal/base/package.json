@@ -1,0 +1,26 @@
+{
+  "name": "@internal/base",
+  "version": "0.0.0",
+  "description": "base rendering library",
+  "keywords": [
+    "renderer"
+  ],
+  "author": "msinnes <michael.sinnes@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "./",
+  "private": true,
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@internal/frame": "^0.0.0",
+    "@internal/is": "^0.0.0",
+    "@internal/oop": "^0.0.0",
+    "@internal/render": "^0.0.0",
+    "@internal/utils": "^0.0.0"
+  }
+}

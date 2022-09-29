@@ -1,0 +1,13 @@
+{
+  "name": "@internal/is",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "msinnes <michael.sinnes@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/is.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  }
+}

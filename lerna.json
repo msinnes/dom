@@ -1,0 +1,9 @@
+{
+  "packages": [
+    "@e2e/*",
+    "@internal/*",
+    "@packages/*"
+  ],
+  "npmClient": "yarn",
+  "version": "0.0.0"
+}

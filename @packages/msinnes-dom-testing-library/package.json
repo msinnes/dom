@@ -1,0 +1,36 @@
+{
+  "name": "@msinnes/dom-testing-library",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "msinnes <michael.sinnes@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "src/index.js",
+  "files": [
+    "dist/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:msinnes/dom.git",
+    "directory": "@packages/msinnes-dom-testing-library"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build-dev": "yarn pack",
+    "clean": "rimraf dist",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "jsdom": "^20.0.0"
+  },
+  "devDependencies": {
+    "@internal/ssr": "^0.0.0",
+    "@internal/utils": "^0.0.0",
+    "@msinnes/babel-plugin-dom-jsx": "^0.0.0",
+    "@msinnes/dom": "^0.0.0",
+    "rimraf": "^3.0.2"
+  }
+}
