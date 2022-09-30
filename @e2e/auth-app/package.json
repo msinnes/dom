@@ -1,6 +1,6 @@
 {
   "name": "@e2e/auth-app",
-  "version": "0.0.0",
+  "version": "0.0.2-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
-    "@msinnes/babel-preset-dom-jsx": "^0.0.1-alpha.0",
+    "@msinnes/babel-preset-dom-jsx": "^0.0.2-alpha.0",
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.5.0",
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@msinnes/dom": "^0.0.1-alpha.0",
-    "@msinnes/dom-redux-light": "^0.0.1-alpha.0",
+    "@msinnes/dom-redux-light": "^0.0.2-alpha.0",
     "@msinnes/dom-router": "^0.0.1-alpha.0"
   }
 }
