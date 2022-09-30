@@ -25,7 +25,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "jsdom": "^20.0.0"
+    "jsdom": "^19.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
@@ -48,6 +48,6 @@
     "rollup-plugin-uglify": "^6.0.4"
   },
   "peerDependencies": {
-    "@msinnes/dom": "^0.0.0"
+    "@msinnes/dom": "^0.0.1-alpha.0"
   }
 }

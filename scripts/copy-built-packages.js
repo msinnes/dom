@@ -13,8 +13,8 @@ const packages = [
 
 async function loadFile(name) {
   await cpFile(
-    path.resolve(__dirname, `../@packages/${name}/${name}-v0.0.0.tgz`),
-    path.resolve(__dirname, `../${name}-v0.0.0.tgz`),
+    path.resolve(__dirname, `../@packages/${name}/${name}-v0.0.1-alpha.0.tgz`),
+    path.resolve(__dirname, `../${name}-v0.0.1-alpha.0.tgz`),
     { overwrite: true }
   ).on('progress', console.log);
   console.log('Finished copying:', name);

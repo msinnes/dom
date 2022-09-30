@@ -24,7 +24,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "jsdom": "^20.0.0"
+    "jsdom": "^19.0.0"
   },
   "devDependencies": {
     "@internal/ssr": "^0.0.0",
