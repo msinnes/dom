@@ -11,6 +11,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@internal/dom": "^0.0.0",
     "@internal/is": "^0.0.0",
     "@internal/oop": "^0.0.0",
     "@internal/utils": "^0.0.0"

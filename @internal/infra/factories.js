@@ -1,7 +1,9 @@
 import { isArray } from '@internal/is/array';
 import { isFunction } from '@internal/is/function';
 import { isUndefined } from '@internal/is/undefined';
+import { isString, isEmpty } from '@internal/is/string';
 import compareDepsArrs from '@internal/utils/compareDepsArrs';
+import { DomRef } from '@internal/dom/DomRef';
 import { ContextController } from './ctx/ContextController';
 import { EffectController } from './effect/EffectController';
 import { HookController } from './hooks/HookController';
@@ -23,7 +25,6 @@ export const createServices = (contextController, effectController, hookControll
   setActiveHookContext: instance => hookController.setActiveContext(instance),
 });
 
-
 const createHookValidator = name => (fn, arr) => {
   const valid = isFunction(fn) && (isUndefined(arr) || isArray(arr));
   if (!valid) throw new Error(`ValidationError: ${name} takes a function and an optional array as arguments`);
@@ -31,6 +32,11 @@ const createHookValidator = name => (fn, arr) => {
 
 const validateUseMemoArgs = createHookValidator('useMemo');
 const validateUseEffectArgs = createHookValidator('useEffect');
+
+const validateUseRefArgs = ref => {
+  const valid = isString(ref) || ref instanceof DomRef;
+  if (!valid) throw new Error('ValidationError: useRef can only take a string or a DomRef as an argument');
+};
 
 export const createHooks = (contextController, effectController, hookController) => ({
   useContext: ctx => contextController.getContextValue(ctx),
@@ -55,6 +61,12 @@ export const createHooks = (contextController, effectController, hookController)
       hook.set({ value, conditions });
     }
     return value;
+  },
+  useRef: inputRef => {
+    validateUseRefArgs(inputRef);
+    const ref = inputRef instanceof DomRef ? inputRef : new DomRef(inputRef);
+    const hook = hookController.getHook(ref);
+    return hook.get();
   },
   useState: initialValue => {
     const hook = hookController.getHook(initialValue);

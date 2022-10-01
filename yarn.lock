@@ -1952,13 +1952,13 @@
 
 "@msinnes/babel-plugin-dom-jsx@./msinnes-babel-plugin-dom-jsx-v0.0.1-alpha.0.tgz":
   version "0.0.1-alpha.0"
-  resolved "./msinnes-babel-plugin-dom-jsx-v0.0.1-alpha.0.tgz#4e5416a471fe6ee4863307f993f516bb140be474"
+  resolved "./msinnes-babel-plugin-dom-jsx-v0.0.1-alpha.0.tgz#06b7344d9642950d1dad7a15d3d45df026ffd08e"
   dependencies:
     "@babel/types" "^7.19.3"
 
 "@msinnes/babel-preset-dom-jsx@./msinnes-babel-preset-dom-jsx-v0.0.1-alpha.0.tgz":
   version "0.0.1-alpha.0"
-  resolved "./msinnes-babel-preset-dom-jsx-v0.0.1-alpha.0.tgz#80960d9e5a448df300a69e00a58f8dd666c3ad45"
+  resolved "./msinnes-babel-preset-dom-jsx-v0.0.1-alpha.0.tgz#298352ad81223c03c2e99713c922b12c662ddcdf"
   dependencies:
     "@babel/core" "^7.19.3"
     "@babel/plugin-syntax-jsx" "^7.18.6"

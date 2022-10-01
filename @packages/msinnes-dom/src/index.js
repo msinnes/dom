@@ -8,7 +8,7 @@ import createElement from '@internal/utils/createElement';
 
 import { renderApp as mainRenderApp, hydrateApp as mainHydrateApp } from './main';
 import { services, hooks } from './infra';
-const { useContext, useEffect, useMemo, useState } = hooks;
+const { useContext, useEffect, useMemo, useRef, useState } = hooks;
 
 const createRef = elem => new DomRef(elem);
 const createContext = defaultValue => services.createApiContext(defaultValue);
@@ -24,5 +24,5 @@ const hydrateApp = (render, anchor) => {
 };
 
 export { renderApp, hydrateApp, createContext, createRef, Component };
-export { useContext, useEffect, useMemo, useState };
+export { useContext, useEffect, useMemo, useRef, useState };
 export { createElement, cloneElement };

@@ -127,14 +127,9 @@ describe('JSXElement', () => {
     });
 
     it('should throw an error if the input is a deprecated html tag', () => {
-      let message;
-      try {
+      expect(() => {
         process(case3In, plugins);
-      } catch (e) {
-        message = e.message;
-      }
-      expect(message).toBeDefined();
-      expect(message.startsWith('TypeError: ')).toBe(true);
+      }).toThrow('TypeError:');
     });
   });
 

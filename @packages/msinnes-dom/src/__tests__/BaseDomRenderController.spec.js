@@ -216,13 +216,9 @@ describe('BaseDomRenderController', () => {
 
       it('should throw an error if the component tries to update state during the render cycle', () => {
         instance.appRenderer.renderingComponent = true;
-        let message;
-        try {
+        expect(() => {
           instance.renderFrame({}, {});
-        } catch (e) {
-          message = e.message;
-        }
-        expect(message).toEqual('ImplementationError: setState cannot be called during the render cycle');
+        }).toThrow('ImplementationError: setState cannot be called during the render cycle');
       });
 
       it('should push the frame to the frame queue', () => {

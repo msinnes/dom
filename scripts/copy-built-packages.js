@@ -9,20 +9,23 @@ const packages = [
   'msinnes-dom-redux-light',
   'msinnes-dom-server',
   'msinnes-dom-testing-library',
-];
+].map(name => {
+  const { version } = require(`../@packages/${name}/package.json`);
+  return { name, version };
+});
 
-async function loadFile(name) {
+async function loadFile(name, version) {
   await cpFile(
-    path.resolve(__dirname, `../@packages/${name}/${name}-v0.0.1-alpha.0.tgz`),
-    path.resolve(__dirname, `../${name}-v0.0.1-alpha.0.tgz`),
+    path.resolve(__dirname, `../@packages/${name}/${name}-v${version}.tgz`),
+    path.resolve(__dirname, `../${name}-v${version}.tgz`),
     { overwrite: true }
   ).on('progress', console.log);
   console.log('Finished copying:', name);
 }
 
 async function loadFiles() {
-  const promises = packages.map(async package => {
-    await loadFile(package);
+  const promises = packages.map(async ({ name, version }) => {
+    await loadFile(name, version);
   });
   await Promise.all(promises);
   console.log('Files copied');

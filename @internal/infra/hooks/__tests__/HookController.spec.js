@@ -63,14 +63,9 @@ describe('HookController', () => {
       });
 
       it('should throw an error if there is no active context', () => {
-        let message;
-        try {
+        expect(() => {
           instance.closeActiveContext();
-        } catch (e) {
-          message = e.message;
-        }
-        expect(message).toBeDefined();
-        expect(message.startsWith('InternalError')).toBe(true);
+        }).toThrow('InternalError');
       });
     });
 
@@ -123,14 +118,9 @@ describe('HookController', () => {
 
       it('should throw an error if the input instance is not found', () => {
         const notInArrRef = {};
-        let message;
-        try {
+        expect(() => {
           instance.destroyContext(notInArrRef);
-        } catch (e) {
-          message = e.message;
-        }
-        expect(message).toBeDefined();
-        expect(message.startsWith('InternalError')).toBe(true);
+        }).toThrow('InternalError');
       });
     });
 
@@ -172,14 +162,9 @@ describe('HookController', () => {
       });
 
       it('should throw an error if there is no active context', () => {
-        let message;
-        try {
+        expect(() => {
           instance.getHook();
-        } catch (e) {
-          message = e.message;
-        }
-        expect(message).toBeDefined();
-        expect(message.startsWith('InternalError')).toBe(true);
+        }).toThrow('InternalError');
       });
     });
 
@@ -210,14 +195,9 @@ describe('HookController', () => {
 
       it('should throw an error if the instance is not found', () => {
         const notInArrRef = {};
-        let message;
-        try {
+        expect(() => {
           instance.setActiveContext(notInArrRef);
-        } catch (e) {
-          message = e.message;
-        }
-        expect(message).toBeDefined();
-        expect(message.startsWith('InternalError')).toBe(true);
+        }).toThrow('InternalError');
       });
     });
   });

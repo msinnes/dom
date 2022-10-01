@@ -1,3 +1,8 @@
+/**
+ * @jest-environment jsdom
+ */
+import { DomRef } from '@internal/dom/DomRef';
+
 import { ContextController } from '../ctx/ContextController';
 import { EffectController } from '../effect/EffectController';
 import * as factories from '../factories';
@@ -197,6 +202,7 @@ describe('factories.createHooks', () => {
   let useContext;
   let useMemo;
   let useEffect;
+  let useRef;
   beforeEach(() => {
     hookController = {};
     effectController = {};
@@ -206,11 +212,13 @@ describe('factories.createHooks', () => {
       useContext: useContextHook,
       useMemo: useMemoHook,
       useEffect: useEffectHook,
+      useRef: useRefHook,
     } = factories.createHooks(contextController, effectController, hookController);
     useState = useStateHook;
     useContext = useContextHook;
     useMemo = useMemoHook;
     useEffect = useEffectHook;
+    useRef = useRefHook;
   });
 
   it('should be a function', () => {
@@ -309,35 +317,16 @@ describe('factories.createHooks', () => {
       getHookMock.mockImplementation(() => getHookReturnRef);
       const fn = () => {};
       const arr = [];
-      let message;
-      try {
+
+      expect(() => {
         useMemo(fn);
-      } catch (e) {
-        message = e.message;
-      }
-      expect(message).toBeUndefined();
-
-      try {
         useMemo(fn, arr);
-      } catch (e) {
-        message = e.message;
-      }
-      expect(message).toBeUndefined();
+      }).not.toThrow();
 
-      try {
+      expect(() => {
         useMemo(fn, 'not an array');
-      } catch (e) {
-        message = e.message;
-      }
-      expect(message.startsWith('ValidationError')).toBe(true);
-      message = undefined;
-
-      try {
         useMemo('not a function');
-      } catch (e) {
-        message = e.message;
-      }
-      expect(message.startsWith('ValidationError')).toBe(true);
+      }).toThrow('ValidationError');
     });
 
     it('should not pass an initial value to the getHookMock', () => {
@@ -588,34 +577,18 @@ describe('factories.createHooks', () => {
       const fn = () => {};
       const arr = [];
       let message;
-      try {
+      expect(() => {
         useEffect(fn);
-      } catch (e) {
-        message = e.message;
-      }
-      expect(message).toBeUndefined();
-
-      try {
         useEffect(fn, arr);
-      } catch (e) {
-        message = e.message;
-      }
-      expect(message).toBeUndefined();
+      }).not.toThrow();
 
-      try {
+      expect(() => {
         useEffect(fn, 'not an array');
-      } catch (e) {
-        message = e.message;
-      }
-      expect(message.startsWith('ValidationError')).toBe(true);
-      message = undefined;
+      }).toThrow('ValidationError');
 
-      try {
+      expect(() => {
         useEffect('not a function');
-      } catch (e) {
-        message = e.message;
-      }
-      expect(message.startsWith('ValidationError')).toBe(true);
+      }).toThrow('ValidationError');
     });
 
     it('should not pass an initial value to the getHookMock', () => {
@@ -668,6 +641,56 @@ describe('factories.createHooks', () => {
       expect(effectRef.fn).toBe(fn);
       expect(setShouldExecuteMock).toHaveBeenCalledTimes(1);
       expect(setShouldExecuteMock).toHaveBeenCalledWith(arr);
+    });
+  });
+
+  describe('useRef', () => {
+    let getHookMock;
+    let getMock;
+    let hookMock;
+    beforeEach(() => {
+      getHookMock = jest.fn();
+      getMock = jest.fn();
+      hookMock = {
+        get: getMock,
+      };
+      getHookMock.mockReturnValue(hookMock);
+      hookController.getHook = getHookMock;
+    });
+
+    it('should be a function', () => {
+      expect(useRef).toBeInstanceOf(Function);
+    });
+
+    it('should throw an error if improper arguments are passed', () => {
+      expect(() => {
+        useRef('string');
+        useRef(new DomRef('div'));
+      }).not.toThrow();
+
+      expect(() => {
+        useRef({});
+      }).toThrow('ValidationError');
+    });
+
+    it('should pass a domRef instance to the getHookMock', () => {
+      useRef('div');
+      expect(getHookMock).toHaveBeenCalledTimes(1);
+      expect(getHookMock.mock.calls[0][0].elem.tagName).toBe('DIV');
+      const ref = new DomRef('div');
+      useRef(ref);
+      expect(getHookMock).toHaveBeenCalledTimes(2);
+      expect(getHookMock).toHaveBeenCalledWith(ref);
+    });
+
+    it('should return the data stored in the hook', () => {
+      const returnRef = {};
+      getMock.mockReturnValue(returnRef);
+      const ref = useRef('div');
+      expect(getHookMock).toHaveBeenCalledTimes(1);
+      expect(getHookMock.mock.calls[0][0].elem.tagName).toBe('DIV');
+      expect(getMock).toHaveBeenCalledTimes(1);
+      expect(ref).toBe(returnRef);
     });
   });
 });
@@ -727,6 +750,7 @@ describe('factories.createInfrastructure', () => {
         'useContext',
         'useEffect',
         'useMemo',
+        'useRef',
         'useState',
       ]);
     });

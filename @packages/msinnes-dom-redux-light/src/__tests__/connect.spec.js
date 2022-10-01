@@ -11,14 +11,9 @@ describe('connect', () => {
   describe('when the store is not configured', () => {
     it('should throw an error when the component tries to render', () => {
       const ConnectedComponent = connect()(() => {});
-      let message;
-      try {
+      expect(() => {
         ConnectedComponent({});
-      } catch (e) {
-        message = e.message;
-      }
-      expect(message).toBeDefined();
-      expect(message).toEqual('ImplementationError: connected components require a configured store in the component tree.');
+      }).toThrow('ImplementationError: connected components require a configured store in the component tree.');
     });
   });
 

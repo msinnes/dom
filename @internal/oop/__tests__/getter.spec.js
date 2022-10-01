@@ -14,13 +14,8 @@ describe('getter', () => {
   it('should throw an error on write to getter value', () => {
     const instance = {};
     getter(instance, 'field', 'value');
-    let message;
-    try {
+    expect(() => {
       instance.field = 'another value';
-    } catch (e) {
-      message = e.message;
-    }
-    expect(message).toBeDefined();
-    expect(message).toEqual('Cannot set property field of #<Object> which has only a getter');
+    }).toThrow('Cannot set property field of #<Object> which has only a getter');
   });
 });

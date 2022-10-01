@@ -13,6 +13,7 @@
     "build-dev": "lerna run build-dev",
     "build-e2e": "yarn build-packages && yarn clean-bootstrap && yarn build-packages",
     "build-packages": "lerna run build",
+    "clean": "rimraf ./@packages/*/*.tgz && rimraf *.tgz",
     "clean-bootstrap": "lerna clean --yes && lerna bootstrap",
     "copy-built-packages": "node ./scripts/copy-built-packages.js",
     "coverage": "yarn test --coverage",

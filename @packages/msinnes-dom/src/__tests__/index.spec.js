@@ -14,6 +14,7 @@ import {
   useState,
   useMemo,
   useEffect,
+  useRef,
 } from '..';
 
 describe('index', () => {
@@ -80,6 +81,12 @@ describe('index', () => {
   describe('useEffect', () => {
     it('should be a function', () => {
       expect(useEffect).toBeInstanceOf(Function);
+    });
+  });
+
+  describe('useRef', () => {
+    it('should be a function', () => {
+      expect(useRef).toBeInstanceOf(Function);
     });
   });
 });

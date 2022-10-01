@@ -143,23 +143,17 @@ describe('Effect', () => {
         instance.needsFirstExecution = false;
         const localInstance = new Effect(() => {});
         let message;
-        try {
+        expect(() => {
           localInstance.setShouldExecute(['something']);
-        } catch (e) {
-          message = e.message;
-        }
-        expect(message).toBeUndefined();
+        }).not.toThrow();
       });
 
       it('should not throw an error if nextConditions is undefined', () => {
         instance.needsFirstExecution = false;
         let message;
-        try {
+        expect(() => {
           instance.setShouldExecute();
-        } catch (e) {
-          message = e.message;
-        }
-        expect(message).toBeUndefined();
+        }).not.toThrow();
       });
     });
   });

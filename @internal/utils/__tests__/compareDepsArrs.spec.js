@@ -21,22 +21,14 @@ describe('compareDepsArrs', () => {
   });
 
   it('should not throw an error if there is no lastConditons set', () => {
-    let message;
-    try {
+    expect(() => {
       compareDepsArrs(undefined, ['something']);
-    } catch (e) {
-      message = e.message;
-    }
-    expect(message).toBeUndefined();
+    }).not.toThrow();
   });
 
   it('should not throw an error if nextConditions is undefined', () => {
-    let message;
-    try {
+    expect(() => {
       compareDepsArrs([]);
-    } catch (e) {
-      message = e.message;
-    }
-    expect(message).toBeUndefined();
+    }).not.toThrow();
   });
 });

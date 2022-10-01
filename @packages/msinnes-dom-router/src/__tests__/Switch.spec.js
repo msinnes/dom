@@ -48,14 +48,10 @@ describe('createResolver', () => {
   it('should throw an error if the input signature is not recognized', () => {
     class NotRecognized {}
     const render = { signature: NotRecognized, props: {} };
-    let message;
-    try {
+    expect(() => {
       createResolver(render);
-    } catch (e) {
-      message = e.message;
-    }
-    expect(message).toBeDefined();
-    expect(message).toEqual('ImplementationError: Switch components can only take Case and Redirect as children');
+    }).toThrow('ImplementationError: Switch components can only take Case and Redirect as children');
+    let message;
   });
 });
 
