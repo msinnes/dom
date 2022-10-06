@@ -15,13 +15,11 @@ describe('createRouteRegex', () => {
     expect(regex.test('/route')).toBe(true);
     expect(regex.test('/route/')).toBe(true);
     expect(regex.test('/route/anything')).toBe(true);
-    expect(regex.test('/route anything')).toBe(false);
 
     regex = createRouteRegex('/route/');
+    expect(regex.test('/route')).toBe(true);
     expect(regex.test('/route/')).toBe(true);
     expect(regex.test('/route/anything')).toBe(true);
-    expect(regex.test('/route')).toBe(false);
-    expect(regex.test('/route anything')).toBe(false);
   });
 
   it('should prepend a \'/\' character if one is not passed', () => {
@@ -30,13 +28,11 @@ describe('createRouteRegex', () => {
     expect(regex.test('/route')).toBe(true);
     expect(regex.test('/route/')).toBe(true);
     expect(regex.test('/route/anything')).toBe(true);
-    expect(regex.test('/route anything')).toBe(false);
 
     regex = createRouteRegex('route/');
+    expect(regex.test('/route')).toBe(true);
     expect(regex.test('/route/')).toBe(true);
     expect(regex.test('/route/anything')).toBe(true);
-    expect(regex.test('/route')).toBe(false);
-    expect(regex.test('/route anything')).toBe(false);
   });
 
   it('should return an exact matcher if an exact prop is passed', () => {

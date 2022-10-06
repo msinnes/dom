@@ -13,7 +13,7 @@ export const createOr = (left, right) => left + PIPE + right;
 export const STARTS_WITH_SLASH = new RegExp(createStartsWith(ESCAPED_SLASH));
 export const ENDS_WITH_SLASH = new RegExp(createEndsWith(ESCAPED_SLASH));
 
-export const normalize = path => (STARTS_WITH_SLASH.test(path) ? path : ESCAPED_SLASH + path).replace('/', '\/');
-export const createInexact = path => ENDS_WITH_SLASH.test(path)
-  ? createStartsWith(path)
-  : createOr(createExact(path), createStartsWith(path + ESCAPED_SLASH));
+export const normalize = path => (STARTS_WITH_SLASH.test(path) ? path : ESCAPED_SLASH + path).replace('/', '\/').replace(/:[a-zA-Z1-9]+/g, '(.+)');
+export const createInexact = path => createStartsWith(
+  (ENDS_WITH_SLASH.test(path) ? path.substring(0, path.length - 1) : path) + '[\/]?'
+);

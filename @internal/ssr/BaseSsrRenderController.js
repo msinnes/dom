@@ -11,7 +11,7 @@ import { DomRef } from '@internal/dom/DomRef';
 class AppRenderer extends BaseAppRenderer {
   create(render) {
     const appRender = render instanceof AppRender ? render : new AppRender(render);
-    const { signature, props } = appRender.render || {};
+    const { signature, props } = appRender.render;
     if (extendz(signature, RenderableComponent)) return new ClassComponent(signature, props, this.composedServices);
     return super.create(appRender);
   }

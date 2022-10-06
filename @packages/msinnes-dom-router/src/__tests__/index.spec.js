@@ -16,4 +16,8 @@ describe('index', () => {
   it('should expose a Link', () => {
     expect(api.Link).toBeDefined();
   });
+
+  it('should expose hooks', () => {
+    expect(api.useParams).toBeDefined();
+  });
 });

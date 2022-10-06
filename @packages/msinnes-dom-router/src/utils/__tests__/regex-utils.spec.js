@@ -80,9 +80,16 @@ describe('regex string builders', () => {
       expect(string).toEqual('\/string\/');
     });
 
-    it('should prepend a \'/\' character if one is not passes', () => {
+    it('should prepend a \'/\' character if one is not passed', () => {
       const string = normalize('string');
       expect(string).toEqual('\/string');
+    });
+
+    it('should replace path params with wildcard captures', () => {
+      let string = normalize('/:string');
+      expect(string).toEqual('\/(.+)');
+      string = normalize('/:string/');
+      expect(string).toEqual('\/(.+)\/')
     });
   });
 
@@ -91,16 +98,16 @@ describe('regex string builders', () => {
       expect(createInexact).toBeInstanceOf(Function);
     });
 
-    it('should return a starts with string if the route ends with \'/\'', () => {
+    it('should return a starts with string and swap this ending slash for an optional slash if the route ends with \'/\'', () => {
       let string = createInexact('route/');
-      expect(string).toEqual('^route\/');
+      expect(string).toEqual('^route[\/]?');
       string = createInexact('route\/');
-      expect(string).toEqual('^route\/');
+      expect(string).toEqual('^route[\/]?');
     });
 
-    it('should return an exact match or startsWith route plus \'/\' if no slash at the end', () => {
+    it('should return a starts with and append an optional \'/\/ if the string does not end with a slash', () => {
       let string = createInexact('string');
-      expect(string).toEqual('^string$|^string\/');
+      expect(string).toEqual('^string[\/]?')
     });
   });
 });

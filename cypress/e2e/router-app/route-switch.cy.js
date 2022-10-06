@@ -14,13 +14,28 @@ describe('route switch', () => {
     });
   });
 
+  describe('params route', () => {
+    it('should load the page', () => {
+      cy.visit('http://localhost:9006');
+    });
+
+    it('should navigate to the Params page', () => {
+      cy.get('body > div > ul > li').eq(2).click();
+
+      cy.get('body').should('contain', 'Param: 1');
+      cy.location().should(loc => {
+        expect(loc.pathname).to.equal('/param/1');
+      });
+    });
+  });
+
   describe('anything redirect', () => {
     it('should load the page', () => {
       cy.visit('http://localhost:9006');
     });
 
     it('should redirect to the About page', () => {
-      cy.get('body > div > ul > li').eq(2).click();
+      cy.get('body > div > ul > li').eq(3).click();
 
       cy.get('body').should('contain', 'About Page');
       cy.location().should(loc => {

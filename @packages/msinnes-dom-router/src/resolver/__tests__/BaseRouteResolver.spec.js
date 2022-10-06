@@ -16,7 +16,11 @@ describe('BaseRouteResolver', () => {
     });
 
     it('should have a regex props from createRouteRegex', () => {
-      expect(instance.regex).toEqual(/^\/path\//);
+      expect(instance.regex).toEqual(new RegExp('^\/path[\/]?'));
+    });
+
+    it('should expose the path on a path prop', () => {
+      expect(instance.path).toEqual('/path/');
     });
 
     it('should have a test function that executes the regex.test method', () => {

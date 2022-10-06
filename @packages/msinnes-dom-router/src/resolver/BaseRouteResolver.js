@@ -4,6 +4,7 @@ import { createRouteRegex } from '../utils/createRouteRegex';
 class BaseRouteResolver {
   constructor(path, exact) {
     this.regex = createRouteRegex(path, exact);
+    this.path = path;
   }
 
   test(route) {

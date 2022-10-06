@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { ParamsContext } from '../ParamsContext';
 import { CaseResolver } from '../resolver/CaseResolver';
 import { RedirectResolver } from '../resolver/RedirectResolver';
 
@@ -14,7 +15,9 @@ import {
 
 jest.mock('@msinnes/dom', () => {
   let useMemoVal;
+  const DOM = jest.requireActual('@msinnes/dom');
   const module = {
+    ...DOM,
     useMemo: fn => {
       let value = useMemoVal;
       if (!useMemoVal) value = fn();
@@ -26,6 +29,7 @@ jest.mock('@msinnes/dom', () => {
 
 afterEach(() => {
   window.history.pushState({}, '', '/');
+  jest.resetModules();
 });
 
 describe('createResolver', () => {
@@ -140,10 +144,14 @@ describe('Switch', () => {
     ];
     window.history.pushState({}, '', '/home');
     let render = Switch({ children });
-    expect(render).toBe(child1);
+    expect(render.signature).toBe(ParamsContext.Provider);
+    expect(render.props).toMatchObject({ value: {} });
+    expect(render.children[0]).toBe(child1);
     window.history.pushState({}, '', '/about');
     render = Switch({ children });
-    expect(render).toBe(child2);
+    expect(render.signature).toBe(ParamsContext.Provider);
+    expect(render.props).toMatchObject({ value: {} });
+    expect(render.children[0]).toBe(child2);
   });
 
   it('should take a single wildcard regex', () => {
@@ -154,10 +162,14 @@ describe('Switch', () => {
       <Case path="/about" render={child2} />,
     ];
     let render = Switch({ children });
-    expect(render).toBe(child1);
+    expect(render.signature).toBe(ParamsContext.Provider);
+    expect(render.props).toMatchObject({ value: {} });
+    expect(render.children[0]).toBe(child1);
     window.history.pushState({}, '', '/about');
     render = Switch({ children });
-    expect(render).toBe(child1);
+    expect(render.signature).toBe(ParamsContext.Provider);
+    expect(render.props).toMatchObject({ value: {} });
+    expect(render.children[0]).toBe(child1);
   });
 
   it('should perform a startsWith match unless an exact prop is passed', () => {
@@ -168,10 +180,14 @@ describe('Switch', () => {
       <Case path="/about" render={child2} />,
     ];
     let render = Switch({ children });
-    expect(render).toBe(child1);
+    expect(render.signature).toBe(ParamsContext.Provider);
+    expect(render.props).toMatchObject({ value: {} });
+    expect(render.children[0]).toBe(child1);
     window.history.pushState({}, '', '/about');
     render = Switch({ children });
-    expect(render).toBe(child1);
+    expect(render.signature).toBe(ParamsContext.Provider);
+    expect(render.props).toMatchObject({ value: {} });
+    expect(render.children[0]).toBe(child1);
 
     children = [
       <Case path="/" render={child1} exact />,
@@ -179,10 +195,14 @@ describe('Switch', () => {
     ];
     window.history.pushState({}, '', '/');
     render = Switch({ children });
-    expect(render).toBe(child1);
+    expect(render.signature).toBe(ParamsContext.Provider);
+    expect(render.props).toMatchObject({ value: {} });
+    expect(render.children[0]).toBe(child1);
     window.history.pushState({}, '', '/about');
     render = Switch({ children });
-    expect(render).toBe(child2);
+    expect(render.signature).toBe(ParamsContext.Provider);
+    expect(render.props).toMatchObject({ value: {} });
+    expect(render.children[0]).toBe(child2);
   });
 
   it('should return null and perform a redirect on the to param if the path param is matched', () => {
@@ -205,7 +225,7 @@ describe('Switch', () => {
       <Case path="/" children={childrenRef} exact />,
     ];
     const render = Switch({ children });
-    expect(render).toBe(childrenRef);
+    expect(render.children[0]).toBe(childrenRef);
   });
 });
 

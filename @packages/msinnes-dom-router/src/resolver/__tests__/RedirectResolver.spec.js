@@ -21,7 +21,7 @@ describe('RedirectResolver', () => {
     });
 
     it('should have a regex props from createRouteRegex', () => {
-      expect(instance.regex).toEqual(/^\/path\//);
+      expect(instance.regex).toEqual(new RegExp('^\/path[\/]?'));
     });
 
     it('should extend BaseRouteResolver', () => {
