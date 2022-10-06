@@ -29,7 +29,6 @@
     "dom"
   ],
   "author": "Michael Sinnes",
-  "license": "ISC",
   "private": true,
   "devDependencies": {
     "@babel/cli": "^7.19.3",

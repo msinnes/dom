@@ -7,7 +7,6 @@
   ],
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
-  "license": "ISC",
   "main": "./",
   "private": true,
   "scripts": {

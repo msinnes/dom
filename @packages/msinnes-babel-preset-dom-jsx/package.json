@@ -4,7 +4,7 @@
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
-  "license": "ISC",
+  "license": "MIT",
   "main": "src/index.js",
   "repository": {
     "type": "git",
