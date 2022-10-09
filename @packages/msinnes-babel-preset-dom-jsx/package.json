@@ -1,6 +1,6 @@
 {
   "name": "@msinnes/babel-preset-dom-jsx",
-  "version": "0.0.2-alpha.0",
+  "version": "0.0.3-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -25,7 +25,7 @@
     "@babel/preset-env": "^7.15.8"
   },
   "devDependencies": {
-    "@msinnes/babel-plugin-dom-jsx": "^0.0.1-alpha.0"
+    "@msinnes/babel-plugin-dom-jsx": "^0.0.3-alpha.0"
   },
   "peerDependencies": {
     "@msinnes/babel-plugin-dom-jsx": "^0.0.1-alpha.0"

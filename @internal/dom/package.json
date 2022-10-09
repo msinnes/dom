@@ -1,6 +1,6 @@
 {
   "name": "@internal/dom",
-  "version": "0.0.0",
+  "version": "0.0.3-alpha.0",
   "description": "dom renderer",
   "keywords": [
     "dom"
@@ -13,8 +13,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@internal/base": "^0.0.0",
-    "@internal/is": "^0.0.0",
-    "@internal/oop": "^0.0.0"
+    "@internal/base": "^0.0.3-alpha.0",
+    "@internal/is": "^0.0.3-alpha.0",
+    "@internal/oop": "^0.0.3-alpha.0"
   }
 }

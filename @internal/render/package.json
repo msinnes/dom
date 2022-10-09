@@ -1,6 +1,6 @@
 {
   "name": "@internal/render",
-  "version": "0.0.0",
+  "version": "0.0.3-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -13,6 +13,6 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@internal/oop": "^0.0.0"
+    "@internal/oop": "^0.0.3-alpha.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@internal/ssr",
-  "version": "0.0.2-alpha.0",
+  "version": "0.0.3-alpha.0",
   "description": "ssr",
   "keywords": [
     "ssr"
@@ -13,15 +13,15 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@internal/app": "^0.0.0",
-    "@internal/base": "^0.0.0",
-    "@internal/dom": "^0.0.0",
-    "@internal/infra": "^0.0.0",
-    "@internal/oop": "^0.0.0",
-    "@internal/utils": "^0.0.0",
+    "@internal/app": "^0.0.3-alpha.0",
+    "@internal/base": "^0.0.3-alpha.0",
+    "@internal/dom": "^0.0.3-alpha.0",
+    "@internal/infra": "^0.0.3-alpha.0",
+    "@internal/oop": "^0.0.3-alpha.0",
+    "@internal/utils": "^0.0.3-alpha.0",
     "jsdom": "^19.0.0"
   },
   "devDependencies": {
-    "@msinnes/dom": "^0.0.1-alpha.0"
+    "@msinnes/dom": "^0.0.3-alpha.0"
   }
 }

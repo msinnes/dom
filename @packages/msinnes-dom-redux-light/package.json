@@ -1,6 +1,6 @@
 {
   "name": "@msinnes/dom-redux-light",
-  "version": "0.0.2-alpha.0",
+  "version": "0.0.3-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -27,10 +27,10 @@
   "devDependencies": {
     "@babel/cli": "^7.19.3",
     "@babel/core": "^7.19.3",
-    "@internal/oop": "^0.0.0",
-    "@msinnes/babel-preset-dom-jsx": "^0.0.2-alpha.0",
-    "@msinnes/dom": "^0.0.1-alpha.0",
-    "@msinnes/dom-testing-library": "^0.0.2-alpha.0",
+    "@internal/oop": "^0.0.3-alpha.0",
+    "@msinnes/babel-preset-dom-jsx": "^0.0.3-alpha.0",
+    "@msinnes/dom": "^0.0.3-alpha.0",
+    "@msinnes/dom-testing-library": "^0.0.3-alpha.0",
     "@rollup/plugin-babel": "^5.3.1",
     "babel-loader": "^8.2.5",
     "rimraf": "^3.0.2",

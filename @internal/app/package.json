@@ -1,6 +1,6 @@
 {
   "name": "@internal/app",
-  "version": "0.0.0",
+  "version": "0.0.3-alpha.0",
   "description": "app",
   "keywords": [
     "app"
@@ -13,12 +13,12 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@internal/base": "^0.0.0",
-    "@internal/dom": "^0.0.0",
-    "@internal/is": "^0.0.0",
-    "@internal/oop": "^0.0.0"
+    "@internal/base": "^0.0.3-alpha.0",
+    "@internal/dom": "^0.0.3-alpha.0",
+    "@internal/is": "^0.0.3-alpha.0",
+    "@internal/oop": "^0.0.3-alpha.0"
   },
   "devDependencies": {
-    "@internal/utils": "^0.0.0"
+    "@internal/utils": "^0.0.3-alpha.0"
   }
 }
