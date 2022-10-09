@@ -1,4 +1,4 @@
-import { createStore, StoreProvider } from '../../../index';
+import { createStore, StoreProvider } from '../../index';
 
 import { App } from './App';
 

@@ -1,5 +1,5 @@
 import { useState } from '@msinnes/dom';
-import { connect } from '../../../connect';
+import { connect } from '../../connect';
 
 import { addItem as addItemAction } from './actions';
 

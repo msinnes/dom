@@ -85,8 +85,8 @@ const TagToRoleMap = {
   input: elem => {
     if (INPUT_TYPE_MAP[elem.type]) return INPUT_TYPE_MAP[elem.type];
     if (elem.type === 'search' && typeof elem.list === 'undefined') return 'searchbox';
-    if (INPUT_COMBOBOX_TYPES.includes(elem.type) && typeof elem.list === 'undefined') return 'textbox';
-    return typeof elem.list === 'undefined' ? 'textbox' : 'combobox';
+    if (INPUT_COMBOBOX_TYPES.includes(elem.type) && !elem.list) return 'textbox';
+    return !elem.list ? 'textbox' : 'combobox';
   },
   ins: 'insertion',
   // j

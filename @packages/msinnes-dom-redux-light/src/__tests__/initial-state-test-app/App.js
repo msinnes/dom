@@ -1,4 +1,4 @@
-import { connect } from '../../../index';
+import { connect } from '../../index';
 
 const App = ({ text }) => {
   return text;

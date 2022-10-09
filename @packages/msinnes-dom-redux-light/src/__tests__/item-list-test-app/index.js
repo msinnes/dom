@@ -1,5 +1,5 @@
-import { StoreProvider } from '../../../StoreProvider';
-import { createStore } from '../../../createStore';
+import { StoreProvider } from '../../StoreProvider';
+import { createStore } from '../../createStore';
 
 import { itemReducer } from './reducer';
 import { Content } from './Content';

@@ -1,4 +1,4 @@
-import { connect } from '../../../connect';
+import { connect } from '../../connect';
 
 import {
   completeItem as completeItemAction,
