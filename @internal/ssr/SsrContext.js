@@ -2,8 +2,8 @@ import { DomContext } from './DomContext';
 import { InfraContext } from './InfraContext';
 
 class SsrContext {
-  constructor() {
-    this.dom = new DomContext();
+  constructor(config = {}) {
+    this.dom = new DomContext(config.dom);
     this.infra = new InfraContext();
   }
 

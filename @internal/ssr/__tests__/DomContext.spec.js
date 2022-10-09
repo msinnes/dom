@@ -50,6 +50,13 @@ describe('DomContext', () => {
         expect(Text).toBe(instance.dom.window.Text);
         instance.disable();
       });
+
+      it('should add a PopStateEvent object to global', () => {
+        instance.enable();
+        expect(PopStateEvent).toBeDefined();
+        expect(PopStateEvent).toBe(instance.dom.window.PopStateEvent);
+        instance.disable();
+      });
     });
 
     describe('disable', () => {
@@ -87,6 +94,26 @@ describe('DomContext', () => {
         expect(Text).toBe(instance.dom.window.Text);
         instance.disable();
         expect(global.Text).toBeUndefined();
+      });
+
+      it('should remove the PopStateEvent object', () => {
+        instance.enable();
+        expect(PopStateEvent).toBeDefined();
+        expect(PopStateEvent).toBe(instance.dom.window.PopStateEvent);
+        instance.disable();
+        expect(global.PopStateEvent).toBeUndefined();
+      });
+    });
+
+    describe('config', () => {
+      it('should set location if config.url is passed', () => {
+        instance = new DomContext({ url: 'http://url.com/path?id=1#hash' });
+        const location = instance.dom.window.location;
+        expect(location.href).toEqual('http://url.com/path?id=1#hash');
+        expect(location.origin).toEqual('http://url.com');
+        expect(location.pathname).toEqual('/path');
+        expect(location.search).toEqual('?id=1');
+        expect(location.hash).toEqual('#hash');
       });
     });
   });

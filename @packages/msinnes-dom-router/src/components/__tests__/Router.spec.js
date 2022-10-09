@@ -1,15 +1,20 @@
-/**
- * @jest-environment jsdom
- */
 import { Component } from '@msinnes/dom';
+import { render } from '@msinnes/dom-testing-library';
 
 import { Router } from '../Router';
 
 describe('Router', () => {
   it('should be a component', () => {
-    expect(Router).toBeInstanceOf(Function);
-    // long hand extends
-    expect(Router.prototype.__proto__.constructor).toBe(Component.prototype.constructor);
+    expect(Router).toExtend(Component);
+  });
+
+  it('should render to the dom', () => {
+    const screen = render(
+      <Router>
+        <div>Content</div>
+      </Router>
+    );
+    expect(screen.getByText('Content')).toBeOnScreen(screen);
   });
 
   describe('instance', () => {
@@ -32,13 +37,13 @@ describe('Router', () => {
       });
 
       it('should add the onPopstate method as a onPopstate handler on the window object', () => {
-        const addEventListenerOriginal = window.addEventListener;
+        global.window = {};
         const addEventListenerMock = jest.fn();
         window.addEventListener = addEventListenerMock;
         instance.componentDidMount();
         expect(addEventListenerMock).toHaveBeenCalledTimes(1);
         expect(addEventListenerMock).toHaveBeenCalledWith('popstate', instance.onPopstate);
-        window.addEventListener = addEventListenerOriginal;
+        delete global.window;
       });
     });
 

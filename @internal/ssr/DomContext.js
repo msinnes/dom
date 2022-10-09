@@ -4,8 +4,8 @@ const { JSDOM } = jsdom;
 // TODO: this should take an optional route from the in put request config
 // necessary for routing to run server side
 class DomContext {
-  constructor() {
-    this.dom = new JSDOM('');
+  constructor(config) {
+    this.dom = new JSDOM('', config);
   }
 
   enable() {
@@ -14,6 +14,7 @@ class DomContext {
     global.document = window.document;
     global.location = window.location;
     global.Text = window.Text;
+    global.PopStateEvent = window.PopStateEvent;
   }
 
   disable() {
@@ -21,6 +22,7 @@ class DomContext {
     delete global.document;
     delete global.location;
     delete global.Text;
+    delete global.PopStateEvent;
   }
 }
 

@@ -12,51 +12,27 @@ describe('navigate', () => {
     expect(navigate).toBeInstanceOf(Function);
   });
 
-  it('should trigger async', () => {
-    expect(window.location.href).toEqual('http://localhost/');
-    navigate('/home');
-    expect(window.location.href).not.toEqual('http://localhost/home');
-    expect(window.location.href).toEqual('http://localhost/');
-  });
-
-  it('should call history.replaceState with the input path', done => {
-    expect(window.location.href).toEqual('http://localhost/');
-    navigate('/home');
-    setTimeout(() => {
-      expect(window.location.href).toEqual('http://localhost/home');
-      done();
-    });
-  });
-
-  it('should trigger a popstate event after navigating', done => {
+  it('should trigger a popstate event after navigating', () => {
     const mock = jest.fn();
     window.onpopstate = () => {
       mock(window.location.href);
     };
     expect(window.location.href).toEqual('http://localhost/');
     navigate('/home');
-    expect(mock).not.toHaveBeenCalled();
-    setTimeout(() => {
-      expect(window.location.href).toEqual('http://localhost/home');
-      expect(mock).toHaveBeenCalledTimes(1);
-      expect(mock).toHaveBeenCalledWith('http://localhost/home');
-      done();
-    });
+    expect(window.location.href).toEqual('http://localhost/home');
+    expect(mock).toHaveBeenCalledTimes(1);
+    expect(mock).toHaveBeenCalledWith('http://localhost/home');
   });
 
-  it('should accept an object { pathname, state } for input', done => {
+  it('should accept an object { pathname, state } for input', () => {
     const mock = jest.fn();
     window.onpopstate = e => {
       mock(window.location.href, e.state.from);
     };
     expect(window.location.href).toEqual('http://localhost/');
     navigate({ pathname: '/home', state: { from: 'from' } });
-    expect(mock).not.toHaveBeenCalled();
-    setTimeout(() => {
-      expect(window.location.href).toEqual('http://localhost/home');
-      expect(mock).toHaveBeenCalledTimes(1);
-      expect(mock).toHaveBeenCalledWith('http://localhost/home', 'from');
-      done();
-    });
+    expect(window.location.href).toEqual('http://localhost/home');
+    expect(mock).toHaveBeenCalledTimes(1);
+    expect(mock).toHaveBeenCalledWith('http://localhost/home', 'from');
   });
 });

@@ -110,6 +110,110 @@ describe('queries', () => {
     });
   });
 
+  describe('getByRole', () => {
+    const { getByRole } = queries;
+    let getByRoleMock;
+
+    beforeEach(() => {
+      getByRoleMock = jest.spyOn(queryFns, 'getByRole');
+    });
+
+    it('should be a function', () => {
+      expect(getByRole).toBeInstanceOf(Function);
+    });
+
+    it('should call the queryFns.getByRole method', () => {
+      const root = {};
+      const text = 'query';
+      const resultNode = {};
+      const result = [resultNode];
+      getByRoleMock.mockReturnValue(result);
+      const output = getByRole(root, text);
+      expect(getByRoleMock).toHaveBeenCalledTimes(1);
+      expect(getByRoleMock).toHaveBeenCalledWith(root, 'query');
+      expect(output).toBe(resultNode);
+    });
+
+    it('should throw an error if results are empty', () => {
+      const root = {};
+      const text = 'query';
+      const result = [];
+      getByRoleMock.mockReturnValue(result);
+      expect(() => {
+        getByRole(root, 'query');
+      }).toThrow('getByRole did not find any results');
+    });
+
+    it('should throw an error if more then one result is found', () => {
+      const root = {};
+      const text = 'query';
+      const resultNode = {};
+      const result = [resultNode, resultNode];
+      getByRoleMock.mockReturnValue(result);
+      expect(() => {
+        getByRole(root, 'query');
+      }).toThrow('getByRole found too many results');
+    });
+  });
+
+  describe('getAllByRole', () => {
+    const { getAllByRole } = queries;
+    let getByRole;
+
+    beforeEach(() => {
+      getByRole = jest.spyOn(queryFns, 'getByRole');
+    });
+
+    it('should be a function', () => {
+      expect(getAllByRole).toBeInstanceOf(Function);
+    });
+
+    it('should call the queryFns.getAllByRole method', () => {
+      const root = {};
+      const text = 'query';
+      const result = [{}];
+      getByRole.mockReturnValue(result);
+      const output = getAllByRole(root, text);
+      expect(getByRole).toHaveBeenCalledTimes(1);
+      expect(getByRole).toHaveBeenCalledWith(root, 'query');
+      expect(output).toBe(result);
+    });
+
+    it('should throw an error if results are empty', () => {
+      const root = {};
+      const text = 'query';
+      const result = [];
+      getByRole.mockReturnValue(result);
+      expect(() => {
+        getAllByRole(root, text);
+      }).toThrow('getAllByRole did not find any results');
+    });
+  });
+
+  describe('queryAllByRole', () => {
+    const { queryAllByRole } = queries;
+    let getByRoleMock;
+
+    beforeEach(() => {
+      getByRoleMock = jest.spyOn(queryFns, 'getByRole');
+    });
+
+    it('should be a function', () => {
+      expect(queryAllByRole).toBeInstanceOf(Function);
+    });
+
+    it('should call the queryFns.getByRole method', () => {
+      const root = {};
+      const text = 'query';
+      const result = [];
+      getByRoleMock.mockReturnValue(result);
+      const output = queryAllByRole(root, text);
+      expect(getByRoleMock).toHaveBeenCalledTimes(1);
+      expect(getByRoleMock).toHaveBeenCalledWith(root, 'query');
+      expect(output).toBe(result);
+    });
+  });
+
   describe('getByText', () => {
     const { getByText } = queries;
     let getByTextMock;

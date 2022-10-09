@@ -45,6 +45,38 @@ describe('queryFns', () => {
     });
   });
 
+  describe('getByRole', () => {
+    const { getByRole } = queryFns;
+
+    it('should be a function', () => {
+      expect(getByRole).toBeInstanceOf(Function);
+    });
+
+    it('should return an element with an explicitly defined role', () => {
+      const elem = { tagName: 'BUTTON', role: 'button' };
+      const root = { tagName: 'BODY', children: [elem] };
+      const result = getByRole(root, 'button');
+      expect(result).toBeInstanceOf(Array);
+      expect(result.length).toBe(1);
+      expect(result[0]).toBe(elem);
+    });
+
+    it('should return an element with a calculated role', () => {
+      const button = { tagName: 'BUTTON' };
+      const table = { tagName: 'TABLE' };
+      const root = { tagName: 'BODY', children: [button, table] };
+      let result = getByRole(root, 'button');
+      expect(result).toBeInstanceOf(Array);
+      expect(result.length).toBe(1);
+      expect(result[0]).toBe(button);
+
+      result = getByRole(root, 'table');
+      expect(result).toBeInstanceOf(Array);
+      expect(result.length).toBe(1);
+      expect(result[0]).toBe(table);
+    });
+  });
+
   describe('getByText', () => {
     const { getByText } = queryFns;
 

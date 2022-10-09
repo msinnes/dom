@@ -7,10 +7,8 @@ const navigate = to => {
     destination = to.pathname;
     state = to.state;
   }
-  setTimeout(() => {
-    window.history.pushState(state, null, window.location.origin + destination);
-    window.dispatchEvent(new PopStateEvent('popstate', { state }));
-  });
+  window.history.pushState(state, null, window.location.origin + destination);
+  window.dispatchEvent(new PopStateEvent('popstate', { state }));
 };
 
 export { navigate };

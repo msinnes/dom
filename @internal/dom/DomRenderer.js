@@ -13,6 +13,7 @@ class DomRenderer extends BaseRenderer {
   }
 
   render(render, parent, currentComponent) {
+    if (!render) return;
     const domRender = new DomRender(render);
     let { children = [] } = domRender.render;
     if (domRender.isArrayRender) children = domRender.render;

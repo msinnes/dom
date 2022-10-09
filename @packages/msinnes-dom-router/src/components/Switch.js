@@ -1,15 +1,14 @@
-import { useMemo } from '@msinnes/dom';
+import * as DOM from '@msinnes/dom';
 
-import { navigate } from './utils/navigate';
+import { CaseResolver } from '../resolver/CaseResolver';
+import { RedirectResolver } from '../resolver/RedirectResolver';
+import * as navigateApi from '../utils/navigate';
 
-import { CaseResolver } from './resolver/CaseResolver';
-import { RedirectResolver } from './resolver/RedirectResolver';
-
-const createResolver = ({ signature, props }) => {
+const createResolver = ({ signature, props, children }) => {
   if (signature === Case) {
-    return new CaseResolver(props.path, props.exact, props.render || props.children);
+    return new CaseResolver(props.path, props.exact, props.render || children);
   } else if (signature === Redirect) {
-    return new RedirectResolver(props.path, props.exact, () => navigate(props.to));
+    return new RedirectResolver(props.path, props.exact, <Redirect to={props.to} />);
   }
   throw new Error('ImplementationError: Switch components can only take Case and Redirect as children');
 };
@@ -29,20 +28,16 @@ const Case = () => {
 };
 
 const Redirect = ({ to }) => {
-  navigate(to);
+  DOM.useEffect(() => {
+    navigateApi.navigate(to);
+  });
   return null;
 };
 
 const Switch = ({ children }) => {
   // TODO: it should update when there is a change in children
-  const resolvers = useMemo(() => children.map(createResolver));
+  const resolvers = DOM.useMemo(() => children.map(createResolver));
   return findCurrentRouteChild(resolvers);
 };
 
-export {
-  createResolver,
-  findCurrentRouteChild,
-  Case,
-  Redirect,
-  Switch,
-};
+export { createResolver, findCurrentRouteChild, Switch, Case, Redirect };

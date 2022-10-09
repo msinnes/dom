@@ -1,4 +1,5 @@
 import { traverse } from './traverse';
+import { getRole } from './getRole';
 
 const query = (root, selector) => {
   const results = [];
@@ -18,6 +19,13 @@ export const getByLabelText = (root, q) => {
   }, []);
   const selector = node => {
     if (labelFors.includes(node.name)) return node;
+  };
+  return query(root, selector);
+};
+
+export const getByRole = (root, q) => {
+  const selector = node => {
+    if(getRole(node) === q) return node;
   };
   return query(root, selector);
 };

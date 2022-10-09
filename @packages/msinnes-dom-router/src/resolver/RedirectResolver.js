@@ -8,8 +8,7 @@ class RedirectResolver extends BaseRouteResolver {
   }
 
   resolve() {
-    this.to();
-    return null;
+    return this.to;
   }
 }
 

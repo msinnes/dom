@@ -35,6 +35,7 @@
     "@internal/oop": "^0.0.0",
     "@msinnes/babel-plugin-dom-jsx": "^0.0.1-alpha.0",
     "@msinnes/dom": "^0.0.1-alpha.0",
+    "@msinnes/dom-testing-library": "^0.0.2-alpha.0",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-node-resolve": "^14.1.0",
     "babel-loader": "^8.2.5",

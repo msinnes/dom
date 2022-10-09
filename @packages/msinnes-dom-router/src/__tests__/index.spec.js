@@ -1,3 +1,6 @@
+import { render } from '@msinnes/dom-testing-library';
+import { App } from './test-app';
+
 import * as api from '..';
 
 const { Router, Switch, Case, Redirect, Link } = api;
@@ -19,5 +22,46 @@ describe('index', () => {
 
   it('should expose hooks', () => {
     expect(api.useParams).toBeDefined();
+  });
+});
+
+describe('e2e', () => {
+  let screen;
+  beforeEach(() => {
+    screen = render(<App />, { url: 'http://url.com/'});
+  });
+
+  it('should render 4 links', () => {
+    const links = screen.getAllByRole('link');
+    expect(links.length).toEqual(4);
+    expect(links).toBeOnScreen(screen);
+  });
+
+  it('should be on the home page', () => {
+    const LinkAndDiv = screen.getAllByText('Home');
+    expect(LinkAndDiv.length).toEqual(2);
+    expect(LinkAndDiv).toBeOnScreen(screen);
+  });
+
+  it('should navigate to the about page', () => {
+    const AboutLink = screen.getByText('About');
+    AboutLink.click();
+    expect(screen.getAllByText('Home').length).toEqual(1);
+    expect(screen.getAllByText('About').length).toEqual(2);
+  });
+
+  it('should navigate to the params page', () => {
+    const ParamLink = screen.getByText('Params');
+    ParamLink.click();
+    expect(screen.getAllByText('Home').length).toEqual(1);
+    expect(screen.getAllByText('Params').length).toEqual(1);
+    expect(screen.getAllByText('Param: 1').length).toEqual(1);
+  });
+
+  it('should redirect to about when anything is clicked', () => {
+    const AnythingLink = screen.getByText('Anything');
+    AnythingLink.click();
+    expect(screen.getAllByText('Home').length).toEqual(1);
+    expect(screen.getAllByText('About').length).toEqual(2);
   });
 });

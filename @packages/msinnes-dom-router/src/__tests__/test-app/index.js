@@ -1,10 +1,10 @@
-import { Router, Switch, Case, Redirect, Link, useParams } from '../../..';
+import { Router, Switch, Case, Redirect, Link, useParams } from '../..';
 
-const Home = () => 'Home';
-const About = () => 'About';
+const Home = () => <div>Home</div>;
+const About = () => <div>About</div>;
 const Params = () => {
   const { id } = useParams();
-  return `Param: ${id}`;
+  return <div>Param: {id}</div>;
 };
 
 const Nav = ({ children }) => (

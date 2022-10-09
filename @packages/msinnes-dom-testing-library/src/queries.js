@@ -15,6 +15,21 @@ export const getAllByLabelText = (root, query) => {
 
 export const queryAllByLabelText = (root, query) => queryFns.getByLabelText(root, query);
 
+export const getByRole = (root, query) => {
+  const result = queryFns.getByRole(root, query);
+  if (result.length === 0) throw new Error('getByRole did not find any results');
+  if (result.length > 1) throw new Error ('getByRole found too many results');
+  return result[0];
+};
+
+export const getAllByRole = (root, query) => {
+  const result = queryFns.getByRole(root, query);
+  if (result.length === 0) throw new Error('getAllByRole did not find any results');
+  return result;
+};
+
+export const queryAllByRole = (root, query) => queryFns.getByRole(root, query);
+
 export const getByText = (root, query) => {
   const result = queryFns.getByText(root, query);
   if (result.length === 0) throw new Error('getByText did not find any results');

@@ -56,5 +56,12 @@ describe('SsrContext', () => {
         expect(infraDisableMock).toHaveBeenCalledTimes(1);
       });
     });
+
+    describe('config', () => {
+      it('should pass config.dom to the DomContext', () => {
+        instance = new SsrContext({ dom: { url: 'http://url.com' } });
+        expect(instance.dom.dom.window.location.href).toEqual('http://url.com/');
+      });
+    });
   });
 });

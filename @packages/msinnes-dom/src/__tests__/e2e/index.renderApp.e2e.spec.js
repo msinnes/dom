@@ -264,7 +264,7 @@ describe('index.e2e', () => {
       });
     });
 
-    it('should render a class component that returns a fragment', () => {
+    it('should render a class component that returns a fragment', done => {
       class Comp extends Component {
         render() {
           return [
@@ -278,6 +278,19 @@ describe('index.e2e', () => {
       setTimeout(() => {
         setTimeout(() => {
           expect(document.body.innerHTML).toEqual('<div>text 1</div><div>text 2</div>');
+          done()
+        });
+      });
+    });
+
+    it('should render a component that returns a null render', done => {
+      const Comp = () => null;
+      const render = createElement(Comp);
+      renderApp(render, document.body);
+      setTimeout(() => {
+        setTimeout(() => {
+          expect(document.body.innerHTML).toEqual('');
+          done();
         });
       });
     });

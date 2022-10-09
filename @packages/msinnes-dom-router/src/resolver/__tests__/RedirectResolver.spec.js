@@ -47,8 +47,7 @@ describe('RedirectResolver', () => {
       });
 
       it('should navigate to the to destination and return null', () => {
-        expect(instance.resolve()).toBe(null);
-        expect(toRef).toHaveBeenCalled();
+        expect(instance.resolve()).toBe(toRef);
       });
     });
   });

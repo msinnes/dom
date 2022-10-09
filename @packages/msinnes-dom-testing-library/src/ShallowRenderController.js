@@ -3,70 +3,28 @@ import { BaseSsrRenderController } from '@internal/ssr/BaseSsrRenderController';
 import {
   getByLabelText,
   getAllByLabelText,
+  queryAllByLabelText,
+  getByRole,
+  getAllByRole,
+  queryAllByRole,
   getByText,
   getAllByText,
-  queryAllByLabelText,
   queryAllByText,
 } from './queries';
 import { traverse } from './traverse';
+import {
+  FORM_EVENTS,
+  KEYBOARD_EVENTS,
+  MOUSE_EVENTS,
+  MEDIA_EVENTS,
+} from './constants';
 
-const handlers = [
-  'onclick',
-  'onblur',
-  'onchangeonblur',
-  'oncontextmenuonblur',
-  'onfocusonblur',
-  'onformchangeonblur',
-  'onforminputonblur',
-  'oninputonblur',
-  'oninvalidonblur',
-  'onresetonblur',
-  'onselectonblur',
-  'onsubmit',
-  'onkeydown',
-  'onkeypress',
-  'onkeyup',
-  'onclick',
-  'ondblclick',
-  'ondrag',
-  'ondragend',
-  'ondragenter',
-  'ondragleave',
-  'ondragover',
-  'ondragstart',
-  'ondrop',
-  'onmousedown',
-  'onmousemove',
-  'onmouseout',
-  'onmouseover',
-  'onmouseup',
-  'onmousewheel',
-  'onscroll',
-  'onabort',
-  'oncanplay',
-  'oncanplaythrough',
-  'ondurationchange',
-  'onemptied',
-  'onended',
-  'onerror',
-  'onloadeddata',
-  'onloadedmetadata',
-  'onloadstart',
-  'onpause',
-  'onplay',
-  'onplaying',
-  'onprogress',
-  'onratechange',
-  'onreadystatechange',
-  'onseeked',
-  'onseeking',
-  'onstalled',
-  'onsuspend',
-  'ontimeupdate',
-  'onvolumechange',
-  'onwaiting',
+const ELEMENT_EVENTS = [
+  ...FORM_EVENTS,
+  ...KEYBOARD_EVENTS,
+  ...MOUSE_EVENTS,
+  ...MEDIA_EVENTS,
 ];
-
 
 class ShallowRenderController extends BaseSsrRenderController {
   constructor(...args) {
@@ -75,8 +33,22 @@ class ShallowRenderController extends BaseSsrRenderController {
     this.wrapElement = this.wrapElement.bind(this);
   }
 
+  processEffects() {
+    this.ctx.enable();
+    this.ctx.infra.services.digestEffects();
+    this.ctx.disable();
+    if (this.queue.length) {
+      while(this.queue.length) {
+        this.renderAppFrame();
+      }
+      super.render();
+      this.processEffects();
+    }
+  }
+
   render() {
     super.render();
+    this.processEffects();
     const container = this.ctx.dom.dom.window.document.body;
     traverse(this.domRenderer.root, component => {
       this.wrapElement(component);
@@ -86,6 +58,9 @@ class ShallowRenderController extends BaseSsrRenderController {
       getByLabelText: query => getByLabelText(container, query),
       getAllByLabelText: query => getAllByLabelText(container, query),
       queryAllByLabelText: query => queryAllByLabelText(container, query),
+      getByRole: query => getByRole(container, query),
+      getAllByRole: query => getAllByRole(container, query),
+      queryAllByRole: query => queryAllByRole(container, query),
       getByText: query => getByText(container, query),
       getAllByText: query => getAllByText(container, query),
       queryAllByText: query => queryAllByText(container, query),
@@ -93,12 +68,14 @@ class ShallowRenderController extends BaseSsrRenderController {
   }
 
   wrapElement(component) {
-    handlers.forEach(key => {
+    ELEMENT_EVENTS.forEach(key => {
       const elem = component.elem.elem;
       if (elem[key] && elem[key] instanceof Function){
         const fn = elem[key];
         elem[key] = (...args) => {
+          this.ctx.enable();
           fn(...args);
+          this.ctx.disable();
           while(this.queue.length) {
             this.renderAppFrame();
           }
