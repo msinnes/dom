@@ -1,8 +1,6 @@
 import * as jsdom from 'jsdom';
 const { JSDOM } = jsdom;
 
-// TODO: this should take an optional route from the in put request config
-// necessary for routing to run server side
 class DomContext {
   constructor(config) {
     this.dom = new JSDOM('', config);
