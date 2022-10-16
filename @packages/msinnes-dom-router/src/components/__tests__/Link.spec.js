@@ -1,10 +1,7 @@
+import * as DOM from '@msinnes/dom';
 import { render } from '@msinnes/dom-testing-library';
 
 import { Link } from '../Link';
-
-import * as navigateApi from '../../utils/navigate';
-
-navigateApi.navigate = jest.fn();
 
 describe('Link', () => {
   afterEach(jest.resetAllMocks);
@@ -14,14 +11,42 @@ describe('Link', () => {
   });
 
   it('should navigate to a route if passed a \'to\' prop', () => {
+    const useContextOriginal = DOM.useContext;
+    const useContextMock = jest.fn();
+    const navigateMock = jest.fn();
+    useContextMock.mockReturnValue({ navigate: navigateMock });
+    DOM.useContext = useContextMock;
     const to = '/about';
     const renderedLink = Link({ to });
     const preventDefaultMock = jest.fn();
     const e = { preventDefault: preventDefaultMock };
     renderedLink.props.onclick(e);
     expect(preventDefaultMock).toHaveBeenCalledTimes(1);
-    expect(navigateApi.navigate).toHaveBeenCalledTimes(1);
-    expect(navigateApi.navigate).toHaveBeenCalledWith(to);
+    expect(navigateMock).toHaveBeenCalledTimes(1);
+    expect(navigateMock).toHaveBeenCalledWith(to);
+    DOM.useContext = useContextOriginal;
+  });
+
+  it('should not navigate if the next route is not within the scope of the base route', () => {
+    const useContextOriginal = DOM.useContext;
+    const useContextMock = jest.fn();
+    const navigateMock = jest.fn();
+    useContextMock.mockReturnValue({ navigate: navigateMock, basePath: /\/path[/]?/ });
+    DOM.useContext = useContextMock;
+    let to = '/about';
+    let renderedLink = Link({ to });
+    const preventDefaultMock = jest.fn();
+    const e = { preventDefault: preventDefaultMock };
+    renderedLink.props.onclick(e);
+    expect(preventDefaultMock).toHaveBeenCalledTimes(0);
+    expect(navigateMock).toHaveBeenCalledTimes(0);
+    to = '/path/about';
+    renderedLink = Link({ to });
+    renderedLink.props.onclick(e);
+    expect(preventDefaultMock).toHaveBeenCalledTimes(1);
+    expect(navigateMock).toHaveBeenCalledTimes(1);
+    expect(navigateMock).toHaveBeenCalledWith(to);
+    DOM.useContext = useContextOriginal;
   });
 
   it('should render without errors', () => {

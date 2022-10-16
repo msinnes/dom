@@ -43,6 +43,19 @@ describe('Context', () => {
         expect(addValueMock).not.toHaveBeenCalled();
         expect(render).toBe(childRef);
       });
+
+      it('should call execute a value function with existing value and call addvalue with the new value', () => {
+        const childRef = [];
+        const newValueRef = {};
+        const valueMock = jest.fn();
+        const value = (...args) => valueMock(...args);
+        valueMock.mockReturnValue(newValueRef);
+        const render = instance.Provider({ value, children: childRef });
+        expect(valueMock).toHaveBeenCalledTimes(1);
+        expect(valueMock).toHaveBeenCalledWith('mock value');
+        expect(addValueMock).toHaveBeenCalledTimes(1);
+        expect(addValueMock).toHaveBeenCalledWith(newValueRef);
+      });
     });
 
     describe('Consumer', () => {

@@ -1,7 +1,11 @@
+import { isFunction } from '@internal/is/function';
+
 class Context {
   constructor(ctxContext) {
     this.Provider = ({ value, children }) => {
-      value && ctxContext.addValue(value);
+      let val = value;
+      if (isFunction(val)) val = val(ctxContext.value);
+      val && ctxContext.addValue(val);
       return children;
     };
 

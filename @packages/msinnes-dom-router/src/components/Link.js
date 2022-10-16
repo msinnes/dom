@@ -1,16 +1,18 @@
-import { navigate } from '../utils/navigate';
+import * as DOM from '@msinnes/dom';
+
+import { RouterContext } from '../RouterContext';
 
 const Link = ({ to, children, ...linkProps }) => {
-  // TODO: get navigate from the routing context.
-  // TODO: get baseRoute from the routing context.
+  const { basePath, navigate } = DOM.useContext(RouterContext);
   let props = { ...linkProps };
   if (to) {
     props = {
       ...props,
       onclick: e => {
-        // TODO: Only prevent default if the baseRoute is in the app.
-        e.preventDefault();
-        navigate(to);
+        if (!basePath || basePath.test(to)) {
+          e.preventDefault();
+          navigate(to);
+        }
       },
       href: to,
     };

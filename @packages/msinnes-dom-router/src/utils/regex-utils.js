@@ -17,3 +17,15 @@ export const normalize = path => (STARTS_WITH_SLASH.test(path) ? path : ESCAPED_
 export const createInexact = path => createStartsWith(
   (ENDS_WITH_SLASH.test(path) ? path.substring(0, path.length - 1) : path) + '[\/]?'
 );
+
+export const createRouteRegex = (path, exact = false) => {
+  if (path === '*') return ANY_REGEX;
+  const normalizedPath = normalize(path);
+
+  let regexString;
+  if (exact) regexString = createExact(normalizedPath);
+  else regexString = createInexact(normalizedPath);
+  return new RegExp(regexString);
+};
+
+export const createBaseRouteRegex = path => createRouteRegex(path);

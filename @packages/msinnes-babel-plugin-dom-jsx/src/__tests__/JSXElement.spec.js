@@ -113,6 +113,17 @@ const case13Out = `({
   children: []
 });`;
 
+const case14In = `
+<Context.Provider>
+  <div />
+</Context.Provider>`;
+const case14Out = `({
+  signature: Context.Provider,
+  children: [{
+    signature: "div"
+  }]
+});`;
+
 
 describe('JSXElement', () => {
   describe('when there is only a signature', () => {
@@ -192,6 +203,13 @@ describe('JSXElement', () => {
     it('should remove jsx comments', () => {
       const out = process(case13In, plugins);
       expect(out).toEqual(case13Out);
+    });
+  });
+
+  describe('dotted signatures', () => {
+    it('should handle object accessors as signatures', () => {
+      const out = process(case14In, plugins);
+      expect(out).toEqual(case14Out);
     });
   });
 });

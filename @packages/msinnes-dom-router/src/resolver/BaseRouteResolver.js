@@ -1,6 +1,5 @@
-import { createRouteRegex } from '../utils/createRouteRegex';
+import { createRouteRegex } from '../utils/regex-utils';
 
-// TODO: this should resolve location, params, and other route functions
 class BaseRouteResolver {
   constructor(path, exact) {
     this.regex = createRouteRegex(path, exact);

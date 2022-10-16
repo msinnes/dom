@@ -66,4 +66,4 @@ const webpackCb = (err, stats) => {
   appServer.start();
 });
 
-// TODO: figure out how to start the ssrApp
+// TODO: figure out how to start the ssrApp -- maybe it can start and run as a separate entity

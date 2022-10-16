@@ -1,4 +1,4 @@
-import { ParamsContext } from '../../ParamsContext';
+import { RouterContext } from '../../RouterContext';
 import { BaseRouteResolver } from '../BaseRouteResolver';
 import { CaseResolver } from '../CaseResolver';
 
@@ -16,11 +16,6 @@ describe('CaseResolver', () => {
     let renderRef = {};
     beforeEach(() => {
       instance = new CaseResolver('/path/', false, renderRef);
-    });
-
-    afterEach(() => {
-      jest.resetAllMocks();
-      delete global.window;
     });
 
     it('should have a regex props from createRouteRegex', () => {
@@ -41,25 +36,13 @@ describe('CaseResolver', () => {
     });
 
     describe('getParams', () => {
-      beforeEach(() => {
-        global.window = {
-          location: {
-            pathname: '/param1/1/param2/2',
-          }
-        };
-      });
-
-      afterEach(() => {
-        delete global.window;
-      });
-
       it('should be a function', () => {
         expect(instance.getParams).toBeInstanceOf(Function);
       });
 
       it('should return an empty object if the regex finds 0 matches', () => {
         instance = new CaseResolver('/path', false, () => 'render');
-        const params = instance.getParams();
+        const params = instance.getParams('/param1/1/param2/2');
         expect(params).toBeDefined();
         expect(params).toBeInstanceOf(Object);
         expect(Object.keys(params).length).toEqual(0);
@@ -67,7 +50,7 @@ describe('CaseResolver', () => {
 
       it('should return an empty object if no param is found', () => {
         instance = new CaseResolver('/param1/1/param2/2', false, () => 'render');
-        const params = instance.getParams();
+        const params = instance.getParams('/param1/1/param2/2');
         expect(params).toBeDefined();
         expect(params).toBeInstanceOf(Object);
         expect(Object.keys(params).length).toEqual(0);
@@ -75,7 +58,7 @@ describe('CaseResolver', () => {
 
       it('should resolve params if they are found', () => {
         instance = new CaseResolver('/param1/:param1/param2/:param2');
-        const params = instance.getParams();
+        const params = instance.getParams('/param1/1/param2/2');
         expect(params).toBeDefined();
         expect(params).toBeInstanceOf(Object);
         expect(params).toMatchObject({
@@ -98,10 +81,12 @@ describe('CaseResolver', () => {
       });
 
       it('should return the render prop', () => {
-        const render = instance.resolve();
-        expect(render.signature).toBe(ParamsContext.Provider);
+        const render = instance.resolve('/path');
+        expect(render.signature).toBe(RouterContext.Provider);
         expect(render.props).toMatchObject({ value: {} });
         expect(render.children[0]).toBe(renderRef);
+        expect(instance.getParams).toHaveBeenCalledTimes(1);
+        expect(instance.getParams).toHaveBeenCalledWith('/path');
       });
     });
   });

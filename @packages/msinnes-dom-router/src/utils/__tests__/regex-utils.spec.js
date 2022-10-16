@@ -1,19 +1,23 @@
 import {
+  // constants
   ESCAPED_SLASH,
   CARAT,
   DS,
   PIPE,
-
+  // constant regular expressions
   ANY_REGEX,
   STARTS_WITH_SLASH,
   ENDS_WITH_SLASH,
-
+  // regex string builders
   createStartsWith,
   createEndsWith,
   createExact,
   createOr,
   normalize,
   createInexact,
+  // util-fns
+  createRouteRegex,
+  createBaseRouteRegex,
 } from '../regex-utils';
 
 describe('constants', () => {
@@ -22,6 +26,23 @@ describe('constants', () => {
     expect(CARAT).toEqual('^');
     expect(DS).toEqual('$');
     expect(PIPE).toEqual('|');
+  });
+});
+
+describe('constant regeular expressions', () => {
+  it('should expose an any regex', () => {
+    expect(ANY_REGEX).toBeInstanceOf(RegExp);
+    expect(ANY_REGEX).toEqual(/.*/);
+  });
+
+  it('should expose a startWithSlash', () => {
+    expect(STARTS_WITH_SLASH).toBeInstanceOf(RegExp);
+    expect(STARTS_WITH_SLASH).toEqual(/^\//);
+  });
+
+  it('should expose an endsWithSlash', () => {
+    expect(ENDS_WITH_SLASH).toBeInstanceOf(RegExp);
+    expect(ENDS_WITH_SLASH).toEqual(/\/$/);
   });
 });
 
@@ -112,19 +133,82 @@ describe('regex string builders', () => {
   });
 });
 
-describe('constant regeular expressions', () => {
-  it('should expose an any regex', () => {
-    expect(ANY_REGEX).toBeInstanceOf(RegExp);
-    expect(ANY_REGEX).toEqual(/.*/);
+describe('createRouteRegex', () => {
+  it('should be a function', () => {
+    expect(createRouteRegex).toBeInstanceOf(Function);
   });
 
-  it('should expose a startWithSlash', () => {
-    expect(STARTS_WITH_SLASH).toBeInstanceOf(RegExp);
-    expect(STARTS_WITH_SLASH).toEqual(/^\//);
+  it('should generate a wildcard regex', () => {
+    const regex = createRouteRegex('*');
+    expect(regex.test('anything')).toBe(true);
   });
 
-  it('should expose an endsWithSlash', () => {
-    expect(ENDS_WITH_SLASH).toBeInstanceOf(RegExp);
-    expect(ENDS_WITH_SLASH).toEqual(/\/$/);
+  it('should append a \'/\' character perform a startWith query', () => {
+    let regex = createRouteRegex('/route');
+    expect(regex.test('/route')).toBe(true);
+    expect(regex.test('/route/')).toBe(true);
+    expect(regex.test('/route/anything')).toBe(true);
+
+    regex = createRouteRegex('/route/');
+    expect(regex.test('/route')).toBe(true);
+    expect(regex.test('/route/')).toBe(true);
+    expect(regex.test('/route/anything')).toBe(true);
+  });
+
+  it('should prepend a \'/\' character if one is not passed', () => {
+    let regex = createRouteRegex('route');
+    expect('/route');
+    expect(regex.test('/route')).toBe(true);
+    expect(regex.test('/route/')).toBe(true);
+    expect(regex.test('/route/anything')).toBe(true);
+
+    regex = createRouteRegex('route/');
+    expect(regex.test('/route')).toBe(true);
+    expect(regex.test('/route/')).toBe(true);
+    expect(regex.test('/route/anything')).toBe(true);
+  });
+
+  it('should return an exact matcher if an exact prop is passed', () => {
+    const regex = createRouteRegex('/exact', true);
+    expect(regex.test('/exact')).toBe(true);
+    expect(regex.test('/exact/')).toBe(false);
+    expect(regex.test('/exact/anything')).toBe(false);
+    expect(regex.test('/exact anything')).toBe(false);
+  });
+});
+
+describe('createBaseRouteRegex', () => {
+  it('should be a function', () => {
+    expect(createBaseRouteRegex).toBeInstanceOf(Function);
+  });
+
+  it('should generate a wildcard regex', () => {
+    const regex = createBaseRouteRegex('*');
+    expect(regex.test('anything')).toBe(true);
+  });
+
+  it('should append a \'/\' character perform a startWith query', () => {
+    let regex = createBaseRouteRegex('/route');
+    expect(regex.test('/route')).toBe(true);
+    expect(regex.test('/route/')).toBe(true);
+    expect(regex.test('/route/anything')).toBe(true);
+
+    regex = createBaseRouteRegex('/route/');
+    expect(regex.test('/route')).toBe(true);
+    expect(regex.test('/route/')).toBe(true);
+    expect(regex.test('/route/anything')).toBe(true);
+  });
+
+  it('should prepend a \'/\' character if one is not passed', () => {
+    let regex = createBaseRouteRegex('route');
+    expect('/route');
+    expect(regex.test('/route')).toBe(true);
+    expect(regex.test('/route/')).toBe(true);
+    expect(regex.test('/route/anything')).toBe(true);
+
+    regex = createBaseRouteRegex('route/');
+    expect(regex.test('/route')).toBe(true);
+    expect(regex.test('/route/')).toBe(true);
+    expect(regex.test('/route/anything')).toBe(true);
   });
 });

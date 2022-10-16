@@ -18,6 +18,9 @@ module.exports = {
   identifier: (name) => {
     return buildIdentifier(name);
   },
+  memberExpression: (object, property, computed, optional) => {
+    return t.memberExpression(buildIdentifier(object), buildIdentifier(property), computed, optional);
+  },
   objectExpression: (properties) => {
     return t.objectExpression(properties);
   },

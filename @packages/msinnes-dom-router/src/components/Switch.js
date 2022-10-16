@@ -2,7 +2,7 @@ import * as DOM from '@msinnes/dom';
 
 import { CaseResolver } from '../resolver/CaseResolver';
 import { RedirectResolver } from '../resolver/RedirectResolver';
-import * as navigateApi from '../utils/navigate';
+import { RouterContext } from '../RouterContext';
 
 const createResolver = ({ signature, props, children }) => {
   if (signature === Case) {
@@ -13,12 +13,11 @@ const createResolver = ({ signature, props, children }) => {
   throw new Error('ImplementationError: Switch components can only take Case and Redirect as children');
 };
 
-const findCurrentRouteChild = (resolvers = []) => {
-  const { pathname } = window.location;
+const findCurrentRouteChild = (resolvers = [], pathname) => {
   const len = resolvers.length;
   for (let i = 0; i < len; i++) {
     const resolver = resolvers[i];
-    if (resolver.test(pathname)) return resolver.resolve();
+    if (resolver.test(pathname)) return resolver.resolve(pathname);
   }
   return null;
 };
@@ -28,16 +27,17 @@ const Case = () => {
 };
 
 const Redirect = ({ to }) => {
+  const ctx = DOM.useContext(RouterContext);
   DOM.useEffect(() => {
-    navigateApi.navigate(to);
+    ctx.navigate(to);
   });
   return null;
 };
 
 const Switch = ({ children }) => {
-  // TODO: it should update when there is a change in children
+  const { location } = DOM.useContext(RouterContext);
   const resolvers = DOM.useMemo(() => children.map(createResolver));
-  return findCurrentRouteChild(resolvers);
+  return findCurrentRouteChild(resolvers, location.pathname);
 };
 
 export { createResolver, findCurrentRouteChild, Switch, Case, Redirect };

@@ -3,12 +3,24 @@ const builder = require('./builder');
 const validHtmlRefs = require('./json/validHtmlTags.json');
 const deprecatedHtmlRefs = require('./json/deprecatedHtmlTags.json');
 
-const getSignatureProperty = node => {
-  const id = node.openingElement.name.name;
+const memberExpressionSignature = node => {
+  return builder.memberExpression(node.object.name, node.property.name);
+};
+
+const nameSignature = node => {
+  const id = node.name;
   let value;
   if (validHtmlRefs.indexOf(id) >= 0) value = builder.stringLiteral(id);
   else if (deprecatedHtmlRefs.indexOf(id) >= 0) throw new Error('TypeError: Deprecated html tags are not supported');
   else value = builder.identifier(id);
+  return value;
+};
+
+const getSignatureProperty = node => {
+  const name = node.openingElement.name;
+  let value;
+  if (name.type === 'JSXMemberExpression') value = memberExpressionSignature(name);
+  else value = nameSignature(name);
   return builder.objectProperty('signature', value);
 };
 
