@@ -13,12 +13,10 @@ const { useContext, useEffect, useMemo, useRef, useState } = hooks;
 const createRef = elem => new DomRef(elem);
 const createContext = defaultValue => services.createApiContext(defaultValue);
 
-// TODO: it should happen in window.onload
 const renderApp = (render, anchor) => {
   mainRenderApp(render, anchor);
 };
 
-// TODO: it should happen in window.onload
 const hydrateApp = (render, anchor) => {
   mainHydrateApp(render, anchor);
 };

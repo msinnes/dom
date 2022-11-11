@@ -22,6 +22,8 @@ describe('index', () => {
   });
 
   it('should expose hooks', () => {
+    expect(api.useLocation).toBeDefined();
+    expect(api.useNavigate).toBeDefined();
     expect(api.useParams).toBeDefined();
   });
 });
