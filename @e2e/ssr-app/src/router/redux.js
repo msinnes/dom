@@ -17,9 +17,7 @@ router.use((req, res) => {
       <App />
     </StoreProvider>
   );
-  console.log(html);
   const page = renderPage('redux', html, 'redux text');
-  console.log(page);
   res.send(page);
 });
 

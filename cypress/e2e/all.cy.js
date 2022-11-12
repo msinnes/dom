@@ -25,3 +25,7 @@ import './redux-task-list/form.cy';
 
 import './router-app/page-load.cy';
 import './router-app/route-switch.cy';
+
+import './ssr-app/index.cy';
+import './ssr-app/contents.cy';
+import './ssr-app/redux.cy';

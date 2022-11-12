@@ -7,8 +7,8 @@ const store = createStore(() => {}, window.__PRELOADED_STATE__);
 
 delete window.__PRELOADED_STATE__;
 
-hydrateApp(
+hydrateApp((
   <StoreProvider store={store}>
     <App />
   </StoreProvider>
-);
+), document.body);

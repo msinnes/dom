@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const indexFile = fs.readFileSync(path.resolve(__dirname, '../public/index.html'), 'utf8');
+const indexFile = fs.readFileSync(path.resolve(__dirname, '../public/ssr.html'), 'utf8');
 
 const renderPage = (pageName, html, initialState) => {
   let renderedPage = indexFile

@@ -37,7 +37,7 @@ const webpackCb = (err, stats) => {
   }
 };
 
-[
+const apps = [
   'auth-app',
   'effects-app',
   'hooks-app',
@@ -47,7 +47,7 @@ const webpackCb = (err, stats) => {
   'router-app',
 ].forEach((appName, i) => {
   const compiler = webpack({
-    entry: path.resolve(__dirname, `../@e2e/${appName}/src/index.js`),
+    entry: path.resolve(__dirname, `../../@e2e/${appName}/src/index.js`),
     output: {
       filename: `${appName}.js`,
       path: path.resolve(__dirname, 'dist'),
@@ -65,5 +65,3 @@ const webpackCb = (err, stats) => {
 
   appServer.start();
 });
-
-// TODO: figure out how to start the ssrApp -- maybe it can start and run as a separate entity

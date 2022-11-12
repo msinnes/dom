@@ -12,4 +12,4 @@ app.use(contentsRoute.route, contentsRoute.router);
 app.use(reduxRoute.route, reduxRoute.router);
 app.use(indexRoute.route, indexRoute.router);
 
-app.listen(9000, () => console.log('server started'));
+app.listen(8080, () => console.log('server started'));
