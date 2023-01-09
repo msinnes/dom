@@ -1,0 +1,12 @@
+{
+  "name": "@new-internal/is",
+  "version": "0.0.3-alpha.0",
+  "description": "> TODO: description",
+  "author": "msinnes <michael.sinnes@gmail.com>",
+  "homepage": "",
+  "main": "src/index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  }
+}

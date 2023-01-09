@@ -1,14 +1,17 @@
 module.exports = {
   collectCoverageFrom: [
     '@internal/**/*.js',
+    '@new-internal/**/*.js',
     '@packages/**/*.js',
+    '!@new-internal/*/src/index.js',
     '!**/node_modules/**',
     '!**/*/*.config.js',
     '!**/dist/**',
-    "!scripts/*",
-    "!**/__tests__/**",
+    '!scripts/*',
+    '!**/__tests__/**',
     '!cypress/**/*.js',
   ],
+  coverageReporters: ['lcov', 'text', 'text-summary'],
   coverageThreshold: {
     global: {  // global thresholds
       branches: 90,
@@ -17,7 +20,6 @@ module.exports = {
       statements: 90
     },
   },
-  coverageReporters: ['lcov', 'text', 'text-summary'],
   setupFilesAfterEnv:['./lib/oop-test-helpers.js'],
   testMatch: ['**/__tests__/**/*.spec.js', '!cypress/**/*.js'],
 };
