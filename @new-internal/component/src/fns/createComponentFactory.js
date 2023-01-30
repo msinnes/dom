@@ -7,7 +7,7 @@ import { EmptyComponent } from '../classes/EmptyComponent';
 import { FunctionComponent } from '../classes/FunctionComponent';
 import { TextComponent } from '../classes/TextComponent';
 
-const createComponentFactory = (BaseClass, domContext) => render => {
+const createComponentFactory = (BaseClass, domContext, services) => render => {
   let component;
   if (render.isArrayRender) component = new ArrayComponent(render.render);
   else if (render.isElementRender) component = new ElementComponent(render.signature, render.props);
@@ -18,6 +18,7 @@ const createComponentFactory = (BaseClass, domContext) => render => {
     : new FunctionComponent(render.signature, render.props);
 
   component.domContext = domContext;
+  component.services = services;
   return component;
 };
 

@@ -1,9 +1,11 @@
 import * as api from '..';
 
+import { createComponentFactory } from '../fns/createComponentFactory';
+import { createRootComponent } from '../fns/createRootComponent';
+
 describe('index', () => {
   it('should expose the api', () => {
-    expect(api.createComponentFactory).toBeInstanceOf(Function);
-    expect(api.createRootComponent).toBeInstanceOf(Function);
-    expect(api.isDomComponent).toBeInstanceOf(Function);
+    expect(api.createComponentFactory).toBe(createComponentFactory);
+    expect(api.createRootComponent).toBe(createRootComponent);
   });
 });

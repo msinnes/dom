@@ -1,4 +1,4 @@
-import { RootNode } from '@new-internal/dom';
+import { DomRef, RootNode } from '@new-internal/dom';
 
 import { DomComponent, DomParent } from '../base/DomComponent';
 
@@ -24,12 +24,21 @@ describe('RootComponent', () => {
       elemRef = {};
       renderRef = {};
 
-      instance = new RootComponent(renderRef, elemRef);
+      instance = new RootComponent(renderRef, new DomRef(elemRef));
 
       addValueMock = jest.fn();
       instance.domContext = {
         addValue: addValueMock,
+        value: {
+          increment: () => {},
+        }
       };
+    });
+
+    it('should set the correct component flags', () => {
+      expect(instance.isJSXComponent).toBe(true);
+      expect(instance.isDomComponent).toBe(true);
+      expect(instance.isRootComponent).toBe(true);
     });
 
     it('should set the elem prop', () => {

@@ -11,6 +11,11 @@ class ElementNode extends BaseDomNode {
     this.ref = createElement(ref);
     this.tag = this.elem.tagName.toLowerCase();
   }
+
+  update({ style, ...rest }) {
+    Object.assign(this.elem.style, style);
+    Object.assign(this.elem, rest);
+  }
 }
 
 export { ElementNode };

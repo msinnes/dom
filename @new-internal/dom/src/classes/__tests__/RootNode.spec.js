@@ -13,16 +13,18 @@ describe('RootNode', () => {
   });
 
   describe('instance', () => {
+    let elem;
     let ref;
     let instance;
     beforeEach(() => {
-      ref = {};
+      elem = {};
+      ref = new DomRef(elem);
       instance = new RootNode(ref);
     });
 
     it('should have a ref prop', () => {
-      expect(instance.ref).toBeInstanceOf(DomRef);
-      expect(instance.ref.elem).toBe(ref);
+      expect(instance.ref).toBe(ref);
+      expect(instance.ref.elem).toBe(elem);
     });
   });
 });

@@ -1,11 +1,11 @@
+import { DomRef } from '@new-internal/dom';
+
 import { Renderer } from '../Renderer';
 import { FrameQueue } from '../Frame';
 
 import { BaseRenderController, BaseRenderableComponent } from '../BaseRenderController';
 
-class TestableRenderController extends BaseRenderController {
-
-}
+class TestableRenderController extends BaseRenderController {}
 
 describe('BaseRenderController', () => {
   it('should be a class', () => {
@@ -20,17 +20,27 @@ describe('BaseRenderController', () => {
     let instance;
     let renderRef;
     let anchorRef;
+    let mockServices;
 
     beforeEach(() => {
       renderRef = {};
       anchorRef = {};
-      instance = new TestableRenderController(BaseRenderableComponent, renderRef, anchorRef);
+      mockServices = {
+        mockFn: jest.fn(),
+      };
+      instance = new TestableRenderController(renderRef, new DomRef(anchorRef), mockServices);
     });
 
     it('should have a renderer prop', () => {
       expect(instance.renderer).toBeInstanceOf(Renderer);
       expect(instance.renderer.root.root).toBe(renderRef);
       expect(instance.renderer.root.elem.elem).toBe(anchorRef);
+    });
+
+    it('should create services', () => {
+      expect(instance.services).toBeInstanceOf(Object);
+      expect(instance.services.pushFrame).toBeInstanceOf(Function);
+      expect(instance.services.mockFn).toBe(mockServices.mockFn);
     });
 
     it('should have a queue prop', () => {
@@ -57,6 +67,19 @@ describe('BaseRenderController', () => {
         instance.pushFrame(instanceRef, nextStateRef);
         expect(addMock).toHaveBeenCalledTimes(1);
         expect(addMock).toHaveBeenCalledWith(instanceRef, nextStateRef);
+      });
+
+      it('should be exposed to a component on services bound to the instance', () => {
+        const componentRef = {};
+        const nextStateRef = {};
+
+        const servicesPushFrameMock = jest.spyOn(instance.services, 'pushFrame');
+        const EmptyComponent = instance.renderer.createComponent({ isEmptyRender: true });
+        EmptyComponent.services.pushFrame(componentRef, nextStateRef);
+        expect(instance.queue.length).toEqual(1);
+        const fr = instance.queue.next();
+        expect(fr.instance).toBe(componentRef)
+        expect(fr.nextState).toBe(nextStateRef);
       });
     });
 
@@ -92,6 +115,18 @@ describe('BaseRenderController', () => {
         instance.renderFrame();
         expect(nextMock).toHaveBeenCalledTimes(1);
         expect(writeMock).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('unmount', () => {
+      it('should be a function', () => {
+        expect(instance.unmount).toBeInstanceOf(Function);
+      });
+
+      it('should call unmount on the root component', () => {
+        const unmountMock = jest.spyOn(instance.renderer.root, 'unmount');
+        instance.unmount();
+        expect(unmountMock).toHaveBeenCalledTimes(1);
       });
     });
   });

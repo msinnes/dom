@@ -21,6 +21,10 @@ describe('EmptyComponent', () => {
       instance = new EmptyComponent();
     });
 
+    it('should set the correct component flags', () => {
+      expect(instance.isEmptyComponent).toBe(true);
+    });
+
     describe('canUpdate', () => {
       it('should be a function', () => {
         expect(instance.canUpdate).toBeInstanceOf(Function);

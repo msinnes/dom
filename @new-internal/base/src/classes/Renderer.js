@@ -1,5 +1,5 @@
 import { createRender } from '@new-internal/render';
-import { createRootComponent, createComponentFactory, isDomComponent } from '@new-internal/component';
+import { createRootComponent, createComponentFactory } from '@new-internal/component';
 
 import { Context } from './Context';
 
@@ -7,15 +7,17 @@ class Renderer {
   domContext = new Context();
   renderingComponent = false;
 
-  constructor(BaseComponent, rootRender, anchor) {
-    this.createComponent = createComponentFactory(BaseComponent, this.domContext);
-    this.root = createRootComponent(rootRender, anchor);
+  constructor(BaseComponent, rootRender, anchor, services) {
+    this.services = services;
+    this.createComponent = createComponentFactory(BaseComponent, this.domContext, this.services);
+    this.root = createRootComponent(rootRender, anchor, this.domContext);
     this.root.domContext = this.domContext;
   }
 
   mount(render, parent) {
     const mountedComponent = this.createComponent(render);
     mountedComponent.mount(parent);
+    if (mountedComponent.componentDidMount) mountedComponent.componentDidMount();
     return mountedComponent;
   }
 
@@ -30,7 +32,7 @@ class Renderer {
     if (nextChildren.length || currentChildren.length) {
       this.renderChildren(nextChildren, currentChildren, renderedComponent);
     }
-    if (isDomComponent(renderedComponent)) this.domContext.removeValue();
+    if (renderedComponent.isElementComponent) this.domContext.removeValue();
   }
 
   renderChildren(nextChildren, currentChildren, currentComponent) {
@@ -52,6 +54,12 @@ class Renderer {
   renderComponent(render, parent, currentComponent) {
     if (currentComponent) return this.update(render, currentComponent);
     return this.mount(render, parent);
+  }
+
+  rootRender() {
+    const root = this.root;
+    this.render(root.render(), root, root.firstChild);
+    this.domContext.removeValue();
   }
 
   update(render, currentComponent) {

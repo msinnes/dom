@@ -1,4 +1,4 @@
-import { createComponentFactory } from '@new-internal/component';
+import { DomRef } from '@new-internal/dom';
 import { Context } from '../Context';
 
 import { Renderer } from '../Renderer';
@@ -6,11 +6,9 @@ import { Renderer } from '../Renderer';
 jest.mock('@new-internal/component', () => {
   const createRootComponentMock = jest.fn();
   const createComponentFactoryMock = jest.fn();
-  const isDomComponentMock = jest.fn();
   return {
     createRootComponent: createRootComponentMock,
     createComponentFactory: createComponentFactoryMock,
-    isDomComponent: isDomComponentMock,
   };
 });
 
@@ -27,16 +25,14 @@ beforeEach(() => {
   const {
     createRootComponent: createRootComponentMock,
     createComponentFactory: createComponentFactoryMock,
-    isDomComponent: isDomComponentMock,
   } = require(componentLibPath);
 
   const { createRender } = jest.requireActual(renderLibPath);
-  const { createRootComponent, createComponentFactory, isDomComponent } = jest.requireActual(componentLibPath);
+  const { createRootComponent, createComponentFactory } = jest.requireActual(componentLibPath);
 
   createRenderMock.mockImplementation(createRender);
   createRootComponentMock.mockImplementation(createRootComponent);
   createComponentFactoryMock.mockImplementation(createComponentFactory);
-  isDomComponentMock.mockImplementation(isDomComponent);
 });
 
 describe('Renderer', () => {
@@ -51,14 +47,22 @@ describe('Renderer', () => {
 
     let rootRender;
     let anchor;
+    let services;
     let instance;
     let removeValueMock;
 
     beforeEach(() => {
       rootRender = {};
       anchor = {};
-      instance = new Renderer(BaseComponent, rootRender, anchor);
+      services = {
+        createInstanceHooks: jest.fn(),
+      };
+      instance = new Renderer(BaseComponent, rootRender, new DomRef(anchor), services);
       removeValueMock = jest.spyOn(instance.domContext, 'removeValue');
+    });
+
+    it('should set the services prop', () => {
+      expect(instance.services).toBe(services);
     });
 
     it('should set a renderingComponent prop to false', () => {
@@ -88,7 +92,7 @@ describe('Renderer', () => {
       instance = new Renderer(BaseComponentRef, renderRef, anchorRef);
       expect(instance.root).toBe(rootRef);
       expect(createRootComponentMock).toHaveBeenCalledTimes(1);
-      expect(createRootComponentMock).toHaveBeenCalledWith(renderRef, anchorRef);
+      expect(createRootComponentMock).toHaveBeenCalledWith(renderRef, anchorRef, instance.domContext);
     });
 
     it('should set a createComponent method', () => {
@@ -109,7 +113,7 @@ describe('Renderer', () => {
       instance = new Renderer(BaseComponentRef, renderRef, anchorRef);
       expect(instance.createComponent).toBe(createComponentRef);
       expect(createComponentFactoryMock).toHaveBeenCalledTimes(1);
-      expect(createComponentFactoryMock).toHaveBeenCalledWith(BaseComponentRef, instance.domContext);
+      expect(createComponentFactoryMock).toHaveBeenCalledWith(BaseComponentRef, instance.domContext, instance.services);
     });
 
     describe('mount', () => {
@@ -134,6 +138,19 @@ describe('Renderer', () => {
         expect(instanceMountMock).toHaveBeenCalledTimes(1);
         expect(instanceMountMock).toHaveBeenCalledWith(parentRef);
         expect(mountedComponent).toBe(createdComponentRef);
+      });
+
+      it('should call componentDidMount if the method exists on the instance', () => {
+        const instanceComponentDidMountMock = jest.fn();
+        const baseCreatedComponentRef = { mount: () => {} };
+        const renderRef = {};
+        const parentRef = {};
+        createComponentMock.mockReturnValueOnce(baseCreatedComponentRef);
+        instance.mount(renderRef, parentRef);
+        expect(instanceComponentDidMountMock).not.toHaveBeenCalled();
+        createComponentMock.mockReturnValueOnce({ ...baseCreatedComponentRef, componentDidMount: instanceComponentDidMountMock });
+        instance.mount(renderRef, parentRef);
+        expect(instanceComponentDidMountMock).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -229,24 +246,22 @@ describe('Renderer', () => {
         expect(renderChildrenMock).not.toHaveBeenCalled();
       });
 
-      it('should call the domContext.removeValue if the component is a dom component', () => {
+      it('should call the domContext.removeValue if the component is an element component', () => {
         const render = { signature: 'div' };
         const parentRef = {};
         const { createRender } = require(renderLibPath);
-        const { isDomComponent } = require(componentLibPath);
         createRender.mockImplementation(() => ({ children: [] }));
-        isDomComponent.mockReturnValue(true);
+        renderComponentMock.mockReturnValue({ isElementComponent: true, children: [], render: () => {} });
         instance.render(render, parentRef);
         expect(removeValueMock).toHaveBeenCalledTimes(1);
       });
 
-      it('should not call the domContext.removeValue if the component is not a dom component', () => {
+      it('should not call the domContext.removeValue if the component is not an element component', () => {
         const render = { signature: 'div' };
         const parentRef = {};
         const { createRender } = require(renderLibPath);
-        const { isDomComponent } = require(componentLibPath);
         createRender.mockImplementation(() => ({ children: [] }));
-        isDomComponent.mockReturnValue(false);
+        renderComponentMock.mockReturnValue({ isElementComponent: false, children: [], render: () => {} });
         instance.render(render, parentRef);
         expect(removeValueMock).not.toHaveBeenCalled();
       });
@@ -331,6 +346,28 @@ describe('Renderer', () => {
         expect(updateMock).toHaveBeenCalledTimes(1);
         expect(updateMock).toHaveBeenCalledWith(renderRef, currentComponentRef);
         expect(updatedComponent).toBe(updateReturnRef);
+      });
+    });
+
+    describe('rootRender', () => {
+      it('should be a function', () => {
+        expect(instance.rootRender).toBeInstanceOf(Function);
+      });
+
+      it('should perform a root render on the app and remove a value from the dom context', () => {
+        const renderMock = jest.fn();
+        const componentRenderRef = {};
+        const rootFirstChildRef = {};
+        const rootRef = { firstChild: rootFirstChildRef, render: () => componentRenderRef };
+        const removeValueMock = jest.fn();
+
+        instance.root = rootRef;
+        instance.render = renderMock;
+        instance.domContext.removeValue = removeValueMock;
+        instance.rootRender();
+        expect(renderMock).toHaveBeenCalledTimes(1);
+        expect(renderMock).toHaveBeenCalledWith(componentRenderRef, instance.root, rootFirstChildRef);
+        expect(removeValueMock).toHaveBeenCalledTimes(1);
       });
     });
 

@@ -4,7 +4,7 @@ import { BaseDomNode } from './BaseDomNode';
 class RootNode extends BaseDomNode {
   constructor(anchor) {
     super();
-    this.ref = new DomRef(anchor);
+    this.ref = anchor;
   }
 }
 

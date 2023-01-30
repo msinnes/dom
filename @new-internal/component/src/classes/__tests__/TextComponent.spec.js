@@ -25,9 +25,18 @@ describe('TextComponent', () => {
       addValueMock = jest.fn();
       domContext = {
         addValue: addValueMock,
+        value: {
+          increment: () => {},
+        },
       };
       instance = new TextComponent('text');
       instance.domContext = domContext;
+    });
+
+    it('should set the correct component flags', () => {
+      expect(instance.isJSXComponent).toBe(true);
+      expect(instance.isDomComponent).toBe(true);
+      expect(instance.isTextComponent).toBe(true);
     });
 
     it('should set a text prop', () => {
@@ -65,12 +74,9 @@ describe('TextComponent', () => {
         expect(instance.render()).toEqual('text');
       });
 
-      it('should call the super.render method', () => {
+      it('should not call the super.render method', () => {
         instance.render();
-        expect(addValueMock).toHaveBeenCalledTimes(1);
-        const domParent = addValueMock.mock.calls[0][0];
-        expect(domParent).toBeInstanceOf(DomParent);
-        expect(domParent.elem.textContent).toBe('text');
+        expect(addValueMock).not.toHaveBeenCalled();
       });
     });
 

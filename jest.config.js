@@ -20,6 +20,6 @@ module.exports = {
       statements: 90
     },
   },
-  setupFilesAfterEnv:['./lib/oop-test-helpers.js'],
+  setupFilesAfterEnv:['./lib/oop-test-helpers.js', './lib/timers.js'],
   testMatch: ['**/__tests__/**/*.spec.js', '!cypress/**/*.js'],
 };

@@ -3,6 +3,8 @@ import { abstract } from '@new-internal/oop';
 import { BaseComponent } from './BaseComponent';
 
 const JSXComponent = abstract(class extends BaseComponent {
+  isJSXComponent = true;
+
   constructor(signature, props) {
     super();
     this.signature = signature;

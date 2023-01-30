@@ -3,17 +3,11 @@ import { createRender } from '@new-internal/render';
 import { JSXComponent } from '../JSXComponent';
 import { EmptyComponent } from '../../EmptyComponent';
 
-import { isDomComponent, DomComponent, DomParent } from '../DomComponent';
+import { DomComponent, DomParent } from '../DomComponent';
 
 class TestableDomComponent extends DomComponent {
   elem = { elem: {} };
 }
-
-describe('isDomComponent', () => {
-  it('should be a function', () => {
-    expect(isDomComponent).toBeInstanceOf(Function);
-  });
-});
 
 describe('DomComponent', () => {
   it('should be a class', () => {
@@ -27,27 +21,22 @@ describe('DomComponent', () => {
   it('should extend JSXComponent', () => {
     expect(DomComponent).toExtend(JSXComponent);
   });
+
   describe('instance', () => {
     let instance;
     let domContextValue;
     let domContext;
     let elemRef;
 
-    let appendChildMock;
-    let removeChildMock;
-    let replaceChildMock;
+    let incrementMock;
 
     let addValueMock;
     let removeValueMock;
     beforeEach(() => {
-      appendChildMock = jest.fn();
-      removeChildMock = jest.fn();
-      replaceChildMock = jest.fn();
+      incrementMock = jest.fn();
+
       domContextValue = {
-        appendChild: appendChildMock,
-        elem: {},
-        removeChild: removeChildMock,
-        replaceChild: replaceChildMock,
+        increment: incrementMock,
       };
 
       addValueMock = jest.fn();
@@ -63,55 +52,9 @@ describe('DomComponent', () => {
       instance.elem = { elem: elemRef };
     });
 
-    it('should have a domParent getter', () => {
-      expect(instance.domParent).toBe(domContextValue);
-    });
-
-    describe('mount', () => {
-      it('should append to the domParent and call the super mount', () => {
-        const parentAppendChildMock = jest.fn();
-        const parent = { appendChild: parentAppendChildMock };
-        instance.mount(parent);
-        expect(instance.parent).toBe(parent);
-        expect(parentAppendChildMock).toHaveBeenCalledTimes(1);
-        expect(parentAppendChildMock).toHaveBeenCalledWith(instance);
-        expect(appendChildMock).toHaveBeenCalledTimes(1);
-        expect(appendChildMock).toHaveBeenCalledWith(instance.elem);
-      });
-    });
-
-    describe('replaceChild', () => {
-      it('should replace child on the domParent and call super replaceChild if new child and old child are DomComponents', () => {
-        const oldChild = new TestableDomComponent('div');
-        oldChild.domContext = domContext;
-        instance.children = [oldChild];
-        const newChild = new TestableDomComponent('span');
-        instance.replaceChild(newChild, oldChild);
-        expect(instance.firstChild).toBe(newChild);
-        expect(replaceChildMock).toHaveBeenCalledTimes(1);
-        expect(replaceChildMock).toHaveBeenCalledWith(newChild.elem, oldChild.elem);
-      });
-
-      it('should remove child from the domParent and call super replaceChild if oldChild is a DomComponent', () => {
-        const oldChild = new TestableDomComponent('div');
-        oldChild.domContext = domContext;
-        instance.children = [oldChild];
-        const newChild = new EmptyComponent();
-        instance.replaceChild(newChild, oldChild);
-        expect(instance.firstChild).toBe(newChild);
-        expect(removeChildMock).toHaveBeenCalledTimes(1);
-        expect(removeChildMock).toHaveBeenCalledWith(oldChild.elem);
-      });
-
-      it('should append child to the domParen and call super replace child if newChild is a DomComponent', () => {
-        const oldChild = new EmptyComponent();
-        instance.children = [oldChild];
-        const newChild = new TestableDomComponent('div');
-        instance.replaceChild(newChild, oldChild);
-        expect(instance.firstChild).toBe(newChild);
-        expect(appendChildMock).toHaveBeenCalledTimes(1);
-        expect(appendChildMock).toHaveBeenCalledWith(newChild.elem);
-      });
+    it('should set the correct component flags', () => {
+      expect(instance.isJSXComponent).toBe(true);
+      expect(instance.isDomComponent).toBe(true);
     });
 
     describe('render', () => {
@@ -126,18 +69,16 @@ describe('DomComponent', () => {
         expect(domParent).toBeInstanceOf(DomParent);
         expect(domParent.elem).toBe(instance.elem.elem);
       });
-    });
 
-    describe('unmount', () => {
-      it('should remove from the domParent and call the super unmount', () => {
-        const parentRomoveChildMock = jest.fn();
-        const parent = { removeChild: parentRomoveChildMock };
-        instance.parent = parent;
-        instance.unmount();
-        expect(parentRomoveChildMock).toHaveBeenCalledTimes(1);
-        expect(parentRomoveChildMock).toHaveBeenCalledWith(instance);
-        expect(removeChildMock).toHaveBeenCalledTimes(1);
-        expect(removeChildMock).toHaveBeenCalledWith(instance.elem);
+      it('should call domParent.increment', () => {
+        instance.render();
+        expect(incrementMock).toHaveBeenCalledTimes(1);
+      });
+
+      it('should not call domParent.increment if there is not domParent', () => {
+        delete instance.domContext.value;
+        instance.render();
+        expect(incrementMock).toHaveBeenCalledTimes(0);
       });
     });
 
@@ -166,6 +107,7 @@ describe('DomParent', () => {
 
   describe('instance', () => {
     let appendChildMock;
+    let insertBeforeMock;
     let removeChildMock;
     let replaceChildMock;
     let instance;
@@ -173,10 +115,12 @@ describe('DomParent', () => {
     let elemRef;
     beforeEach(() => {
       appendChildMock = jest.fn();
+      insertBeforeMock = jest.fn();
       removeChildMock = jest.fn();
       replaceChildMock = jest.fn();
       elemRef = {
         appendChild: appendChildMock,
+        insertBefore: insertBeforeMock,
         removeChild: removeChildMock,
         replaceChild: replaceChildMock,
       };
@@ -218,6 +162,22 @@ describe('DomParent', () => {
 
       it('should increment the index by 1', () => {
         instance.increment();
+        expect(instance.index).toBe(1);
+      });
+    });
+
+    describe('insertChild', () => {
+      it('should be a function', () => {
+        expect(instance.insertChild).toBeInstanceOf(Function);
+      });
+
+      it('should call elem.insertBefore', () => {
+        const newChildRef = { elem: {} };
+        const currentChildRef = {};
+        instance.elem.children = [currentChildRef];
+        instance.insertChild(newChildRef);
+        expect(insertBeforeMock).toHaveBeenCalledTimes(1);
+        expect(insertBeforeMock).toHaveBeenCalledWith(newChildRef.elem, currentChildRef);
         expect(instance.index).toBe(1);
       });
     });

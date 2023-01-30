@@ -1,4 +1,4 @@
-import { createRender } from '@new-internal/render';
+import { createRender } from '@new-internal/render'
 
 import { JSXComponent } from '../base/JSXComponent';
 
@@ -26,10 +26,20 @@ describe('ClassComponent', () => {
     }
     let instance;
     let propsRef;
+    let services;
     beforeEach(() => {
       renderRef = {};
       propsRef = {};
+      services = {
+        pushFrame: jest.fn(),
+      };
       instance = new ClassComponent(Component, propsRef);
+      instance.services = services;
+    });
+
+    it('should set the correct component flags', () => {
+      expect(instance.isJSXComponent).toBe(true);
+      expect(instance.isClassComponent).toBe(true);
     });
 
     it('should be an instance of JSXComponent', () => {
@@ -68,6 +78,25 @@ describe('ClassComponent', () => {
       });
     });
 
+    describe('componentDidMount', () => {
+      it('should be a function', () => {
+        expect(instance.componentDidMount).toBeInstanceOf(Function);
+      });
+
+      it('should set instance.setState', () => {
+        instance.componentDidMount();
+        expect(instance.instance.setState).toBeInstanceOf(Function);
+      });
+
+      it('should call services.pushFrame when instance.setState is called', () => {
+        const nextStateRef = {};
+        instance.componentDidMount();
+        instance.instance.setState(nextStateRef);
+        expect(services.pushFrame).toHaveBeenCalledTimes(1);
+        expect(services.pushFrame).toHaveBeenCalledWith(instance, nextStateRef);
+      });
+    });
+
     describe('render', () => {
       it('should be a function', () => {
         expect(instance.render).toBeInstanceOf(Function);
@@ -91,6 +120,31 @@ describe('ClassComponent', () => {
         instance.update(newProps);
         expect(instance.props).toBe(newProps);
         expect(instance.instance.props).toBe(newProps);
+      });
+    });
+
+    describe('writeState', () => {
+      it('should be a function', () => {
+        expect(instance.writeState).toBeInstanceOf(Function);
+      });
+
+      it('should write the next state to the instance', () => {
+        const nextStateRef = {};
+        instance.writeState(nextStateRef);
+        expect(instance.instance.state).toBe(nextStateRef);
+      });
+
+      it('should execute nextState if the nextState is a function', () => {
+        const nextStateMock = jest.fn();
+        const nextState = prevState => nextStateMock(prevState);
+        const lastStateRef = {};
+        instance.instance.state = lastStateRef;
+        const outputStateRef = {};
+        nextStateMock.mockImplementation(() => outputStateRef);
+        instance.writeState(nextState);
+        expect(nextStateMock).toHaveBeenCalledTimes(1);
+        expect(nextStateMock).toHaveBeenCalledWith(lastStateRef);
+        expect(instance.instance.state).toBe(outputStateRef);
       });
     });
   });

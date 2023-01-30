@@ -1,11 +1,26 @@
 import { abstract, abstractMethod } from '@new-internal/oop';
 
 const BaseComponent = abstract(class {
+  isDomComponent = false;
+  isJSXComponent = false;
+
+  isArrayComponent = false;
+  isClassComponent = false;
+  isElementComponent = false;
+  isEmptyComponent = false;
+  isFunctionComponent = false;
+  isRootComponent = false;
+  isTextComponent = false;
+
   parent = null;
   children = [];
 
   get firstChild() {
     return this.children[0];
+  }
+
+  get domParent() {
+    return this.domContext.value;
   }
 
   constructor() {
@@ -25,6 +40,7 @@ const BaseComponent = abstract(class {
   mount(parent) {
     parent.appendChild(this);
     this.parent = parent;
+    if (this.isDomComponent) this.domParent.appendChild(this.elem);
   }
 
   removeChild(child) {
@@ -39,11 +55,15 @@ const BaseComponent = abstract(class {
     this.children[this.findChildIndex(oldChild)] = newChild;
     newChild.parent = this;
     oldChild.unmountChildren();
+    if (newChild.isDomComponent && oldChild.isDomComponent) this.domParent.replaceChild(newChild.elem, oldChild.elem);
+    else if (newChild.isDomComponent && !oldChild.isDomComponent) this.domParent.insertChild(newChild.elem);
+    else if (oldChild.isDomComponent && !newChild.isDomComponent) this.domParent.removeChild(oldChild.elem);
   }
 
   unmount() {
     if (this.children.length) this.unmountChildren();
     if (this.parent) this.parent.removeChild(this);
+    if (this.isDomComponent && this.domParent) this.domParent.removeChild(this.elem);
   }
 
   unmountChildren() {

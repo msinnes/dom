@@ -21,6 +21,10 @@ describe('ArrayComponent', () => {
       instance = new ArrayComponent(componentsRef);
     });
 
+    it('should set the correct component flags', () => {
+      expect(instance.isArrayComponent).toBe(true);
+    });
+
     it('should be an instance of BaseComponent', () => {
       expect(instance).toBeInstanceOf(BaseComponent);
     });

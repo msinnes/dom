@@ -3,6 +3,8 @@ import { TextNode } from '@new-internal/dom';
 import { DomComponent } from './base/DomComponent';
 
 class TextComponent extends DomComponent {
+  isTextComponent = true;
+
   get text() {
     return this.elem.elem.textContent;
   }
@@ -21,7 +23,6 @@ class TextComponent extends DomComponent {
   }
 
   render() {
-    super.render();
     return this.text;
   }
 }

@@ -21,9 +21,11 @@
      let createComponent;
      class Component {}
      let domContextRef;
+     let servicesRef;
      beforeEach(() => {
        domContextRef = {};
-       createComponent = createComponentFactory(Component, domContextRef);
+       servicesRef = {};
+       createComponent = createComponentFactory(Component, domContextRef, servicesRef);
      });
 
      it('should return a createComponent function and inject the dom context', () => {
@@ -35,6 +37,7 @@
        const component = createComponent(arrayRender);
        expect(component).toBeInstanceOf(ArrayComponent);
        expect(component.domContext).toBe(domContextRef);
+       expect(component.services).toBe(servicesRef);
      });
 
      it('should create an ClassComponent from an JSXRender and inject the dom context', () => {
@@ -43,6 +46,7 @@
        const component = createComponent(classRender);
        expect(component).toBeInstanceOf(ClassComponent);
        expect(component.domContext).toBe(domContextRef);
+       expect(component.services).toBe(servicesRef);
      });
 
      it('should create an ElementComponent from an ElementRender and inject the dom context', () => {
@@ -50,6 +54,7 @@
        const component = createComponent(elementRender);
        expect(component).toBeInstanceOf(ElementComponent);
        expect(component.domContext).toBe(domContextRef);
+       expect(component.services).toBe(servicesRef);
      });
 
      it('should create an EmptyComponent from an EmptyRender and inject the dom context', () => {
@@ -57,6 +62,7 @@
        const component = createComponent(emptyRender);
        expect(component).toBeInstanceOf(EmptyComponent);
        expect(component.domContext).toBe(domContextRef);
+       expect(component.services).toBe(servicesRef);
      });
 
      it('should create a FunctionComponent from a JSXRender and inject the dom context', () => {
@@ -64,6 +70,7 @@
        const component = createComponent(functionRender);
        expect(component).toBeInstanceOf(FunctionComponent);
        expect(component.domContext).toBe(domContextRef);
+       expect(component.services).toBe(servicesRef);
      });
 
      it('should create a TextComponent from a TextRender and inject the dom context', () => {
@@ -71,6 +78,7 @@
        const component = createComponent(textRender);
        expect(component).toBeInstanceOf(TextComponent);
        expect(component.domContext).toBe(domContextRef);
+       expect(component.services).toBe(servicesRef);
      });
    });
  });

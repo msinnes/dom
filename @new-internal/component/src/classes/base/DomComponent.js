@@ -2,32 +2,12 @@ import { abstract } from '@new-internal/oop';
 
 import { JSXComponent } from './JSXComponent';
 
-export const isDomComponent = comp => comp instanceof DomComponent;
-
 const DomComponent = abstract(class extends JSXComponent {
-  get domParent() {
-    return this.domContext.value;
-  }
-
-  mount(parent) {
-    super.mount(parent);
-    this.domParent.appendChild(this.elem);
-  }
+  isDomComponent = true;
 
   render() {
+    if (this.domParent) this.domParent.increment();
     this.domContext.addValue(new DomParent(this.elem));
-  }
-
-  replaceChild(newChild, oldChild) {
-    super.replaceChild(newChild, oldChild);
-    if(isDomComponent(newChild) && isDomComponent(oldChild)) this.domParent.replaceChild(newChild.elem, oldChild.elem);
-    else if (isDomComponent(newChild) && !isDomComponent(oldChild)) this.domParent.appendChild(newChild.elem);
-    else if (isDomComponent(oldChild) && !isDomComponent(newChild)) this.domParent.removeChild(oldChild.elem);
-  }
-
-  unmount() {
-    super.unmount(this.parent);
-    this.domParent.removeChild(this.elem);
   }
 
   unmountChildren() {
@@ -53,6 +33,11 @@ class DomParent {
 
   increment() {
     this.index++;
+  }
+
+  insertChild(newChild) {
+    this.elem.insertBefore(newChild.elem, this.elem.children[this.index]);
+    this.increment();
   }
 
   removeChild(child) {

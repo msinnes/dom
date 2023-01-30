@@ -27,6 +27,10 @@ describe('JSXComponent', () => {
       instance = new TestableJSXComponent('signature', 'props');
     });
 
+    it('should set the correct component flags', () => {
+      expect(instance.isJSXComponent).toBe(true);
+    });
+
     it('should set a signature prop', () => {
       expect(instance.signature).toEqual('signature');
     });

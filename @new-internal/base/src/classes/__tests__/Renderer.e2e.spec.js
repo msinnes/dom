@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { DomRef } from '@new-internal/dom';
 import { createElement } from '@new-internal/utils';
 
 import { Renderer } from '../Renderer';
@@ -8,6 +9,15 @@ import { Renderer } from '../Renderer';
 class Component {}
 
 describe('Renderer.e2e', () => {
+  let services;
+  beforeEach(() => {
+    services = {
+      createInstanceHooks: jest.fn(),
+      closeActiveHookInstance: jest.fn(),
+      setActiveHookInstance: jest.fn(),
+    };
+  });
+
   afterEach(() => {
     while(document.body.firstChild) {
       document.body.removeChild(document.body.firstChild);
@@ -17,14 +27,14 @@ describe('Renderer.e2e', () => {
   describe('basic renders', () => {
     describe('empty render', () => {
       it('should render null', () => {
-        const renderer = new Renderer(Component, null, document.body);
+        const renderer = new Renderer(Component, null, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         expect(renderer.root.firstChild).toBeDefined();
         expect(document.body.innerHTML).toEqual('');
       });
 
       it('should render undefined', () => {
-        const renderer = new Renderer(Component, undefined, document.body);
+        const renderer = new Renderer(Component, undefined, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         expect(renderer.root.firstChild).toBeDefined();
         expect(document.body.innerHTML).toEqual('');
@@ -34,7 +44,7 @@ describe('Renderer.e2e', () => {
     describe('string render', () => {
       it('should render a string', () => {
         const text = 'text';
-        const renderer = new Renderer(Component, text, document.body);
+        const renderer = new Renderer(Component, text, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const textComponent = renderer.root.firstChild;
         expect(textComponent.text).toEqual(text);
@@ -44,7 +54,7 @@ describe('Renderer.e2e', () => {
 
     describe('array render', () => {
       it('should render an empty array', () => {
-        const renderer = new Renderer(Component, [], document.body);
+        const renderer = new Renderer(Component, [], new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const arrayComponent = renderer.root.firstChild;
         expect(arrayComponent.components.length).toEqual(0);
@@ -52,7 +62,7 @@ describe('Renderer.e2e', () => {
       });
 
       it('should render an array of strings', () => {
-        const renderer = new Renderer(Component, ['text 1', 'text 2'], document.body);
+        const renderer = new Renderer(Component, ['text 1', 'text 2'], new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const arrayComponent = renderer.root.firstChild;
         expect(arrayComponent.components.length).toEqual(2);
@@ -63,7 +73,7 @@ describe('Renderer.e2e', () => {
 
       it('should render an array of elements', () => {
         const render = [createElement('div'), createElement('div')];
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const arrayComponent = renderer.root.firstChild;
         expect(arrayComponent.components.length).toEqual(2);
@@ -76,7 +86,7 @@ describe('Renderer.e2e', () => {
     describe('element component', () => {
       it('should render an empty div', () => {
         const render = createElement('div');
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const elementComponent = renderer.root.firstChild;
         expect(elementComponent.elem.tag).toEqual('div');
@@ -86,7 +96,7 @@ describe('Renderer.e2e', () => {
 
       it('should render a div with text children', () => {
         const render = createElement('div', {}, ['text']);
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const elementComponent = renderer.root.firstChild;
         expect(elementComponent.elem.tag).toEqual('div');
@@ -99,7 +109,7 @@ describe('Renderer.e2e', () => {
           createElement('li', {}, ['text 1']),
           createElement('li', {}, ['text 2']),
         ]);
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const elementComponent = renderer.root.firstChild;
         expect(elementComponent.elem.tag).toEqual('ul');
@@ -116,7 +126,7 @@ describe('Renderer.e2e', () => {
     describe('function component', () => {
       it('should render a function component that returns text', () => {
         const render = createElement(() => 'text');
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const functionComponent = renderer.root.firstChild;
         expect(functionComponent.firstChild.text).toEqual('text');
@@ -125,7 +135,7 @@ describe('Renderer.e2e', () => {
 
       it('should render a function component that returns null', () => {
         const render = createElement(() => null);
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const functionComponent = renderer.root.firstChild;
         expect(functionComponent.firstChild).toBeDefined();
@@ -134,7 +144,7 @@ describe('Renderer.e2e', () => {
 
       it('should render a function component that return an element component', () => {
         const render = createElement(() => createElement('div'));
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const functionComponent = renderer.root.firstChild;
         expect(functionComponent.firstChild.elem.tag).toEqual('div');
@@ -143,7 +153,7 @@ describe('Renderer.e2e', () => {
 
       it('should render a function component that return an element component with text', () => {
         const render = createElement(() => createElement('div', {}, ['text']));
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const functionComponent = renderer.root.firstChild;
         expect(functionComponent.firstChild.elem.tag).toEqual('div');
@@ -153,7 +163,7 @@ describe('Renderer.e2e', () => {
 
       it('should render a function component that returns an array', () => {
         const render = createElement(() => ['text']);
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const functionComponent = renderer.root.firstChild;
         expect(functionComponent.firstChild.components).toBeInstanceOf(Array);
@@ -169,7 +179,7 @@ describe('Renderer.e2e', () => {
             return 'text';
           }
         });
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const classComponent = renderer.root.firstChild;
         expect(classComponent.firstChild.text).toEqual('text');
@@ -182,7 +192,7 @@ describe('Renderer.e2e', () => {
             return null;
           }
         });
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const classComponent = renderer.root.firstChild;
         expect(classComponent.firstChild).toBeDefined();
@@ -195,7 +205,7 @@ describe('Renderer.e2e', () => {
             return createElement('div');
           }
         });
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const classComponent = renderer.root.firstChild;
         expect(classComponent.firstChild.elem.tag).toEqual('div');
@@ -208,7 +218,7 @@ describe('Renderer.e2e', () => {
             return createElement('div', {}, ['text']);
           }
         });
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const classComponent = renderer.root.firstChild;
         expect(classComponent.firstChild.elem.tag).toEqual('div');
@@ -222,7 +232,7 @@ describe('Renderer.e2e', () => {
             return ['text'];
           }
         });
-        const renderer = new Renderer(Component, render, document.body);
+        const renderer = new Renderer(Component, render, new DomRef(document.body), services);
         renderer.render(renderer.root.render(), renderer.root);
         const classComponent = renderer.root.firstChild;
         expect(classComponent.firstChild.components).toBeInstanceOf(Array);

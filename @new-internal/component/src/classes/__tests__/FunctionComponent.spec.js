@@ -17,10 +17,24 @@ describe('FunctionComponent', () => {
     let renderFn;
     let instance;
     let propsRef;
+    let services;
     beforeEach(() => {
       renderFn = jest.fn();
       propsRef = {};
+      services = {
+        createInstanceHooks: jest.fn(),
+        destroyInstanceHooks: jest.fn(),
+        closeActiveHookInstance: jest.fn(),
+        setActiveHookInstance: jest.fn(),
+        pushFrame: jest.fn(),
+      };
       instance = new FunctionComponent(renderFn, propsRef);
+      instance.services = services;
+    });
+
+    it('should set the correct component flags', () => {
+      expect(instance.isJSXComponent).toBe(true);
+      expect(instance.isFunctionComponent).toBe(true);
     });
 
     it('should be an instance of JSXComponent', () => {
@@ -48,6 +62,30 @@ describe('FunctionComponent', () => {
       });
     });
 
+    describe('componentDidMount', () => {
+      it('should be a function', () => {
+        expect(instance.componentDidMount).toBeInstanceOf(Function);
+      });
+
+      it('should register the instance with the hook service', () => {
+        instance.componentDidMount();
+        expect(services.createInstanceHooks).toHaveBeenCalledTimes(1);
+        expect(services.createInstanceHooks).toHaveBeenCalledWith(instance);
+      });
+    });
+
+    describe('componentWillUnmount', () => {
+      it('should be a function', () => {
+        expect(instance.componentWillUnmount).toBeInstanceOf(Function);
+      });
+
+      it('should remove the instance from the hook service', () => {
+        instance.componentWillUnmount();
+        expect(services.destroyInstanceHooks).toHaveBeenCalledTimes(1);
+        expect(services.destroyInstanceHooks).toHaveBeenCalledWith(instance);
+      });
+    });
+
     describe('render', () => {
       it('should be a function', () => {
         expect(instance.render).toBeInstanceOf(Function);
@@ -62,6 +100,30 @@ describe('FunctionComponent', () => {
         expect(result[0]).toEqual(renderRef);
         expect(renderFn).toHaveBeenCalledTimes(1);
         expect(renderFn.mock.calls[0][0]).toBe(propsRef);
+      });
+
+      it('should call the hookMocks', () => {
+        const renderRef = {};
+        renderFn.mockImplementationOnce(() => renderRef);
+        const result = instance.render();
+        expect(result[0]).toEqual(renderRef);
+        expect(services.setActiveHookInstance).toHaveBeenCalledTimes(1);
+        expect(services.setActiveHookInstance).toHaveBeenCalledWith(instance);
+        expect(services.closeActiveHookInstance).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('setState', () => {
+      it('should be a function', () => {
+        expect(instance.setState).toBeInstanceOf(Function);
+      });
+
+      it('should pass the hook and next state to the renderFrame handler', () => {
+        const hookRef = {};
+        const nextStateRef = {};
+        instance.setState(hookRef, nextStateRef);
+        expect(services.pushFrame).toHaveBeenCalledTimes(1);
+        expect(services.pushFrame).toHaveBeenCalledWith(hookRef, nextStateRef);
       });
     });
 

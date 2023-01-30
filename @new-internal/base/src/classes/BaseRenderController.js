@@ -10,9 +10,13 @@ const BaseRenderableComponent = abstract(class {
 });
 
 const BaseRenderController = abstract(class {
-  constructor(Component, render, anchor) {
-    this.renderer = new Renderer(Component, render, anchor);
+  constructor(render, anchor, services) {
     this.queue = new FrameQueue();
+    this.services = {
+      pushFrame: this.pushFrame.bind(this),
+      ...services,
+    };
+    this.renderer = new Renderer(BaseRenderableComponent, render, anchor, this.services);
   }
 
   pushFrame(instance, nextState) {
@@ -22,13 +26,16 @@ const BaseRenderController = abstract(class {
   }
 
   render() {
-    const root = this.renderer.root;
-    this.renderer.render(root.render(), root, root.firstChild);
+    this.renderer.rootRender();
   }
 
   renderFrame() {
     const fr = this.queue.next();
     fr.write();
+  }
+
+  unmount() {
+    this.renderer.root.unmount();
   }
 });
 

@@ -37,5 +37,38 @@ describe('ElementNode', () => {
       instance = new ElementNode(ref);
       expect(instance.elem).toBe(ref.elem);
     });
+
+
+    describe('update', () => {
+      let ObjectAssignMock;
+      let ObjectAssignOriginal;
+
+      beforeEach(() => {
+        ObjectAssignOriginal = Object.assign;
+        ObjectAssignMock = jest.fn();
+        Object.assign = ObjectAssignMock;
+      });
+
+      afterEach(() => {
+        Object.assign = ObjectAssignOriginal;
+      });
+
+      it('should be a function', () => {
+        expect(instance.update).toBeInstanceOf(Function);
+      });
+
+      it('should call Object.assign with a separate style call', () => {
+        const styleProp = {};
+        const props = { style: styleProp };
+        instance.update(props);
+        expect(ObjectAssignMock).toHaveBeenCalledTimes(2);
+        expect(ObjectAssignMock.mock.calls[0][0]).toEqual(instance.elem.style);
+        expect(ObjectAssignMock.mock.calls[0][1]).toEqual(styleProp);
+
+        expect(ObjectAssignMock.mock.calls[1][0]).toEqual(instance.elem);
+        // make sure style is not assigned to element
+        expect(ObjectAssignMock.mock.calls[1][1].style).toBeUndefined();
+      });
+    });
   });
 });

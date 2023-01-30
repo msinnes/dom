@@ -1,6 +1,8 @@
 import { BaseComponent } from '../BaseComponent';
 
 class TestableBaseComponent extends BaseComponent {
+  elem = { elem: {} }
+
   canUpdate() {}
   render() {}
   update() {}
@@ -41,9 +43,34 @@ describe('BaseComponent', () => {
 
   describe('instance', () => {
     let instance;
+    let domContextValue;
+    let domContext;
+    let elemRef;
+
+    let appendChildMock;
+    let insertChildMock;
+    let removeChildMock;
+    let replaceChildMock;
 
     beforeEach(() => {
+      appendChildMock = jest.fn();
+      insertChildMock = jest.fn();
+      removeChildMock = jest.fn();
+      replaceChildMock = jest.fn();
+      domContextValue = {
+        appendChild: appendChildMock,
+        elem: {},
+        insertChild: insertChildMock,
+        removeChild: removeChildMock,
+        replaceChild: replaceChildMock,
+      };
+
+      domContext = {
+        value: domContextValue,
+      };
+
       instance = new TestableBaseComponent();
+      instance.domContext = domContext;
     });
 
     it('should have an empty array of children', () => {
@@ -53,6 +80,22 @@ describe('BaseComponent', () => {
 
     it('should have a null parent', () => {
       expect(instance.parent).toBe(null);
+    });
+
+    it('should have component flags set to false', () => {
+      expect(instance.isDomComponent).toBe(false);
+      expect(instance.isJSXComponent).toBe(false);
+      expect(instance.isArrayComponent).toBe(false);
+      expect(instance.isClassComponent).toBe(false);
+      expect(instance.isElementComponent).toBe(false);
+      expect(instance.isEmptyComponent).toBe(false);
+      expect(instance.isFunctionComponent).toBe(false);
+      expect(instance.isRootComponent).toBe(false);
+      expect(instance.isTextComponent).toBe(false);
+    });
+
+    it('should have a domParent getter', () => {
+      expect(instance.domParent).toBe(domContextValue);
     });
 
     it('should have a firstChild prop', () => {
@@ -102,6 +145,29 @@ describe('BaseComponent', () => {
         expect(appendChildMock).toHaveBeenCalledWith(instance);
         expect(instance.parent).toEqual(parent);
       });
+
+
+      it('should append to the domParent and call the super mount if component is a dom component', () => {
+        const parentAppendChildMock = jest.fn();
+        const parent = { appendChild: parentAppendChildMock };
+        instance.isDomComponent = true;
+        instance.mount(parent);
+        expect(instance.parent).toBe(parent);
+        expect(parentAppendChildMock).toHaveBeenCalledTimes(1);
+        expect(parentAppendChildMock).toHaveBeenCalledWith(instance);
+        expect(appendChildMock).toHaveBeenCalledTimes(1);
+        expect(appendChildMock).toHaveBeenCalledWith(instance.elem);
+      });
+
+      it('should not append to the domParent and call the super mount if component is not a dom component', () => {
+        const parentAppendChildMock = jest.fn();
+        const parent = { appendChild: parentAppendChildMock };
+        instance.mount(parent);
+        expect(instance.parent).toBe(parent);
+        expect(parentAppendChildMock).toHaveBeenCalledTimes(1);
+        expect(parentAppendChildMock).toHaveBeenCalledWith(instance);
+        expect(appendChildMock).toHaveBeenCalledTimes(0);
+      });
     });
 
     describe('removeChild', () => {
@@ -138,6 +204,43 @@ describe('BaseComponent', () => {
         expect(instance.children[1]).toEqual(child2);
         expect(child3.parent).toEqual(instance);
       });
+
+
+      it('should replace child on the domParent and call super replaceChild if new child and old child are DomComponents', () => {
+        const oldChild = new TestableBaseComponent('div');
+        oldChild.domContext = domContext;
+        oldChild.isDomComponent = true;
+        instance.children = [oldChild];
+        const newChild = new TestableBaseComponent('span');
+        newChild.isDomComponent = true;
+        instance.replaceChild(newChild, oldChild);
+        expect(instance.firstChild).toBe(newChild);
+        expect(replaceChildMock).toHaveBeenCalledTimes(1);
+        expect(replaceChildMock).toHaveBeenCalledWith(newChild.elem, oldChild.elem);
+      });
+
+      it('should remove child from the domParent and call super replaceChild if oldChild is a DomComponent', () => {
+        const oldChild = new TestableBaseComponent('div');
+        oldChild.domContext = domContext;
+        oldChild.isDomComponent = true;
+        instance.children = [oldChild];
+        const newChild = new TestableBaseComponent();
+        instance.replaceChild(newChild, oldChild);
+        expect(instance.firstChild).toBe(newChild);
+        expect(removeChildMock).toHaveBeenCalledTimes(1);
+        expect(removeChildMock).toHaveBeenCalledWith(oldChild.elem);
+      });
+
+      it('should insert child to the domParent and call super replace child if newChild is a DomComponent', () => {
+        const oldChild = new TestableBaseComponent();
+        instance.children = [oldChild];
+        const newChild = new TestableBaseComponent('div');
+        newChild.isDomComponent = true;
+        instance.replaceChild(newChild, oldChild);
+        expect(instance.firstChild).toBe(newChild);
+        expect(insertChildMock).toHaveBeenCalledTimes(1);
+        expect(insertChildMock).toHaveBeenCalledWith(newChild.elem);
+      });
     });
 
     describe('unmount', () => {
@@ -167,6 +270,37 @@ describe('BaseComponent', () => {
         expect(instance.children.length).toEqual(2);
         instance.unmount();
         expect(instance.children.length).toEqual(0);
+      });
+
+
+      it('should remove from the domParent and call the super unmount if component is a dom component', () => {
+        const parentRomoveChildMock = jest.fn();
+        const parent = { removeChild: parentRomoveChildMock };
+        instance.parent = parent;
+        instance.isDomComponent = true;
+        instance.unmount();
+        expect(parentRomoveChildMock).toHaveBeenCalledTimes(1);
+        expect(parentRomoveChildMock).toHaveBeenCalledWith(instance);
+        expect(removeChildMock).toHaveBeenCalledTimes(1);
+        expect(removeChildMock).toHaveBeenCalledWith(instance.elem);
+      });
+
+      it('should not remove from the domParent and call the super unmount if component is not a dom component', () => {
+        const parentRomoveChildMock = jest.fn();
+        const parent = { removeChild: parentRomoveChildMock };
+        instance.parent = parent;
+        instance.isDomComponent = true;
+        instance.unmount();
+        expect(parentRomoveChildMock).toHaveBeenCalledTimes(1);
+        expect(parentRomoveChildMock).toHaveBeenCalledWith(instance);
+        expect(removeChildMock).toHaveBeenCalledTimes(1);
+        expect(removeChildMock).toHaveBeenCalledWith(instance.elem);
+      });
+
+      it('should not call domParent removeChild if there is no parent and component is a dom component', () => {
+        delete instance.domContext.value;
+        instance.unmount();
+        expect(removeChildMock).toHaveBeenCalledTimes(0);
       });
     });
 

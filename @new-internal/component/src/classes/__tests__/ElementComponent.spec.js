@@ -27,9 +27,18 @@ describe('ElementComponent', () => {
       addValueMock = jest.fn();
       domContextRef = {
         addValue: addValueMock,
+        value: {
+          increment: () => {},
+        },
       };
       instance = new ElementComponent('div', props);
       instance.domContext = domContextRef;
+    });
+
+    it('should set the correct component flags', () => {
+      expect(instance.isJSXComponent).toBe(true);
+      expect(instance.isDomComponent).toBe(true);
+      expect(instance.isElementComponent).toBe(true);
     });
 
     it('should have a signature prop', () => {

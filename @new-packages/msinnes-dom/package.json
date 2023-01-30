@@ -1,0 +1,49 @@
+{
+  "name": "@new-msinnes/dom",
+  "version": "0.0.3-alpha.0",
+  "description": "A dom library",
+  "keywords": [
+    "dom"
+  ],
+  "author": "msinnes <michael.sinnes@gmail.com>",
+  "homepage": "",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "files": [
+    "dist/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:msinnes/dom.git",
+    "directory": "@packages/msinnes-dom"
+  },
+  "private": true,
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "scripts": {
+    "build": "rollup --config rollup.config.js && yarn transform && yarn uglify",
+    "build-dev": "yarn clean && yarn build && yarn pack",
+    "clean": "rimraf dist",
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "transform": "babel dist/index.js --out-file dist/dom.js",
+    "uglify": "uglifyjs dist/dom.js --output dist/dom.min.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.19.3",
+    "@babel/cli": "^7.19.0",
+    "@babel/preset-env": "^7.19.3",
+    "@new-internal/base": "^0.0.3-alpha.0",
+    "@new-internal/dom": "^0.0.3-alpha.0",
+    "@new-internal/infra": "^0.0.3-alpha.0",
+    "@new-internal/utils": "^0.0.3-alpha.0",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-node-resolve": "^14.1.0",
+    "babel-loader": "^8.2.5",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.79.1",
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "rollup-plugin-uglify": "^6.0.4",
+    "uglify-js": "^3.17.4"
+  }
+}

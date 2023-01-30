@@ -3,6 +3,7 @@
     "@e2e/*",
     "@internal/*",
     "@new-internal/*",
+    "@new-packages/*",
     "@packages/*"
   ],
   "npmClient": "yarn",
