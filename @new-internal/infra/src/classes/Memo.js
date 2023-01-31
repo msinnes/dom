@@ -1,23 +1,9 @@
-import { compareDepsArrs } from '../fns/compareDepsArrs';
+import { BaseDependable } from './base/BaseDependable';
 
-class Memo {
-  tick = 0;
-
-  constructor(fn, dependencies) {
-    this.fn = fn;
-    this.dependencies = dependencies;
-  }
-
+class Memo extends BaseDependable {
   getValue(nextDependencies) {
     if (this.shouldExecute(nextDependencies)) this.val = this.fn();
     return this.val;
-  }
-
-  shouldExecute(nextDependencies) {
-    const tick = this.tick++;
-    const previousDependencies = this.dependencies;
-    this.dependencies = nextDependencies;
-    return !tick || compareDepsArrs(previousDependencies, nextDependencies);
   }
 }
 

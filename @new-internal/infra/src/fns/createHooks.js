@@ -1,6 +1,5 @@
 import { isArray, isFunction, isUndefined } from '@new-internal/is';
 
-import { compareDepsArrs } from './compareDepsArrs';
 import { Memo } from '../classes/Memo';
 
 const createHookValidator = name => (fn, arr) => {
@@ -9,8 +8,21 @@ const createHookValidator = name => (fn, arr) => {
 };
 
 const validateUseMemoArgs = createHookValidator('useMemo');
+const validateUseEffectArgs = createHookValidator('useEffect');
 
-const createHooks = hookService => ({
+const createHooks = (hookService, effectService, contextService) => ({
+  useContext: userContext => contextService.getContextValue(userContext),
+  useEffect: (effectFn, dependencies) => {
+    validateUseEffectArgs(effectFn, dependencies);
+    const hook = hookService.getHook();
+    let { effect } = hook.get() || {};
+    if (!effect) {
+      effect = effectService.addEffect(hook.component, effectFn, dependencies);
+      hook.set({ effect });
+    }
+    effect.fn = effectFn;
+    effect.nextDependencies = dependencies;
+  },
   useMemo: (memoFn, dependencies) => {
     validateUseMemoArgs(memoFn, dependencies);
     const hook = hookService.getHook();

@@ -14,10 +14,8 @@ describe('HookService', () => {
 
   describe('instance', () => {
     let instance;
-    let contextInstanceRef;
     beforeEach(() => {
-      contextInstanceRef = {};
-      instance = new HookService(contextInstanceRef);
+      instance = new HookService();
     });
 
     it('should have an active context prop set to null', () => {

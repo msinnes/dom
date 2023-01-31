@@ -4,11 +4,11 @@ class FunctionComponent extends JSXComponent {
   isFunctionComponent = true;
 
   componentDidMount() {
-    this.services.createInstanceHooks(this);
+    this.services.registerInstance(this);
   }
 
   componentWillUnmount() {
-    this.services.destroyInstanceHooks(this);
+    this.services.destroyInstance(this);
   }
 
   setState(hook, nextState) {

@@ -33,6 +33,7 @@ class Renderer {
       this.renderChildren(nextChildren, currentChildren, renderedComponent);
     }
     if (renderedComponent.isElementComponent) this.domContext.removeValue();
+    this.services.clearContextValue(renderedComponent.signature);
   }
 
   renderChildren(nextChildren, currentChildren, currentComponent) {
@@ -45,6 +46,7 @@ class Renderer {
         if (i < nextChildren.length) {
           this.render(nextChildren[i], currentComponent, currentComponent.children[i]);
         } else {
+          if (child.componentWillUnmount) child.componentWillUnmount();
           child.unmount();
         }
       });
@@ -65,10 +67,13 @@ class Renderer {
   update(render, currentComponent) {
     if (currentComponent.canUpdate(render)) {
       currentComponent.update(render.propsObj);
+      if (currentComponent.componentDidUpdate) currentComponent.componentDidUpdate();
       return currentComponent;
     }
     const newComponent = this.createComponent(render);
+    if (currentComponent.componentWillUnmount) currentComponent.componentWillUnmount();
     currentComponent.parent.replaceChild(newComponent, currentComponent);
+    if (newComponent.componentDidMount) newComponent.componentDidMount();
     return newComponent;
   }
 }

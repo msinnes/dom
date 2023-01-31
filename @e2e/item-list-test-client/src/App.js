@@ -1,4 +1,4 @@
-import { Component } from '@msinnes/dom';
+import { Component } from '@new-msinnes/dom';
 
 import { AddWidget } from './AddWidget';
 import { ItemList } from './ItemList';

@@ -12,9 +12,10 @@ describe('Renderer.e2e', () => {
   let services;
   beforeEach(() => {
     services = {
-      createInstanceHooks: jest.fn(),
+      registerInstance: jest.fn(),
       closeActiveHookInstance: jest.fn(),
       setActiveHookInstance: jest.fn(),
+      clearContextValue: jest.fn(),
     };
   });
 

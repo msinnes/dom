@@ -1,3 +1,5 @@
+import { abstract } from '@new-internal/oop';
+
 const compareDepsArrs = (dependencies, nextDependencies) => {
   if (nextDependencies && nextDependencies.length === 0) return false;
   const checkedDependencies = dependencies || [];
@@ -10,4 +12,20 @@ const compareDepsArrs = (dependencies, nextDependencies) => {
   }, false);
 };
 
-export { compareDepsArrs };
+const BaseDependable = abstract(class {
+  tick = 0;
+
+  constructor(fn, dependencies) {
+    this.fn = fn;
+    this.dependencies = dependencies;
+  }
+
+  shouldExecute(nextDependencies) {
+    const tick = this.tick++;
+    const previousDependencies = this.dependencies;
+    this.dependencies = nextDependencies;
+    return !tick || compareDepsArrs(previousDependencies, nextDependencies);
+  }
+});
+
+export { BaseDependable };

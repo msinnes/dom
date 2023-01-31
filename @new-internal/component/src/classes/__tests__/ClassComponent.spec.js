@@ -32,6 +32,8 @@ describe('ClassComponent', () => {
       propsRef = {};
       services = {
         pushFrame: jest.fn(),
+        addClassEffect: jest.fn(),
+        getContextValue: jest.fn(),
       };
       instance = new ClassComponent(Component, propsRef);
       instance.services = services;
@@ -78,6 +80,33 @@ describe('ClassComponent', () => {
       });
     });
 
+    describe('checkContext', () => {
+      const contextRef = {};
+      class ContextClass {
+        static contextType = contextRef;
+      }
+      let localInstance;
+      beforeEach(() => {
+        localInstance = new ClassComponent(ContextClass, {});
+        localInstance.services = services;
+      });
+
+      it('should be a function', () => {
+        expect(instance.checkContext).toBeInstanceOf(Function);
+      });
+
+      it('should assign the context value to the instance if there is a static contextType on the class', () => {
+        const contextValueRef = {};
+        services.getContextValue.mockImplementation(() => contextValueRef);
+        instance.checkContext();
+        localInstance.checkContext();
+        expect(services.getContextValue).toHaveBeenCalledTimes(1);
+        expect(services.getContextValue).toHaveBeenCalledWith(contextRef);
+        expect(instance.instance.context).toBeUndefined();
+        expect(localInstance.instance.context).toBe(contextValueRef);
+      });
+    });
+
     describe('componentDidMount', () => {
       it('should be a function', () => {
         expect(instance.componentDidMount).toBeInstanceOf(Function);
@@ -95,6 +124,46 @@ describe('ClassComponent', () => {
         expect(services.pushFrame).toHaveBeenCalledTimes(1);
         expect(services.pushFrame).toHaveBeenCalledWith(instance, nextStateRef);
       });
+
+      it('should call addClassEffect if the instance has componentDidMount', () => {
+        instance.componentDidMount();
+        expect(services.addClassEffect).toHaveBeenCalledTimes(0);
+        instance.instance = { componentDidMount: jest.fn() };
+        instance.componentDidMount();
+        expect(services.addClassEffect).toHaveBeenCalledTimes(1);
+        services.addClassEffect.mock.calls[0][0]();
+        expect(instance.instance.componentDidMount).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('componentDidUpdate', () => {
+      it('should be a function', () => {
+        expect(instance.componentDidUpdate).toBeInstanceOf(Function);
+      });
+
+      it('should call addClassEffect if the instance has componentDidUpdate', () => {
+        instance.componentDidUpdate();
+        expect(services.addClassEffect).toHaveBeenCalledTimes(0);
+        instance.instance = { componentDidUpdate: jest.fn() };
+        instance.componentDidUpdate();
+        expect(services.addClassEffect).toHaveBeenCalledTimes(1);
+        services.addClassEffect.mock.calls[0][0]();
+        expect(instance.instance.componentDidUpdate).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('componentWillUnmount', () => {
+      it('should be a function', () => {
+        expect(instance.componentWillUnmount).toBeInstanceOf(Function);
+      });
+
+      it('should componentWillUnmount if the instance has componentWillUnmount', () => {
+        instance.componentWillUnmount();
+        expect(services.addClassEffect).toHaveBeenCalledTimes(0);
+        instance.instance = { componentWillUnmount: jest.fn() };
+        instance.componentWillUnmount();
+        expect(instance.instance.componentWillUnmount).toHaveBeenCalledTimes(1);
+      });
     });
 
     describe('render', () => {
@@ -107,6 +176,12 @@ describe('ClassComponent', () => {
         expect(output).toBeInstanceOf(Array);
         expect(output.length).toEqual(1);
         expect(output[0]).toEqual(renderRef);
+      });
+
+      it('should call checkContext', () => {
+        const checkContextMock = jest.spyOn(instance, 'checkContext');
+        instance.render();
+        expect(checkContextMock).toHaveBeenCalledTimes(1);
       });
     });
 

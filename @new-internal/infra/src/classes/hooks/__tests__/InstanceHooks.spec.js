@@ -9,10 +9,10 @@ describe('InstanceHooks', () => {
 
   describe('instance', () => {
     let instance;
-    let contextInstanceRef;
+    let serviceInstanceRef;
     beforeEach(() => {
-      contextInstanceRef = {};
-      instance = new InstanceHooks(contextInstanceRef);
+      serviceInstanceRef = {};
+      instance = new InstanceHooks(serviceInstanceRef);
     });
 
     it('should have an array on the hooks prop', () => {
@@ -24,7 +24,7 @@ describe('InstanceHooks', () => {
     });
 
     it('should expose the input instance on the instance prop', () => {
-      expect(instance.instance).toBe(contextInstanceRef);
+      expect(instance.instance).toBe(serviceInstanceRef);
     });
 
     describe('next', () => {
@@ -51,7 +51,7 @@ describe('InstanceHooks', () => {
           const hook = instance.next('initialValue');
           expect(hook).toBeInstanceOf(Hook);
           expect(hook.get()).toEqual('initialValue');
-          expect(hook.component).toBe(contextInstanceRef);
+          expect(hook.component).toBe(serviceInstanceRef);
         });
       });
 

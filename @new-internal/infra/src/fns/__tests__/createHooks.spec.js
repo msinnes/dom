@@ -1,30 +1,58 @@
 import { Hook } from '../../classes/hooks/Hook';
+import { Effect } from '../../classes/effect/Effect';
 
 import { createHooks } from '../createHooks';
 
 describe('createHooks', () => {
   let mockHookService;
+  let mockEffectService;
+  let mockContextService;
   let hooks;
   beforeEach(() => {
     mockHookService = {};
-    hooks = createHooks(mockHookService);
+    mockEffectService = {};
+    mockContextService = {};
+    hooks = createHooks(mockHookService, mockEffectService, mockContextService);
   });
 
   it('should be a function', () => {
     expect(createHooks).toBeInstanceOf(Function);
   });
 
-  describe('useState', () => {
-    let useState;
+  describe('useContext', () => {
+    let useContext;
+    let getContextValueMock;
     beforeEach(() => {
-      useState = hooks.useState;
+      useContext = hooks.useContext;
+      getContextValueMock = jest.fn();
+      mockContextService.getContextValue = getContextValueMock;
     });
 
     it('should be a function', () => {
-      expect(useState).toBeInstanceOf(Function);
+      expect(useContext).toBeInstanceOf(Function);
     });
 
-    it('should return the initial value and a setter function', () => {
+    it('should pass he context to contextService.getContextValue and return the result', () => {
+      const mockUserContext = {};
+      const mockUserContextValue = {};
+      mockContextService.getContextValue.mockReturnValue(mockUserContextValue);
+      const ctxValue = useContext(mockUserContext);
+      expect(ctxValue).toBe(mockUserContextValue);
+      expect(getContextValueMock).toHaveBeenCalledTimes(1);
+      expect(getContextValueMock).toHaveBeenCalledWith(mockUserContext);
+    });
+  });
+
+  describe('useEffect', () => {
+    let useEffect;
+    let getHookMock;
+    beforeEach(() => {
+      useEffect = hooks.useEffect;
+      getHookMock = jest.fn();
+      mockHookService.getHook = getHookMock;
+    });
+
+    it('should throw an error if incorrect arguments are passed', () => {
       let hook;
       mockHookService.getHook = initialValue => {
         if (!hook) {
@@ -32,28 +60,122 @@ describe('createHooks', () => {
         }
         return hook;
       };
-      const [state, setState] = useState('initialValue');
-      expect(state).toEqual('initialValue');
-      expect(setState).toBeInstanceOf(Function);
+      const fn = () => {};
+      const arr = [];
+
+      mockEffectService.addEffect = jest.fn().mockReturnValue(new Effect(fn));
+
+      let message;
+      expect(() => {
+        useEffect(fn);
+        useEffect(fn, arr);
+      }).not.toThrow();
+
+      expect(() => {
+        useEffect(fn, 'not an array');
+      }).toThrow('ValidationError');
+
+      expect(() => {
+        useEffect('not a function');
+      }).toThrow('ValidationError');
     });
 
-    it('should call component.setState', () => {
-      let hook;
-      const componentMock = {
-        setState: jest.fn(),
-      };
-      mockHookService.getHook = initialValue => {
-        if (!hook) {
-          hook = new Hook(initialValue, componentMock);
-        }
-        return hook;
-      };
-      const [state, setState] = useState('initialValue');
-      expect(state).toEqual('initialValue');
+    describe('without a dependency array', () => {
+      it('should execute fn every time if no dependency array is passed', () => {
+        const componentRef = {};
+        let hook;
+        mockHookService.getHook = initialValue => {
+          if (!hook) {
+            hook = new Hook(initialValue, componentRef);
+          }
+          return hook;
+        };
 
-      setState('new value');
-      expect(componentMock.setState).toHaveBeenCalledTimes(1);
-      expect(componentMock.setState).toHaveBeenCalledWith(hook, 'new value');
+        const fnMock = jest.fn();
+        const fn = () => fnMock();
+
+        mockEffectService.addEffect = jest.fn().mockReturnValue(new Effect(fn));
+
+        useEffect(fn);
+
+        const { effect } = hook.get();
+        expect(effect.fn).toBe(fn);
+        expect(effect.dependencies).toBeUndefined();
+        expect(mockEffectService.addEffect).toHaveBeenCalledTimes(1);
+        expect(mockEffectService.addEffect).toHaveBeenCalledWith(componentRef, fn, undefined);
+
+        effect.exec();
+        expect(fnMock).toHaveBeenCalledTimes(1);
+        effect.exec();
+        expect(fnMock).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    describe('with a dependency array', () => {
+      it('should only execute once if the dependency array is empty', () => {
+        const componentRef = {};
+        let hook;
+        mockHookService.getHook = initialValue => {
+          if (!hook) {
+            hook = new Hook(initialValue, componentRef);
+          }
+          return hook;
+        };
+
+        const fnMock = jest.fn();
+        const fn = () => fnMock();
+        const arr = [];
+
+        mockEffectService.addEffect = jest.fn().mockReturnValue(new Effect(fn, arr));
+
+        useEffect(fn, arr);
+
+        const { effect } = hook.get();
+        expect(effect.fn).toBe(fn);
+        expect(effect.dependencies).toBe(arr);
+        expect(mockEffectService.addEffect).toHaveBeenCalledTimes(1);
+        expect(mockEffectService.addEffect).toHaveBeenCalledWith(componentRef, fn, arr);
+        effect.nextDependencies = [];
+        effect.exec();
+        expect(fnMock).toHaveBeenCalledTimes(1);
+        effect.nextDependencies = [];
+        effect.exec();
+        expect(fnMock).toHaveBeenCalledTimes(1);
+      });
+
+      it('should execute the effectFn if a dependency changes', () => {
+        const componentRef = {};
+        let hook;
+        mockHookService.getHook = initialValue => {
+          if (!hook) {
+            hook = new Hook(initialValue, componentRef);
+          }
+          return hook;
+        };
+
+        const fnMock = jest.fn();
+        const fn = () => fnMock();
+        const arr = ['value'];
+
+        mockEffectService.addEffect = jest.fn().mockReturnValue(new Effect(fn, arr));
+
+        useEffect(fn, arr);
+
+        const { effect } = hook.get();
+        expect(effect.fn).toBe(fn);
+        expect(effect.dependencies).toBe(arr);
+        expect(mockEffectService.addEffect).toHaveBeenCalledTimes(1);
+        expect(mockEffectService.addEffect).toHaveBeenCalledWith(componentRef, fn, arr);
+        effect.nextDependencies = ['value'];
+        effect.exec();
+        expect(fnMock).toHaveBeenCalledTimes(1);
+        effect.nextDependencies = ['value'];
+        effect.exec();
+        expect(fnMock).toHaveBeenCalledTimes(1);
+        effect.nextDependencies = ['new value'];
+        effect.exec();
+        expect(fnMock).toHaveBeenCalledTimes(2);
+      });
     });
   });
 
@@ -64,11 +186,6 @@ describe('createHooks', () => {
       useMemo = hooks.useMemo;
       getHookMock = jest.fn();
       mockHookService.getHook = getHookMock;
-    });
-
-    afterEach(() => {
-      jest.resetAllMocks();
-      jest.resetModules();
     });
 
     it('should be a function', () => {
@@ -195,6 +312,49 @@ describe('createHooks', () => {
         memo = useMemo(fn, ['new value']);
         expect(fnMock).toHaveBeenCalledTimes(2);
       });
+    });
+  });
+
+  describe('useState', () => {
+    let useState;
+    beforeEach(() => {
+      useState = hooks.useState;
+    });
+
+    it('should be a function', () => {
+      expect(useState).toBeInstanceOf(Function);
+    });
+
+    it('should return the initial value and a setter function', () => {
+      let hook;
+      mockHookService.getHook = initialValue => {
+        if (!hook) {
+          hook = new Hook(initialValue);
+        }
+        return hook;
+      };
+      const [state, setState] = useState('initialValue');
+      expect(state).toEqual('initialValue');
+      expect(setState).toBeInstanceOf(Function);
+    });
+
+    it('should call component.setState', () => {
+      let hook;
+      const componentMock = {
+        setState: jest.fn(),
+      };
+      mockHookService.getHook = initialValue => {
+        if (!hook) {
+          hook = new Hook(initialValue, componentMock);
+        }
+        return hook;
+      };
+      const [state, setState] = useState('initialValue');
+      expect(state).toEqual('initialValue');
+
+      setState('new value');
+      expect(componentMock.setState).toHaveBeenCalledTimes(1);
+      expect(componentMock.setState).toHaveBeenCalledWith(hook, 'new value');
     });
   });
 });

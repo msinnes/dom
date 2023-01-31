@@ -22,8 +22,8 @@ describe('FunctionComponent', () => {
       renderFn = jest.fn();
       propsRef = {};
       services = {
-        createInstanceHooks: jest.fn(),
-        destroyInstanceHooks: jest.fn(),
+        registerInstance: jest.fn(),
+        destroyInstance: jest.fn(),
         closeActiveHookInstance: jest.fn(),
         setActiveHookInstance: jest.fn(),
         pushFrame: jest.fn(),
@@ -69,8 +69,8 @@ describe('FunctionComponent', () => {
 
       it('should register the instance with the hook service', () => {
         instance.componentDidMount();
-        expect(services.createInstanceHooks).toHaveBeenCalledTimes(1);
-        expect(services.createInstanceHooks).toHaveBeenCalledWith(instance);
+        expect(services.registerInstance).toHaveBeenCalledTimes(1);
+        expect(services.registerInstance).toHaveBeenCalledWith(instance);
       });
     });
 
@@ -81,8 +81,8 @@ describe('FunctionComponent', () => {
 
       it('should remove the instance from the hook service', () => {
         instance.componentWillUnmount();
-        expect(services.destroyInstanceHooks).toHaveBeenCalledTimes(1);
-        expect(services.destroyInstanceHooks).toHaveBeenCalledWith(instance);
+        expect(services.destroyInstance).toHaveBeenCalledTimes(1);
+        expect(services.destroyInstance).toHaveBeenCalledWith(instance);
       });
     });
 

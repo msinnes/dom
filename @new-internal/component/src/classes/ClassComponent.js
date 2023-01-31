@@ -11,13 +11,27 @@ class ClassComponent extends JSXComponent {
     props && this.update(props);
   }
 
+  checkContext() {
+    if (this.signature.contextType) this.instance.context = this.services.getContextValue(this.signature.contextType);
+  }
+
   componentDidMount() {
     this.instance.setState = nextState => {
       this.services.pushFrame(this, nextState);
     };
+    if (this.instance.componentDidMount) this.services.addClassEffect(() => this.instance.componentDidMount());
+  }
+
+  componentDidUpdate() {
+    if (this.instance.componentDidUpdate) this.services.addClassEffect(() => this.instance.componentDidUpdate());
+  }
+
+  componentWillUnmount() {
+    if (this.instance.componentWillUnmount) this.instance.componentWillUnmount();
   }
 
   render() {
+    this.checkContext();
     return [this.instance.render()];
   }
 

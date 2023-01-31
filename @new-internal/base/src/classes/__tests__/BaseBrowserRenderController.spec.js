@@ -35,15 +35,57 @@ describe('BaseBrowserRenderController', () => {
     let renderRef;
 
     let instance;
+    let services;
     beforeEach(() => {
       anchorRef = {};
       renderRef = {};
       instance = new TestableRenderController(renderRef, new DomRef(anchorRef), {});
+      services = {
+        digestEffects: jest.fn(),
+      };
+      instance.services = services;
     });
 
     it('should have a renderTimeoutId property defaulted to null', () => {
       expect(instance.renderTimeoutId).toBeDefined();
       expect(instance.renderTimeoutId).toBe(null);
+    });
+
+    it('should have a trace prop', () => {
+      expect(instance.trace).toEqual(0);
+    });
+
+    describe('processEffects', () => {
+      it('should be a function', () => {
+        expect(instance.processEffects).toBeInstanceOf(Function);
+      });
+
+      it('should call services.digestEffects', () => {
+        instance.processEffects();
+        expect(services.digestEffects).toHaveBeenCalledTimes(1);
+      });
+
+      it('should increment trace if there are items in the queue', () => {
+        instance.queue.add({}, {});
+        instance.processEffects();
+        expect(services.digestEffects).toHaveBeenCalledTimes(1);
+        expect(instance.trace).toEqual(1);
+      });
+
+      it('should set trace back to 0 if there are no items in the queue', () => {
+        instance.trace = 1;
+        instance.processEffects();
+        expect(services.digestEffects).toHaveBeenCalledTimes(1);
+        expect(instance.trace).toEqual(0);
+      });
+
+      it('should throw an error if trace if greater than 50', () => {
+        instance.trace = 50;
+        instance.queue.add({}, {});
+        expect(() => instance.processEffects()).not.toThrow();
+        expect(instance.trace).toEqual(51);
+        expect(() => instance.processEffects()).toThrow('ImplementationError: Maximum call depth exceeded');
+      });
     });
 
     describe('pushFrame', () => {
@@ -131,6 +173,7 @@ describe('BaseBrowserRenderController', () => {
         instance.render();
         expect(renderFrameMock).not.toHaveBeenCalled();
         expect(renderMock).toHaveBeenCalledTimes(1);
+        expect(services.digestEffects).toHaveBeenCalledTimes(1);
       });
     });
 

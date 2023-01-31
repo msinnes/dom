@@ -56,6 +56,7 @@ describe('Renderer', () => {
       anchor = {};
       services = {
         createInstanceHooks: jest.fn(),
+        clearContextValue: jest.fn(),
       };
       instance = new Renderer(BaseComponent, rootRender, new DomRef(anchor), services);
       removeValueMock = jest.spyOn(instance.domContext, 'removeValue');
@@ -179,6 +180,22 @@ describe('Renderer', () => {
         expect(renderComponentMock).toHaveBeenCalledWith(appRenderRef, parentRef, currentComponentRef);
       });
 
+      it('should call services.clearContextValue', () => {
+        const render = { signature: 'div' };
+        const { createRender } = require(renderLibPath);
+        const appRenderRef = { children: [] };
+        createRender.mockImplementation(() => appRenderRef);
+        const parentRef = {};
+        const currentComponentRef = {};
+        const renderedComponentRef = { signature: {}, render: () => {} };
+        renderComponentMock.mockReturnValue(renderedComponentRef);
+        instance.render(render, parentRef, currentComponentRef);
+        expect(renderComponentMock).toHaveBeenCalledTimes(1);
+        expect(renderComponentMock).toHaveBeenCalledWith(appRenderRef, parentRef, currentComponentRef);
+        expect(services.clearContextValue).toHaveBeenCalledTimes(1);
+        expect(services.clearContextValue).toHaveBeenCalledWith(renderedComponentRef.signature);
+      });
+
       it('should change renderingComponent to true before component render and back to false after', () => {
         const renderMock = jest.fn();
         class TestComponent extends BaseComponent {
@@ -282,8 +299,9 @@ describe('Renderer', () => {
           const nextChild1 = {};
           const nextChildren = [nextChild1];
           const unmountMock = jest.fn();
+          const componentWillUnmountMock = jest.fn();
           const currentChild1 = { unmount: unmountMock };
-          const currentChild2 = { unmount: unmountMock };
+          const currentChild2 = { unmount: unmountMock, componentWillUnmount: componentWillUnmountMock };
           const currentChildren = [currentChild1, currentChild2];
           const currentComponent = { children: currentChildren };
           instance.renderChildren(nextChildren, currentChildren, currentComponent);
@@ -292,6 +310,7 @@ describe('Renderer', () => {
           expect(renderMock.mock.calls[0]).toMatchObject([nextChild1, currentComponent, currentChild1]);
 
           expect(unmountMock).toHaveBeenCalledTimes(1);
+          expect(componentWillUnmountMock).toHaveBeenCalledTimes(1);
         });
       });
 
@@ -403,6 +422,33 @@ describe('Renderer', () => {
         expect(updatedComponent).toBe(newComponentRef);
       });
 
+      it('should call componentWillUnmount and componentDidMount on replaced components', () => {
+        const renderRef = {};
+        const canUpdateMock = jest.fn(() => false);
+        const replaceChildMock = jest.fn();
+        const currentComponent = {
+          canUpdate: canUpdateMock,
+          parent: {
+            replaceChild: replaceChildMock,
+          },
+          componentWillUnmount: jest.fn(),
+        };
+        const newComponentRef = {
+          componentDidMount: jest.fn(),
+        };
+        createComponentMock.mockReturnValue(newComponentRef);
+        const updatedComponent = instance.update(renderRef, currentComponent);
+        expect(canUpdateMock).toHaveBeenCalledTimes(1);
+        expect(canUpdateMock).toHaveBeenCalledWith(renderRef);
+        expect(createComponentMock).toHaveBeenCalledTimes(1);
+        expect(createComponentMock).toHaveBeenCalledWith(renderRef);
+        expect(replaceChildMock).toHaveBeenCalledTimes(1);
+        expect(replaceChildMock).toHaveBeenCalledWith(newComponentRef, currentComponent);
+        expect(updatedComponent).toBe(newComponentRef);
+        expect(newComponentRef.componentDidMount).toHaveBeenCalledTimes(1);
+        expect(currentComponent.componentWillUnmount).toHaveBeenCalledTimes(1);
+      });
+
       it('should update the currentComponent if the component can update', () => {
         const renderProps = {};
         const renderRef = { propsObj: renderProps };
@@ -419,6 +465,26 @@ describe('Renderer', () => {
         expect(updateMock).toHaveBeenCalledTimes(1);
         expect(updateMock).toHaveBeenCalledWith(renderProps);
         expect(updatedComponent).toBe(currentComponent);
+      });
+
+      it('should call componentDidUpdate if the component has that method', () => {
+        const renderProps = {};
+        const renderRef = { propsObj: renderProps };
+        const canUpdateMock = jest.fn(() => true);
+        const updateMock = jest.fn();
+        const currentComponent = {
+          canUpdate: canUpdateMock,
+          update: updateMock,
+          componentDidUpdate: jest.fn(),
+        };
+        const newComponentRef = {};
+        const updatedComponent = instance.update(renderRef, currentComponent);
+        expect(canUpdateMock).toHaveBeenCalledTimes(1);
+        expect(canUpdateMock).toHaveBeenCalledWith(renderRef);
+        expect(updateMock).toHaveBeenCalledTimes(1);
+        expect(updateMock).toHaveBeenCalledWith(renderProps);
+        expect(updatedComponent).toBe(currentComponent);
+        expect(currentComponent.componentDidUpdate).toHaveBeenCalledTimes(1);
       });
     });
   });

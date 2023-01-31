@@ -1,4 +1,4 @@
-import { renderApp, Component } from '@msinnes/dom';
+import { createRef, Component } from '@new-msinnes/dom';
 
 class Page1 extends Component {
   render() {
@@ -7,12 +7,13 @@ class Page1 extends Component {
 }
 
 class Page2 extends Component {
-  effect() {
-    const originalTitle = window.document.title;
+  componentDidMount() {
+    this.originalTitle = window.document.title;
     window.document.title = 'set title';
-    return () => {
-      window.document.title = originalTitle;
-    };
+  }
+
+  componentWillUnmount() {
+    window.document.title = this.originalTitle;
   }
 
   render() {
@@ -31,7 +32,7 @@ class App extends Component {
     this.togglePageTwoOpen = this.togglePageTwoOpen.bind(this);
   }
 
-  effect() {
+  componentDidMount() {
     window.document.title = 'default title';
   }
 
@@ -47,4 +48,4 @@ class App extends Component {
   }
 }
 
-renderApp(<App />, document.body);
+createRef(document.body).render(<App />);
