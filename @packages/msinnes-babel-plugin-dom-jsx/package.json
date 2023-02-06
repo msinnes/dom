@@ -23,14 +23,7 @@
     "build-dev": "yarn pack",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "dependencies": {
-    "@babel/types": "^7.19.3"
-  },
-  "devDependencies": {
-    "@babel/plugin-syntax-jsx": "^7.18.6",
-    "rimraf": "^3.0.2"
-  },
-  "peerDependencies": {
-    "@babel/plugin-syntax-jsx": "^7.18.6"
-  }
+  "dependencies": {},
+  "devDependencies": {},
+  "peerDependencies": {}
 }

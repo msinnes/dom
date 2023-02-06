@@ -20,9 +20,6 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@babel/core": "^7.19.3",
-    "@babel/plugin-syntax-jsx": "^7.18.6",
-    "@babel/preset-env": "^7.15.8",
     "@msinnes/babel-plugin-dom-jsx": "^0.0.3-alpha.0"
   }
 }
