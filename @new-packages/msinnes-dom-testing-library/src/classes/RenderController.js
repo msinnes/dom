@@ -26,8 +26,23 @@ class RenderController extends BaseServerRenderController {
     this.render();
   }
 
+  processEffects(trace = 0) {
+    if (trace >= 50) throw new Error('ImplementationError: Maximum call depth exceeded');
+    this.scope.enable();
+    this.scope.services.digestEffects();
+    this.scope.disable();
+    if (this.queue.length) {
+      while(this.queue.length) {
+        this.renderFrame();
+      }
+      super.render();
+      this.processEffects(trace + 1);
+    }
+  }
+
   render() {
     super.render();
+    this.processEffects();
     traverse(this.scope.body.elem, elem => {
       this.wrapElement(elem);
     });

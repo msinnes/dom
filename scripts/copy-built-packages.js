@@ -10,14 +10,14 @@ const packages = [
   'msinnes-dom-server',
   'msinnes-dom-testing-library',
 ].map(name => {
-  const { version } = require(`../@packages/${name}/package.json`);
+  const { version } = require(`../@new-packages/${name}/package.json`);
   return { name, version };
 });
 
 async function loadFile(name, version) {
   await cpFile(
-    path.resolve(__dirname, `../@packages/${name}/${name}-v${version}.tgz`),
-    path.resolve(__dirname, `../${name}-v${version}.tgz`),
+    path.resolve(__dirname, `../@new-packages/${name}/new-${name}-v${version}.tgz`),
+    path.resolve(__dirname, `../new-${name}-v${version}.tgz`),
     { overwrite: true }
   ).on('progress', console.log);
   console.log('Finished copying:', name);

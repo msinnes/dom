@@ -73,7 +73,7 @@ const case9Out = `({
   }))]
 });`;
 
-const case10In = `<div beforeProp="123" {...props} afterProp={1} />`;
+const case10In = '<div beforeProp="123" {...props} afterProp={1} />';
 const case10Out = `({
   signature: "div",
   props: {
@@ -83,7 +83,7 @@ const case10Out = `({
   }
 });`;
 
-const case11In = `<div exact />`;
+const case11In = '<div exact />';
 const case11Out = `({
   signature: "div",
   props: {

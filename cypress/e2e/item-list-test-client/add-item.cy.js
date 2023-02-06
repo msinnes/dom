@@ -7,13 +7,13 @@ describe('add item', () => {
     cy.get('body > button').click();
 
     cy.get('body >').should(elems => {
-      const div = elems.eq(1)[0];
+      const div = elems.eq(0)[0];
       expect(div.tagName).to.equal('DIV');
       expect(div).to.contain('Item List');
-      const input = elems.eq(2)[0];
+      const input = elems.eq(1)[0];
       expect(input.tagName).to.equal('INPUT');
       expect(input.type).to.equal('text');
-      const button = elems.eq(3)[0];
+      const button = elems.eq(2)[0];
       expect(button.tagName).to.equal('BUTTON');
       expect(button).to.contain('Add item');
     });
@@ -29,14 +29,14 @@ describe('add item', () => {
     cy.get('body > button').click();
 
     cy.get('body >').should(elems => {
-      const div = elems.eq(1)[0];
+      const div = elems.eq(0)[0];
       expect(div.tagName).to.equal('DIV');
       expect(div).to.contain('Item List');
-      const ul = elems.eq(2)[0];
+      const ul = elems.eq(1)[0];
       expect(ul.tagName).to.equal('UL');
       expect(ul.children.length).to.equal(1);
       expect(ul.firstChild).to.contain('input');
-      const button = elems.eq(3)[0];
+      const button = elems.eq(2)[0];
       expect(button.tagName).to.equal('BUTTON');
       expect(button).to.contain('Add Item');
     });
@@ -46,17 +46,17 @@ describe('add item', () => {
     cy.get('body > button').click();
 
     cy.get('body >').should(elems => {
-      const div = elems.eq(1)[0];
+      const div = elems.eq(0)[0];
       expect(div.tagName).to.equal('DIV');
       expect(div).to.contain('Item List');
-      const ul = elems.eq(2)[0];
+      const ul = elems.eq(1)[0];
       expect(ul.tagName).to.equal('UL');
       expect(ul.children.length).to.equal(1);
       expect(ul.firstChild).to.contain('input');
-      const input = elems.eq(3)[0];
+      const input = elems.eq(2)[0];
       expect(input.tagName).to.equal('INPUT');
       expect(input.type).to.equal('text');
-      const button = elems.eq(4)[0];
+      const button = elems.eq(3)[0];
       expect(button.tagName).to.equal('BUTTON');
       expect(button).to.contain('Add item');
     });
@@ -72,15 +72,15 @@ describe('add item', () => {
     cy.get('body > button').click();
 
     cy.get('body >').should(elems => {
-      const div = elems.eq(1)[0];
+      const div = elems.eq(0)[0];
       expect(div.tagName).to.equal('DIV');
       expect(div).to.contain('Item List');
-      const ul = elems.eq(2)[0];
+      const ul = elems.eq(1)[0];
       expect(ul.tagName).to.equal('UL');
       expect(ul.children.length).to.equal(2);
       expect(ul.firstChild).to.contain('input');
       expect(ul.firstChild.nextSibling).to.contain('input 2');
-      const button = elems.eq(3)[0];
+      const button = elems.eq(2)[0];
       expect(button.tagName).to.equal('BUTTON');
       expect(button).to.contain('Add Item');
     });

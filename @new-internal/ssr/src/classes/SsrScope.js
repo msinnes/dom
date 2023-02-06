@@ -8,6 +8,7 @@ import { DomScope } from './DomScope';
 import { InfraScope } from './InfraScope';
 
 Dom.Component = BaseRenderableComponent;
+Dom.createContext = defaultValue => Infra.contextService.createEntity(defaultValue);
 
 class SsrScope {
   get services() {

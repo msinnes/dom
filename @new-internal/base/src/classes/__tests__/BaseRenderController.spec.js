@@ -6,6 +6,9 @@ import { FrameQueue } from '../Frame';
 import { BaseRenderController, BaseRenderableComponent } from '../BaseRenderController';
 
 class TestableRenderController extends BaseRenderController {}
+class TestableComponent extends BaseRenderableComponent {
+  render() {}
+}
 
 describe('BaseRenderController', () => {
   it('should be a class', () => {
@@ -143,5 +146,18 @@ describe('BaseRenderableComponent', () => {
 
   it('should have an abstract render method', () => {
     expect(BaseRenderableComponent).toHaveAbstractMethod('render');
+  });
+
+  describe('instance', () => {
+    let instance;
+    let propsRef;
+    beforeEach(() => {
+      propsRef = {};
+      instance = new TestableComponent(propsRef);
+    });
+
+    it('should set props', () => {
+      expect(instance.props).toBe(propsRef);
+    });
   });
 });

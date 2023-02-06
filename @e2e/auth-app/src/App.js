@@ -1,5 +1,5 @@
-import { Router, Switch, Case, Redirect } from '@msinnes/dom-router';
-import { combineReducers, createStore, StoreProvider } from '@msinnes/dom-redux-light';
+import { Router, Switch, Case, Redirect } from '@new-msinnes/dom-router';
+import { combineReducers, createStore, StoreProvider } from '@new-msinnes/dom-redux-light';
 
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';

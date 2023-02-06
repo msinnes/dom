@@ -41,6 +41,18 @@ describe('InfraScope', () => {
         expect(instance.enable).toBeInstanceOf(Function);
       });
 
+      it('should overwrite useContext functionality', () => {
+        instance.enable();
+        expect(Dom.useContext).toBe(instance.hooks.useContext);
+        instance.disable();
+      });
+
+      it('should overwrite useEffect functionality', () => {
+        instance.enable();
+        expect(Dom.useEffect).toBe(instance.hooks.useEffect);
+        instance.disable();
+      });
+
       it('should overwrite useMemo functionality', () => {
         instance.enable();
         expect(Dom.useMemo).toBe(instance.hooks.useMemo);
@@ -57,6 +69,20 @@ describe('InfraScope', () => {
     describe('disable', () => {
       it('should be a function', () => {
         expect(instance.disable).toBeInstanceOf(Function);
+      });
+
+      it('should reset useContext functionality', () => {
+        instance.enable();
+        expect(Dom.useContext).toBe(instance.hooks.useContext);
+        instance.disable();
+        expect(Dom.useContext).toBe(useContextOriginal);
+      });
+
+      it('should reset useEffect functionality', () => {
+        instance.enable();
+        expect(Dom.useEffect).toBe(instance.hooks.useEffect);
+        instance.disable();
+        expect(Dom.useEffect).toBe(useEffectOriginal);
       });
 
       it('should reset useMemo functionality', () => {

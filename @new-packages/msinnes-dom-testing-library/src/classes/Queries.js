@@ -1,25 +1,48 @@
 import { traverse } from '../fns/traverse';
+import { getRole } from '../fns/getRole';
+
+const ignoreParentNodesMatcher = (node, ignoreParentNodes = true) => ignoreParentNodes ? node.children.length === 0 : true;
+const createConfigMatcher = ({ ignoreParentNodes } = {}) => node => ignoreParentNodesMatcher(node, ignoreParentNodes);
 
 class Queries {
   constructor(container) {
     this.container = container;
   }
 
-  byText(text) {
+  byLabelText(text, config) {
     if (!text) return [];
+    const labels = this.byText(text, config);
+    const labelFors = labels.reduce((acc, item) => {
+      if (item.for) acc.push(item.for);
+      return acc;
+    }, []);
+    const selector = node => {
+      if (labelFors.includes(node.name)) return node;
+    };
+    return this.query(selector);
+  }
 
-    let selector;
+  byRole(role) {
+    if (!role) return [];
+    const selector = node => {
+      if (getRole(node) === role) return node;
+    };
+    return this.query(selector);
+  }
+
+  byText(text, config) {
+    if (!text) return [];
+    const configMatcher = createConfigMatcher(config);
+    let match;
     if (text instanceof RegExp) {
-      selector = node => {
-        if (node.textContent && text.test(node.textContent)) return node;
-        if (node.innerText && text.test(node.innerText)) return node;
-      };
+      match = string => string && text.test(string);
     } else {
-      selector = node => {
-        if (node.textContent === text) return node;
-        if (node.innerText === text) return node;
-      };
+      match = string => string === text;
     }
+    const selector = node => {
+      if (match(node.textContent) && configMatcher(node)) return node;
+      if (match(node.innerText) && configMatcher(node)) return node;
+    };
     return this.query(selector);
   }
 

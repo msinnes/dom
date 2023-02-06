@@ -18,6 +18,10 @@ describe('RenderController', () => {
     let anchorRef;
     let ssrScope;
 
+    let enableMock;
+    let digestEffectsMock;
+    let disableMock;
+
     let instance;
 
     beforeEach(() => {
@@ -25,6 +29,9 @@ describe('RenderController', () => {
       anchorRef = {};
       ssrScope = new SsrScope({ dom: {} });
       instance = new RenderController(renderRef, ssrScope);
+      enableMock = jest.spyOn(instance.scope, 'enable');
+      digestEffectsMock = jest.spyOn(instance.scope.services, 'digestEffects');
+      disableMock = jest.spyOn(instance.scope, 'disable');
     });
 
     it('should have a renderer prop', () => {
@@ -44,12 +51,60 @@ describe('RenderController', () => {
       });
     });
 
+    describe('processEffects', () => {
+      it('should be a function', () => {
+        expect(instance.processEffects).toBeInstanceOf(Function);
+      });
+
+      it('should process any effects withing the instane scope', () => {
+        instance.processEffects();
+        expect(enableMock).toHaveBeenCalledTimes(1);
+        expect(digestEffectsMock).toHaveBeenCalledTimes(1);
+        expect(disableMock).toHaveBeenCalledTimes(1);
+      });
+
+      it('should process frames and rerender if there are frames after processing the effects', () => {
+        instance.queue = [];
+        const renderFrameMock = jest.spyOn(instance, 'renderFrame').mockImplementation(() => {
+          instance.queue.pop();
+        });
+        digestEffectsMock.mockImplementationOnce(() => {
+          instance.queue.push({})
+        });
+        instance.processEffects();
+        expect(renderFrameMock).toHaveBeenCalledTimes(1);
+        expect(enableMock).toHaveBeenCalledTimes(3);
+        expect(digestEffectsMock).toHaveBeenCalledTimes(2);
+        expect(disableMock).toHaveBeenCalledTimes(3);
+      });
+
+      it('should throw an error if an infinite loop runs', () => {
+        instance.queue = [];
+        const renderFrameMock = jest.spyOn(instance, 'renderFrame').mockImplementation(() => {
+          instance.queue.pop();
+        });
+        digestEffectsMock.mockImplementation(() => {
+          instance.queue.push({})
+        });
+        expect(() => instance.processEffects()).toThrow('ImplementationError: Maximum call depth exceeded');
+        expect(renderFrameMock).toHaveBeenCalledTimes(50);
+      });
+    });
+
     describe('render', () => {
       it('should call wrapElement for all elements in the dom', () => {
+        const processEffectsMock = jest.spyOn(instance, 'processEffects').mockImplementation(() => {});
         const wrapElementMock = jest.spyOn(instance, 'wrapElement').mockImplementation(() => {});
         instance.render();
         expect(wrapElementMock).toHaveBeenCalledTimes(1);
         expect(wrapElementMock).toHaveBeenCalledWith(ssrScope.body.elem);
+      });
+
+      it('should call processEffects', () => {
+        const processEffectsMock = jest.spyOn(instance, 'processEffects').mockImplementation(() => {});
+        const wrapElementMock = jest.spyOn(instance, 'wrapElement').mockImplementation(() => {});
+        instance.render();
+        expect(processEffectsMock).toHaveBeenCalledTimes(1);
       });
     });
 

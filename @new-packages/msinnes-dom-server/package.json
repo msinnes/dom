@@ -5,7 +5,7 @@
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com:msinnes/dom.git",
@@ -32,7 +32,7 @@
     "@new-internal/dom": "^0.0.3-alpha.0",
     "@new-internal/ssr": "^0.0.3-alpha.0",
     "@new-internal/utils": "^0.0.3-alpha.0",
-    "@msinnes/babel-plugin-dom-jsx": "^0.0.3-alpha.0",
+    "@new-msinnes/babel-plugin-dom-jsx": "^0.0.3-alpha.0",
     "@new-msinnes/dom": "^0.0.3-alpha.0",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-node-resolve": "^14.1.0",
@@ -42,6 +42,6 @@
     "rollup-plugin-uglify": "^6.0.4"
   },
   "peerDependencies": {
-    "@msinnes/dom": "^0.0.1-alpha.0"
+    "@new-msinnes/dom": "^0.0.1-alpha.0"
   }
 }

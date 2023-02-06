@@ -1,4 +1,4 @@
-import { connect } from '@msinnes/dom-redux-light';
+import { connect } from '@new-msinnes/dom-redux-light';
 
 const App = ({ text }) => text;
 

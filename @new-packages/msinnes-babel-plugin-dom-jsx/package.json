@@ -1,0 +1,36 @@
+{
+  "name": "@new-msinnes/babel-plugin-dom-jsx",
+  "version": "0.0.3-alpha.0",
+  "description": "A dom jsx plugin",
+  "keywords": [
+    "dom",
+    "jsx"
+  ],
+  "author": "msinnes <michael.sinnes@gmail.com>",
+  "homepage": "",
+  "license": "MIT",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:msinnes/dom.git",
+    "directory": "@packages/msinnes-babel-plugin-dom-jsx"
+  },
+  "private": true,
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "scripts": {
+    "build-dev": "yarn pack",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@babel/types": "^7.19.3"
+  },
+  "devDependencies": {
+    "@babel/plugin-syntax-jsx": "^7.18.6",
+    "rimraf": "^3.0.2"
+  },
+  "peerDependencies": {
+    "@babel/plugin-syntax-jsx": "^7.18.6"
+  }
+}

@@ -16,7 +16,7 @@ describe('add item and delete', () => {
   it('should delete the item', () => {
     cy.get('body > div > ul > li > button').eq(1).click();
     cy.get('body >').should(elems => {
-      const div = elems.eq(1)[0];
+      const div = elems.eq(0)[0];
       expect(div.tagName).to.equal('DIV');
       expect(div).to.contain('No Items Yet');
     });

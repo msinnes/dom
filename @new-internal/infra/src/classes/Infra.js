@@ -8,6 +8,8 @@ import { HookService } from './hooks/HookService';
 const contextService = new ContextService();
 
 class Infra {
+  static contextService = contextService;
+
   effectService = new EffectService();
   hookService = new HookService();
 

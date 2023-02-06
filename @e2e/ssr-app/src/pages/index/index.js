@@ -1,5 +1,5 @@
-import { hydrateApp } from '@msinnes/dom';
+import { createRef } from '@new-msinnes/dom';
 
 import { App } from './App';
 
-hydrateApp(<App />, document.body);
+createRef(document.body).hydrate(<App />);

@@ -23,6 +23,7 @@ class TextComponent extends DomComponent {
   }
 
   render() {
+    if (this.domParent) this.domParent.increment();
     return this.text;
   }
 }

@@ -22,9 +22,10 @@
     "access": "restricted"
   },
   "scripts": {
-    "build": "rollup --config rollup.config.js && yarn transform && yarn uglify",
+    "build": "yarn rollup && yarn transform && yarn uglify",
     "build-dev": "yarn clean && yarn build && yarn pack",
     "clean": "rimraf dist",
+    "rollup": "rollup --config rollup.config.js",
     "test": "echo \"Error: run tests from root\" && exit 1",
     "transform": "babel dist/index.js --out-file dist/dom.js",
     "uglify": "uglifyjs dist/dom.js --output dist/dom.min.js"

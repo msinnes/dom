@@ -123,6 +123,7 @@ describe('DomParent', () => {
         insertBefore: insertBeforeMock,
         removeChild: removeChildMock,
         replaceChild: replaceChildMock,
+        children: [],
       };
       nodeRef = {
         elem: elemRef,
@@ -140,19 +141,6 @@ describe('DomParent', () => {
 
     it('should have an index props set to 0', () => {
       expect(instance.index).toBe(0);
-    });
-
-    describe('appendChild', () => {
-      it('should be a function', () => {
-        expect(instance.appendChild).toBeInstanceOf(Function);
-      });
-
-      it('should call elem.appendChild', () => {
-        const child = { elem: {} };
-        instance.appendChild(child);
-        expect(appendChildMock).toHaveBeenCalledTimes(1);
-        expect(appendChildMock).toHaveBeenCalledWith(child.elem);
-      });
     });
 
     describe('increment', () => {
@@ -178,7 +166,6 @@ describe('DomParent', () => {
         instance.insertChild(newChildRef);
         expect(insertBeforeMock).toHaveBeenCalledTimes(1);
         expect(insertBeforeMock).toHaveBeenCalledWith(newChildRef.elem, currentChildRef);
-        expect(instance.index).toBe(1);
       });
     });
 

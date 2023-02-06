@@ -1,4 +1,4 @@
-import { StoreProvider, createStore } from '@msinnes/dom-redux-light';
+import { StoreProvider, createStore } from '@new-msinnes/dom-redux-light';
 
 import { itemReducer } from './reducer';
 import { Content } from './Content';

@@ -47,18 +47,15 @@ describe('BaseComponent', () => {
     let domContext;
     let elemRef;
 
-    let appendChildMock;
     let insertChildMock;
     let removeChildMock;
     let replaceChildMock;
 
     beforeEach(() => {
-      appendChildMock = jest.fn();
       insertChildMock = jest.fn();
       removeChildMock = jest.fn();
       replaceChildMock = jest.fn();
       domContextValue = {
-        appendChild: appendChildMock,
         elem: {},
         insertChild: insertChildMock,
         removeChild: removeChildMock,
@@ -148,25 +145,25 @@ describe('BaseComponent', () => {
 
 
       it('should append to the domParent and call the super mount if component is a dom component', () => {
-        const parentAppendChildMock = jest.fn();
-        const parent = { appendChild: parentAppendChildMock };
+        const parentAppendChild = jest.fn();
+        const parent = { appendChild: parentAppendChild };
         instance.isDomComponent = true;
         instance.mount(parent);
         expect(instance.parent).toBe(parent);
-        expect(parentAppendChildMock).toHaveBeenCalledTimes(1);
-        expect(parentAppendChildMock).toHaveBeenCalledWith(instance);
-        expect(appendChildMock).toHaveBeenCalledTimes(1);
-        expect(appendChildMock).toHaveBeenCalledWith(instance.elem);
+        expect(parentAppendChild).toHaveBeenCalledTimes(1);
+        expect(parentAppendChild).toHaveBeenCalledWith(instance);
+        expect(insertChildMock).toHaveBeenCalledTimes(1);
+        expect(insertChildMock).toHaveBeenCalledWith(instance.elem);
       });
 
       it('should not append to the domParent and call the super mount if component is not a dom component', () => {
-        const parentAppendChildMock = jest.fn();
-        const parent = { appendChild: parentAppendChildMock };
+        const parentAppendChild = jest.fn();
+        const parent = { appendChild: parentAppendChild };
         instance.mount(parent);
         expect(instance.parent).toBe(parent);
-        expect(parentAppendChildMock).toHaveBeenCalledTimes(1);
-        expect(parentAppendChildMock).toHaveBeenCalledWith(instance);
-        expect(appendChildMock).toHaveBeenCalledTimes(0);
+        expect(parentAppendChild).toHaveBeenCalledTimes(1);
+        expect(parentAppendChild).toHaveBeenCalledWith(instance);
+        expect(insertChildMock).toHaveBeenCalledTimes(0);
       });
     });
 
@@ -319,6 +316,20 @@ describe('BaseComponent', () => {
         expect(instance.children.length).toEqual(2);
         instance.unmountChildren();
         expect(instance.children.length).toEqual(0);
+      });
+
+      it('should call componentWillUnmount if a child has that prop', () => {
+        const child1 = new TestableBaseComponent();
+        const child2 = new TestableBaseComponent();
+        const componentWillUnmountMock = jest.fn();
+        child1.componentWillUnmount = componentWillUnmountMock;
+        child1.mount(instance);
+        child2.mount(instance);
+
+        expect(instance.children.length).toEqual(2);
+        instance.unmountChildren();
+        expect(instance.children.length).toEqual(0);
+        expect(componentWillUnmountMock).toHaveBeenCalledTimes(1);
       });
     });
   });

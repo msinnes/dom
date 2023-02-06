@@ -142,6 +142,10 @@ describe('AppRef', () => {
         expect(instance.unmount()).toBe(instance);
         expect(document.body.innerHTML).toEqual('');
       });
+
+      it('should not throw an error if there is no controller', () => {
+        expect(() => instance.unmount()).not.toThrow();
+      });
     });
   });
 });

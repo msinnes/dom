@@ -27,17 +27,13 @@ class DomParent {
     this.node = node;
   }
 
-  appendChild(child) {
-    this.elem.appendChild(child.elem);
-  }
-
   increment() {
     this.index++;
   }
 
-  insertChild(newChild) {
-    this.elem.insertBefore(newChild.elem, this.elem.children[this.index]);
-    this.increment();
+  insertChild(child) {
+    this.elem.insertBefore(child.elem, this.elem.children[this.index]);
+    // this.increment();
   }
 
   removeChild(child) {

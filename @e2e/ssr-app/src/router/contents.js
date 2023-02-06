@@ -1,7 +1,6 @@
 const { Router } = require('express');
 
-const { renderToString } = require('@msinnes/dom-server');
-const { createElement } = require('@msinnes/dom');
+const { renderToString } = require('@new-msinnes/dom-server');
 
 const renderPage = require('../renderPage');
 

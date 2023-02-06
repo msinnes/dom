@@ -17,6 +17,10 @@ describe('Infra', () => {
     expect(Infra).toBeAClass();
   });
 
+  it('should expose the contextService statically', () => {
+    expect(Infra.contextService).toBeInstanceOf(ContextService);
+  });
+
   describe('instance', () => {
     let servicesRef;
     let hooksRef;

@@ -40,7 +40,7 @@ const BaseComponent = abstract(class {
   mount(parent) {
     parent.appendChild(this);
     this.parent = parent;
-    if (this.isDomComponent) this.domParent.appendChild(this.elem);
+    if (this.isDomComponent) this.domParent.insertChild(this.elem);
   }
 
   removeChild(child) {
@@ -69,7 +69,9 @@ const BaseComponent = abstract(class {
   unmountChildren() {
     let i = this.children.length;
     while(i--) {
-      this.children.pop().unmount();
+      const child = this.children.pop();
+      if (child.componentWillUnmount) child.componentWillUnmount();
+      child.unmount();
     }
   }
 });

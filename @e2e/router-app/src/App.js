@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 
-import { Router, Switch, Case, Redirect, Link, useParams } from '@msinnes/dom-router';
+import { Router, Switch, Case, Redirect, Link, useParams } from '@new-msinnes/dom-router';
 
 import './App.css';
 

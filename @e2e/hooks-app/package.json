@@ -15,7 +15,7 @@
     "@babel/cli": "^7.19.3",
     "@babel/plugin-syntax-jsx": "^7.18.6",
     "@babel/preset-env": "^7.19.3",
-    "@msinnes/babel-plugin-dom-jsx": "^0.0.3-alpha.0",
+    "@new-msinnes/babel-preset-dom-jsx": "^0.0.3-alpha.0",
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.5.0",
