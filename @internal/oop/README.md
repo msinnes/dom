@@ -2,6 +2,14 @@
 
 A lightweight library for basic object oriented patterns not present in core JavaScript.
 
+[comment]: <> (TODO: expand on the top-level docs)
+
+```js
+export { abstract } from './fns/abstract';
+export { abstractMethod } from './fns/abstractMethod';
+export { extendz } from './fns/extendz';
+```
+
 ## abstract
 
 Makes a class abstract. Uses ES6 to extend the class. This is a runtime abstraction.
@@ -13,7 +21,3 @@ Makes a class abstract by creating an abstract method. This should be implemente
 ## extendz
 
 Will check to see if one class extends another.
-
-## getter
-
-A shorthand for adding a getter to a class when an ES6 getter is not optimal.

@@ -28,7 +28,6 @@
     "jsdom": "^19.0.0"
   },
   "devDependencies": {
-    "@internal/app": "^0.0.3-alpha.0",
     "@internal/dom": "^0.0.3-alpha.0",
     "@internal/is": "^0.0.3-alpha.0",
     "@internal/oop": "^0.0.3-alpha.0",

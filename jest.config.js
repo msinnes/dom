@@ -1,16 +1,16 @@
 module.exports = {
   collectCoverageFrom: [
     '@internal/**/*.js',
-    '@new-internal/**/*.js',
     '@new-packages/**/*.js',
     '@packages/**/*.js',
-    '!@new-internal/*/src/index.js',
     '!**/node_modules/**',
     '!**/*/*.config.js',
     '!**/dist/**',
     '!scripts/*',
     '!**/__tests__/**',
     '!cypress/**/*.js',
+    '!@shared/**/*.js',
+    '!**/.eslintrc.js',
   ],
   coverageReporters: ['lcov', 'text', 'text-summary'],
   coverageThreshold: {

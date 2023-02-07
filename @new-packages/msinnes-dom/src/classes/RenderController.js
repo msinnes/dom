@@ -1,4 +1,4 @@
-import { BaseBrowserRenderController } from '@new-internal/base';
+import { BaseBrowserRenderController } from '@internal/base';
 
 class RenderController extends BaseBrowserRenderController {
   bootstrap() {

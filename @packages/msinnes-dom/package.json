@@ -28,10 +28,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "devDependencies": {
-    "@internal/app": "^0.0.3-alpha.0",
     "@internal/base": "^0.0.3-alpha.0",
     "@internal/dom": "^0.0.3-alpha.0",
-    "@internal/frame": "^0.0.3-alpha.0",
     "@internal/infra": "^0.0.3-alpha.0",
     "@internal/is": "^0.0.3-alpha.0",
     "@internal/oop": "^0.0.3-alpha.0",

@@ -1,5 +1,5 @@
-import { BaseBrowserRenderController } from '@new-internal/base';
-import { DomRef } from '@new-internal/dom';
+import { BaseBrowserRenderController } from '@internal/base';
+import { DomRef } from '@internal/dom';
 
 import { RenderController } from '../RenderController';
 

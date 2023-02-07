@@ -23,11 +23,11 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "devDependencies": {
-    "@new-internal/base": "^0.0.3-alpha.0",
-    "@new-internal/dom": "^0.0.3-alpha.0",
-    "@new-internal/ssr": "^0.0.3-alpha.0",
-    "@new-internal/utils": "^0.0.3-alpha.0",
-    "@new-msinnes/babel-plugin-dom-jsx": "^0.0.3-alpha.0",
+    "@internal/base": "^0.0.3-alpha.0",
+    "@internal/dom": "^0.0.3-alpha.0",
+    "@internal/ssr": "^0.0.3-alpha.0",
+    "@internal/utils": "^0.0.3-alpha.0",
+    "@msinnes/babel-plugin-dom-jsx": "^0.0.3-alpha.0",
     "@new-msinnes/dom": "^0.0.3-alpha.0",
     "@rollup/plugin-node-resolve": "^14.1.0",
     "rimraf": "^3.0.2",

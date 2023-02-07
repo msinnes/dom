@@ -2,6 +2,9 @@
 
 An internal, shared utility library.
 
-## compareDepsArrs
+[comment]: <> (TODO: expand on the top-level docs)
 
-A quick function for comparing dependency arrays.
+```js
+export { cloneElement } from './fns/cloneElement';
+export { createElement } from './fns/createElement';
+```

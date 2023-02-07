@@ -1,6 +1,6 @@
 const babelPresetEnv = require('@babel/preset-env');
 const babelPluginSyntaxJsx = require('@babel/plugin-syntax-jsx');
-const msinnesPluginDomJsx = require('@new-msinnes/babel-plugin-dom-jsx');
+const msinnesPluginDomJsx = require('@msinnes/babel-plugin-dom-jsx');
 
 const preset = require('..');
 

@@ -1,4 +1,4 @@
-import { Infra } from '@new-internal/infra';
+import { Infra } from '@internal/infra';
 
 import { infra } from '../infra';
 

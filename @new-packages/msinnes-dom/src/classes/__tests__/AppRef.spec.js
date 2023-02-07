@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { DomRef } from '@new-internal/dom';
-import { createElement } from '@new-internal/utils';
+import { DomRef } from '@internal/dom';
+import { createElement } from '@internal/utils';
 
 import { AppRef } from '../AppRef';
 

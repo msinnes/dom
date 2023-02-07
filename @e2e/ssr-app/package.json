@@ -24,7 +24,7 @@
     "@babel/cli": "^7.19.3",
     "@babel/plugin-syntax-jsx": "^7.18.6",
     "@babel/preset-env": "^7.19.3",
-    "@new-msinnes/babel-plugin-dom-jsx": "^0.0.3-alpha.0",
+    "@msinnes/babel-plugin-dom-jsx": "^0.0.3-alpha.0",
     "@new-msinnes/dom": "^0.0.3-alpha.0",
     "@new-msinnes/dom-redux-light": "^0.0.3-alpha.0",
     "@new-msinnes/dom-server": "^0.0.3-alpha.0",

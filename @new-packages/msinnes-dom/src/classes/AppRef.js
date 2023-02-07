@@ -1,4 +1,4 @@
-import { DomRef } from '@new-internal/dom';
+import { DomRef } from '@internal/dom';
 
 import { HydrateController } from './HydrateController';
 import { RenderController } from './RenderController';

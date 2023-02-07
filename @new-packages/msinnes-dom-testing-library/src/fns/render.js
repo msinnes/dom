@@ -1,4 +1,4 @@
-import { parseConfig, SsrScope } from '@new-internal/ssr';
+import { parseConfig, SsrScope } from '@internal/ssr';
 
 import { RenderController } from '../classes/RenderController';
 import { Screen } from '../classes/Screen';

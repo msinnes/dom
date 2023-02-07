@@ -1,4 +1,4 @@
-import { BaseServerRenderController } from '@new-internal/base';
+import { BaseServerRenderController } from '@internal/base';
 
 import { traverse } from '../fns/traverse';
 import {

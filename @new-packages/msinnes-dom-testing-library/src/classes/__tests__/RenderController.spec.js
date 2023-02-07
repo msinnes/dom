@@ -1,6 +1,6 @@
-import { BaseServerRenderController } from '@new-internal/base';
-import { DomRef } from '@new-internal/dom';
-import { SsrScope } from '@new-internal/ssr';
+import { BaseServerRenderController } from '@internal/base';
+import { DomRef } from '@internal/dom';
+import { SsrScope } from '@internal/ssr';
 
 import { RenderController } from '../RenderController';
 

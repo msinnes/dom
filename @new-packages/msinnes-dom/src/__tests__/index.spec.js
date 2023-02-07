@@ -1,5 +1,5 @@
-import { createElement, cloneElement } from '@new-internal/utils';
-import { BaseRenderableComponent } from '@new-internal/base';
+import { createElement, cloneElement } from '@internal/utils';
+import { BaseRenderableComponent } from '@internal/base';
 
 import * as api from '..';
 

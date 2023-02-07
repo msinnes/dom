@@ -1,5 +1,5 @@
-import { BaseServerRenderController } from '@new-internal/base';
-import { DomRef } from '@new-internal/dom';
+import { BaseServerRenderController } from '@internal/base';
+import { DomRef } from '@internal/dom';
 
 import { RenderToStringController } from '../RenderToStringController';
 

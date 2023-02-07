@@ -1,4 +1,4 @@
-import { SsrScope, parseConfig } from '@new-internal/ssr';
+import { SsrScope, parseConfig } from '@internal/ssr';
 
 import { RenderToStringController } from '../classes/RenderToStringController';
 

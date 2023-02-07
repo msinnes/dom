@@ -2,9 +2,9 @@
   "packages": [
     "@e2e/*",
     "@internal/*",
-    "@new-internal/*",
     "@new-packages/*",
-    "@packages/*"
+    "@packages/*",
+    "@shared/*"
   ],
   "npmClient": "yarn",
   "version": "0.0.3-alpha.0"
