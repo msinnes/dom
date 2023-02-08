@@ -1,4 +1,4 @@
-import { useState } from '@new-msinnes/dom';
+import { useState } from '@msinnes/dom';
 
 const IncrementButton = () => {
   const [state, setState] = useState(0);

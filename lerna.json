@@ -2,7 +2,6 @@
   "packages": [
     "@e2e/*",
     "@internal/*",
-    "@new-packages/*",
     "@packages/*",
     "@shared/*"
   ],

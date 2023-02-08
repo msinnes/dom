@@ -1,4 +1,4 @@
-import { useState, cloneElement } from '@new-msinnes/dom';
+import { useState, cloneElement } from '@msinnes/dom';
 
 const FormWrapper = ({ children, name, label, value, required, submitted, error }) => (
   <div className="form-group">

@@ -1,0 +1,35 @@
+{
+  "name": "@msinnes/dom-testing-library-jest",
+  "version": "0.0.3-alpha.0",
+  "description": "> TODO: description",
+  "author": "msinnes <michael.sinnes@gmail.com>",
+  "homepage": "",
+  "license": "MIT",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:msinnes/dom.git",
+    "directory": "@packages/msinnes-dom-testing-library-jest"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build-dev": "yarn pack",
+    "lint": "eslint src/",
+    "lint-fix": "eslint src/ --fix",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/preset-env": "^7.19.3",
+    "@msinnes/dom": "^0.0.3-alpha.0",
+    "@msinnes/dom-testing-library": "^0.0.3-alpha.0",
+    "@shared/eslint-config": "^0.0.3-alpha.0",
+    "eslint": "^8.33.0"
+  },
+  "peerDependencies": {
+    "@msinnes/dom-testing-library": "^0.0.3-alpha.0"
+  }
+}

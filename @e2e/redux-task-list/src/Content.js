@@ -1,4 +1,4 @@
-import { useState } from '@new-msinnes/dom';
+import { useState } from '@msinnes/dom';
 
 import { AddItem } from './AddItem';
 import { ItemList } from './ItemList';

@@ -32,7 +32,7 @@ const pageConfig = {
         use: {
           loader: 'babel-loader',
           options: {
-            plugins: ['@babel/plugin-syntax-jsx', '@new-msinnes/babel-plugin-dom-jsx'],
+            plugins: ['@babel/plugin-syntax-jsx', '@msinnes/babel-plugin-dom-jsx'],
             presets: ['@babel/preset-env']
           },
         },
@@ -109,7 +109,7 @@ const getFilesInDir = async dir => {
 const transformFile = file => {
   return new Promise((resolve, reject) => {
     babel.transformFile(file, {
-      plugins: ['@babel/plugin-syntax-jsx', '@new-msinnes/babel-plugin-dom-jsx'],
+      plugins: ['@babel/plugin-syntax-jsx', '@msinnes/babel-plugin-dom-jsx'],
       presets: ['@babel/preset-env']
     }, (err, out) => {
       if (err) {

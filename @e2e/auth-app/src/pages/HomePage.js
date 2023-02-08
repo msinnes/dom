@@ -1,5 +1,5 @@
-import { connect } from '@new-msinnes/dom-redux-light';
-import { Link } from '@new-msinnes/dom-router';
+import { connect } from '@msinnes/dom-redux-light';
+import { Link } from '@msinnes/dom-router';
 
 import { logout as logoutAction } from '../actions';
 

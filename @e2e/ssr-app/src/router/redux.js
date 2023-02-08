@@ -1,7 +1,7 @@
 const { Router } = require('express');
 
-const { renderToString } = require('@new-msinnes/dom-server');
-const { createStore, StoreProvider } = require('@new-msinnes/dom-redux-light');
+const { renderToString } = require('@msinnes/dom-server');
+const { createStore, StoreProvider } = require('@msinnes/dom-redux-light');
 
 const renderPage = require('../renderPage');
 

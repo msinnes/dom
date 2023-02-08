@@ -1,4 +1,4 @@
-import { Component } from '@new-msinnes/dom';
+import { Component } from '@msinnes/dom';
 
 class AddForm extends Component {
   constructor(props) {

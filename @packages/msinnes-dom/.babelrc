@@ -1,4 +1,3 @@
 {
-  "presets": ["@babel/preset-env"],
-  "inputSourceMap": true
+  "presets": ["@babel/preset-env"]
 }

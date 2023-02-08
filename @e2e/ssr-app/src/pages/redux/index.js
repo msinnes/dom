@@ -1,5 +1,5 @@
-import { createRef } from '@new-msinnes/dom';
-import { createStore, StoreProvider } from '@new-msinnes/dom-redux-light';
+import { createRef } from '@msinnes/dom';
+import { createStore, StoreProvider } from '@msinnes/dom-redux-light';
 
 import { App } from './App';
 

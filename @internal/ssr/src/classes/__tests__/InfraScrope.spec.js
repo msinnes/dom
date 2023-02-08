@@ -1,4 +1,4 @@
-import * as Dom from '@new-msinnes/dom';
+import * as Dom from '@msinnes/dom';
 import { Infra } from '@internal/infra';
 
 import { InfraScope } from '../InfraScope';

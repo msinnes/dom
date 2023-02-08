@@ -1,5 +1,5 @@
-import { useState } from '@new-msinnes/dom';
-import { connect } from '@new-msinnes/dom-redux-light';
+import { useState } from '@msinnes/dom';
+import { connect } from '@msinnes/dom-redux-light';
 
 import { addItem as addItemAction } from './actions';
 

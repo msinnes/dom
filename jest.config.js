@@ -1,7 +1,6 @@
 module.exports = {
   collectCoverageFrom: [
     '@internal/**/*.js',
-    '@new-packages/**/*.js',
     '@packages/**/*.js',
     '!**/node_modules/**',
     '!**/*/*.config.js',

@@ -1,4 +1,4 @@
-import * as Dom from '@new-msinnes/dom';
+import * as Dom from '@msinnes/dom';
 
 // Store original api values for instance clearing;
 const useContextOriginal = Dom.useContext;

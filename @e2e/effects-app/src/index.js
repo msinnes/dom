@@ -1,4 +1,4 @@
-import { createRef, Component } from '@new-msinnes/dom';
+import { createRef, Component } from '@msinnes/dom';
 
 class Page1 extends Component {
   render() {

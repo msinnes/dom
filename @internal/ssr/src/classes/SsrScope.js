@@ -1,4 +1,4 @@
-import * as Dom from '@new-msinnes/dom';
+import * as Dom from '@msinnes/dom';
 
 import { BaseRenderableComponent } from '@internal/base';
 import { DomRef } from '@internal/dom';
@@ -7,6 +7,7 @@ import { Infra } from '@internal/infra';
 import { DomScope } from './DomScope';
 import { InfraScope } from './InfraScope';
 
+// TODO: move this to InfraScope to consolidate import
 Dom.Component = BaseRenderableComponent;
 Dom.createContext = defaultValue => Infra.contextService.createEntity(defaultValue);
 

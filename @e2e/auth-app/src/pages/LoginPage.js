@@ -1,5 +1,5 @@
-import { connect } from '@new-msinnes/dom-redux-light';
-import { Redirect } from '@new-msinnes/dom-router';
+import { connect } from '@msinnes/dom-redux-light';
+import { Redirect } from '@msinnes/dom-router';
 
 import { Form, Input } from '../components/Form';
 import { login as loginAction } from '../actions';

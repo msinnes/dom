@@ -1,4 +1,4 @@
-import { useMemo, useState } from '@new-msinnes/dom';
+import { useMemo, useState } from '@msinnes/dom';
 
 const TextInput = ({ updateText, text }) => (
   <div>

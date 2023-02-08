@@ -22,22 +22,30 @@
     "build": "rollup --config rollup.config.js",
     "build-dev": "yarn clean && yarn build && yarn pack",
     "clean": "rimraf dist",
+    "lint": "eslint src/",
+    "lint-fix": "eslint src/ --fix",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
     "jsdom": "^19.0.0"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/preset-env": "^7.19.3",
+    "@internal/base": "^0.0.3-alpha.0",
     "@internal/dom": "^0.0.3-alpha.0",
-    "@internal/is": "^0.0.3-alpha.0",
-    "@internal/oop": "^0.0.3-alpha.0",
     "@internal/ssr": "^0.0.3-alpha.0",
     "@internal/utils": "^0.0.3-alpha.0",
-    "@msinnes/babel-plugin-dom-jsx": "^0.0.3-alpha.0",
     "@msinnes/dom": "^0.0.3-alpha.0",
-    "@msinnes/dom-redux-light": "^0.0.3-alpha.0"
+    "@rollup/plugin-node-resolve": "^14.1.0",
+    "@shared/eslint-config": "0.0.3-alpha.0",
+    "@shared/json": "0.0.3-alpha.0",
+    "@shared/rollup-config": "0.0.3-alpha.0",
+    "eslint": "^8.33.0",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.79.1"
   },
   "peerDependencies": {
-    "@msinnes/dom": "^0.0.1-alpha.0"
+    "@msinnes/dom": "^0.0.3-alpha.0"
   }
 }
