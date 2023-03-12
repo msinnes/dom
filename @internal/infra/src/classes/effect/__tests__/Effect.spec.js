@@ -1,4 +1,4 @@
-import { BaseDependable } from '../../base/BaseDependable';
+import { BaseDependencyHook } from '../../base/BaseDependencyHook';
 
 import { Effect } from '../Effect';
 
@@ -7,8 +7,8 @@ describe('Effect', () => {
     expect(Effect).toBeAClass();
   });
 
-  it('should extend BaseDependable', () => {
-    expect(Effect).toExtend(BaseDependable);
+  it('should extend BaseDependencyHook', () => {
+    expect(Effect).toExtend(BaseDependencyHook);
   });
 
   describe('instance', () => {

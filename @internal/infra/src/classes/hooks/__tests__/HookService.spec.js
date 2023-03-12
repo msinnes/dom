@@ -91,7 +91,6 @@ describe('HookService', () => {
         expect(instance.indexes.length).toEqual(3);
         expect(instance.entities.length).toEqual(3);
         const ctx1 = instance.entities[0];
-        const ctx2 = instance.entities[1];
         const ctx3 = instance.entities[2];
         instance.destroyInstance(comp2Ref);
         expect(instance.indexes.length).toEqual(2);

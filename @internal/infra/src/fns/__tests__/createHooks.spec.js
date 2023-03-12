@@ -65,7 +65,6 @@ describe('createHooks', () => {
 
       mockEffectService.addEffect = jest.fn().mockReturnValue(new Effect(fn));
 
-      let message;
       expect(() => {
         useEffect(fn);
         useEffect(fn, arr);

@@ -12,7 +12,6 @@ describe('InfraScope', () => {
     let instance;
     let infra;
 
-    let createContextOriginal;
     let useContextOriginal;
     let useEffectOriginal;
     let useMemoOriginal;
@@ -21,7 +20,6 @@ describe('InfraScope', () => {
       infra = new Infra();
       instance = new InfraScope(infra);
 
-      createContextOriginal = Dom.createContext;
       useContextOriginal = Dom.useContext;
       useEffectOriginal = Dom.useEffect;
       useMemoOriginal = Dom.useMemo;

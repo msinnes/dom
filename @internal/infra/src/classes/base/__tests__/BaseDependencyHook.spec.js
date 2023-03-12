@@ -1,14 +1,14 @@
-import { BaseDependable } from '../BaseDependable';
+import { BaseDependencyHook } from '../BaseDependencyHook';
 
-class TestDependable extends BaseDependable {}
+class TestDependable extends BaseDependencyHook {}
 
-describe('BaseDependable', () => {
+describe('BaseDependencyHook', () => {
   it('should be a class', () => {
-    expect(BaseDependable).toBeAClass();
+    expect(BaseDependencyHook).toBeAClass();
   });
 
   it('should be abstract', () => {
-    expect(BaseDependable).toBeAbstract();
+    expect(BaseDependencyHook).toBeAbstract();
   });
 
   describe('instance', () => {

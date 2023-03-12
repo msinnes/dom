@@ -1,5 +1,4 @@
 import * as DOM from '@msinnes/dom';
-import { render } from '@msinnes/dom-testing-library';
 
 import { CaseResolver } from '../../classes/CaseResolver';
 import { RedirectResolver } from '../../classes/RedirectResolver';
@@ -35,7 +34,6 @@ describe('createResolver', () => {
     expect(() => {
       createResolver(render);
     }).toThrow('ImplementationError: Switch components can only take Case and Redirect as children');
-    let message;
   });
 });
 

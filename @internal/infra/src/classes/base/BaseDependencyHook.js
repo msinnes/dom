@@ -12,7 +12,7 @@ const compareDepsArrs = (dependencies, nextDependencies) => {
   }, false);
 };
 
-const BaseDependable = abstract(class {
+const BaseDependencyHook = abstract(class {
   tick = 0;
 
   constructor(fn, dependencies) {
@@ -28,4 +28,4 @@ const BaseDependable = abstract(class {
   }
 });
 
-export { BaseDependable };
+export { BaseDependencyHook };

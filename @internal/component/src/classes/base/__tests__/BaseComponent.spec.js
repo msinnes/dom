@@ -45,7 +45,6 @@ describe('BaseComponent', () => {
     let instance;
     let domContextValue;
     let domContext;
-    let elemRef;
 
     let insertChildMock;
     let removeChildMock;

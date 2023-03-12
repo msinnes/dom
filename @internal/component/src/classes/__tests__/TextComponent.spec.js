@@ -4,7 +4,7 @@
 import { createRender } from '@internal/render';
 import { TextNode } from '@internal/dom';
 
-import { DomComponent, DomParent } from '../base/DomComponent';
+import { DomComponent } from '../base/DomComponent';
 
 import { TextComponent } from '../TextComponent';
 

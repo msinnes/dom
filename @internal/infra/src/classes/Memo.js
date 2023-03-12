@@ -1,6 +1,6 @@
-import { BaseDependable } from './base/BaseDependable';
+import { BaseDependencyHook } from './base/BaseDependencyHook';
 
-class Memo extends BaseDependable {
+class Memo extends BaseDependencyHook {
   getValue(nextDependencies) {
     if (this.shouldExecute(nextDependencies)) this.val = this.fn();
     return this.val;

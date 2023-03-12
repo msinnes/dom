@@ -1,5 +1,4 @@
 import { BaseServerRenderController } from '@internal/base';
-import { DomRef } from '@internal/dom';
 import { SsrScope } from '@internal/ssr';
 
 import { RenderController } from '../RenderController';
@@ -15,7 +14,6 @@ describe('RenderController', () => {
 
   describe('instance', () => {
     let renderRef;
-    let anchorRef;
     let ssrScope;
 
     let enableMock;
@@ -26,7 +24,6 @@ describe('RenderController', () => {
 
     beforeEach(() => {
       renderRef = {};
-      anchorRef = {};
       ssrScope = new SsrScope({ dom: {} });
       instance = new RenderController(renderRef, ssrScope);
       enableMock = jest.spyOn(instance.scope, 'enable');
@@ -92,17 +89,20 @@ describe('RenderController', () => {
     });
 
     describe('render', () => {
+      let processEffectsMock;
+      let wrapElementMock;
+      beforeEach(() => {
+        processEffectsMock = jest.spyOn(instance, 'processEffects').mockImplementation(() => {});
+        wrapElementMock = jest.spyOn(instance, 'wrapElement').mockImplementation(() => {});
+      });
+
       it('should call wrapElement for all elements in the dom', () => {
-        const processEffectsMock = jest.spyOn(instance, 'processEffects').mockImplementation(() => {});
-        const wrapElementMock = jest.spyOn(instance, 'wrapElement').mockImplementation(() => {});
         instance.render();
         expect(wrapElementMock).toHaveBeenCalledTimes(1);
         expect(wrapElementMock).toHaveBeenCalledWith(ssrScope.body.elem);
       });
 
       it('should call processEffects', () => {
-        const processEffectsMock = jest.spyOn(instance, 'processEffects').mockImplementation(() => {});
-        const wrapElementMock = jest.spyOn(instance, 'wrapElement').mockImplementation(() => {});
         instance.render();
         expect(processEffectsMock).toHaveBeenCalledTimes(1);
       });

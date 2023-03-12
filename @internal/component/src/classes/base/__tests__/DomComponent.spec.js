@@ -1,7 +1,4 @@
-import { createRender } from '@internal/render';
-
 import { JSXComponent } from '../JSXComponent';
-import { EmptyComponent } from '../../EmptyComponent';
 
 import { DomComponent, DomParent } from '../DomComponent';
 

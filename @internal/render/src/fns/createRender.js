@@ -3,7 +3,6 @@ import {
   isString,
   isEmptyString,
   isArray,
-  isObjectLiteral,
   isFunction,
   isUndefined,
 } from '@internal/is';

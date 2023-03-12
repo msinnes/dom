@@ -2,7 +2,7 @@
 
 A server-side rendering library for the `@msinnes/dom` stack. This is a simple library with a single function. The function, `renderToString` takes a render and gives back a rendered string of `html`.
 
-This library is the one that is the most 'under construction.' The server-side rendering engine is the same engine used to render in `@msinnes/dom` and `@msinnes/dom-testing-library`. The important piece of missing functionality is progressive rendering. The server side rendering library is still a shallow app render MINUS ANY EFFECT RENDERING. Dom effects are processed in other libraries, but effects and setState functionality are not implemented in this library. Once server-side rendering is well polished in the testing library, that functionality will be ported to the server-side rendered application.
+The server-side rendering engine is the same engine used to render in `@msinnes/dom` and `@msinnes/dom-testing-library`. Rendering on the server is synchronous, and any async behavior in your application will be ignore at the current time.
 
 ## Usage
 
@@ -114,4 +114,4 @@ type JSXRender = JSX | string | JSXRender[] | undefined | null;
 function renderToString(JSXRender): string;
 ```
 
-It is important to note that `renderToString` only performs a shallow render of the application. Any DOM effects will be ignored, and there is no implementation for setState functionality. The output string will only include a synchronous output base on the input render and associated date.
+It is important to note that `renderToString` only performs a shallow render of the application. The output string will only include a synchronous output base on the input render and associated date.

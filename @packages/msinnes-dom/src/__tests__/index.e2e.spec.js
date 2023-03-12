@@ -441,9 +441,6 @@ describe('e2e.hooks', () => {
       const incrementState = () => {
         setState(++state);
       };
-      const updateHook = () => {
-        updateTick(++tick);
-      };
 
       useEffect(() => {
         window.document.title = 'set title - ' + state;

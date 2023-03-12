@@ -30,7 +30,7 @@ describe('abstract', () => {
   });
 
   it('should be constructable if extended', () => {
-    class ExtendedClass extends AbstractClass {};
+    class ExtendedClass extends AbstractClass {}
     let error;
     try {
       new ExtendedClass();

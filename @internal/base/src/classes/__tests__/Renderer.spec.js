@@ -458,7 +458,6 @@ describe('Renderer', () => {
           canUpdate: canUpdateMock,
           update: updateMock,
         };
-        const newComponentRef = {};
         const updatedComponent = instance.update(renderRef, currentComponent);
         expect(canUpdateMock).toHaveBeenCalledTimes(1);
         expect(canUpdateMock).toHaveBeenCalledWith(renderRef);
@@ -477,7 +476,6 @@ describe('Renderer', () => {
           update: updateMock,
           componentDidUpdate: jest.fn(),
         };
-        const newComponentRef = {};
         const updatedComponent = instance.update(renderRef, currentComponent);
         expect(canUpdateMock).toHaveBeenCalledTimes(1);
         expect(canUpdateMock).toHaveBeenCalledWith(renderRef);

@@ -94,7 +94,7 @@ By adding a basic `index.js` we can show a small example of how to implement an 
 
 ##### `index.js`
 ```JavaScript
-import { renderApp, useState } from '@msinnes/dom';
+import { createRef, useState } from '@msinnes/dom';
 
 const App = () => {
   const [count, setCount] = useState(0);
@@ -107,33 +107,12 @@ const App = () => {
   );
 };
 
-renderApp(<App />, document.body);
+createRef(document.body).render(<App />);
 ```
 
 # API
 
-## - `renderApp`
-
 The top-level method for rendering an application to the DOM. It takes two arguments, a jsx render and a DOM element. The element will act as a root node for the DOM portion of the input render. Any DOM elements processed during the render cycle will be rendered beneath the input element in the DOM tree.
-
-```TypeScript
-function renderApp(render: JSXRender, element: HTMLElement): void;
-```
-
-The `renderApp` funtion acts as a `main` method would in a Java or C application. It is the starting point of render operations, and a simple html render would look something like the snippet below.
-
-```JavaScript
-import { renderApp } from '@msinnes/dom';
-
-renderApp((
-  <ul>
-    <li>Item 1</li>
-    <li>Item 2</li>
-  </ul>
-), document.body);
-```
-
-**This part of the API is still unstable, and will likely change before or during `beta` development.
 
 ## - `createRef`
 
@@ -143,37 +122,20 @@ A factory function for creating DOM interfaces within the `@msinnes/dom` ecosyst
 function createRef(elem: string | HTMLElement): DomRef;
 ```
 
-A `DomRef` is a wrapper class around DOM elements. It is used in two ways. At the top level, here, it gives the user way to interact with DOM elements. Internally, it wraps every DOM element and gives the application a means of interacting with the DOM. Refs created by this factory have a second purpose in the rendering process: they can be used as jsx signatures. Rather than provide the ref to the component as a prop, the ref is passed as the component's definition.
+A `DomRef` is the entry point of the dom rendering ecosystem. First, create a dom ref from an existing dom node, and then render onto that ref.
 
 ```JavaScript
-import { renderApp, createRef } from '@msinnes/dom';
+import { createRef } from '@msinnes/dom';
 
-const Canvas = createRef('canvas');
-
-function doStuffWithCanvas(canvasRef) {
-  // The created/input element will live on the 'elem' prop.
-  const { elem } = canvasRef;
-
-  /**
-   * Do stuff with the element.
-   * In the case of a canvas element, we would call
-   * canvas.getContext to draw on the surface.
-   */
-}
-
-const App = () => {
-  // renders the canvas to the DOM...poorly in this instance.
-  useEffect(() => {
-    doStuffWithCanvas(Canvas);
-  }, []);
-
-  return <Canvas />;
-};
-
-renderApp(<App />, docuument.body);
+createRef(document.body).render((
+  <ul>
+    <li>Item 1</li>
+    <li>Item 2</li>
+  </ul>
+));
 ```
 
-Although the `DomRef` class is not exposed to the user for extension, it is one of the essential building blocks of the rendering paradigm. After a few improvements inside the library, the refs provided by this utility will replace the need for the `renderApp` function altogether.
+A `DomRef` wraps every DOM element and gives the application a means of interacting with the DOM. These object lie at the center of the dom ecosystem, and provide the connection between user and DOM.
 
 ## - `Component`
 
@@ -193,13 +155,11 @@ renderApp(<MyComponent />, document.body);
 
 **Technically, a render can be anything you want, but be careful. Unrecognized inputs render to the DOM as strings via the `toString` method.
 
-#### Component Lifecycle
+#### `Component Lifecycle`
 
-The Component lifecycle is one of the unstable parts of the library. Currently, they do not work the way one would expect. The Application lifecycle and DOM lifecycle are disjoint. The application rendering process outputs a DOM render that is in turn rendered to the page.
+There are three component lifecycle methods exposed: `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount`. The first two are instance effects, and fire after the render cycle is complete. `componentWillUnmount` fires during the render cycle, and executes immediately before the component is destroyed.
 
-All parts of the application lifecycle run prior to DOM execution, and this will change. There is a seperate API for executing DOM effects on class components, and this API will go away as well.
-
-As of right now, use Function Components with Hooks. That API is stable and works more how you would expect. When the `beta` engine rebuild is finished, the lifecycle API will work almost the same as the React API.
+These instance methods can only be assigned to class components that extends the `Component` class. They also grant the user access to other instance methods. This means that the user can trigger a rerender after the render cycle completes. Careful use of this feature is necessary to prevent infinite loops.
 
 ## - `createContext`
 
@@ -219,7 +179,7 @@ Each context has a `Provider` and a `Consumer`. Can take an initial value, or th
 #### - Providing Context Values
 
 ```JavaScript
-import { renderApp, createContext } from '@msinnes/dom';
+import { createContext } from '@msinnes/dom';
 
 const { Provider } = createContext('initialValue');
 
@@ -235,7 +195,7 @@ Values can be provided two ways, through a default value and through a provider 
 #### - Class Component `contextType`
 
 ```JavaScript
-import { renderApp, Component, createContext } from '@msinnes/dom';
+import { createRef, Component, createContext } from '@msinnes/dom';
 
 const ctx = createContext('initialValue');
 
@@ -247,7 +207,7 @@ class MyComponent extends Component {
   }
 }
 
-renderApp(<MyComponent />, document.body);
+createRef(document.body).render(<MyComponent />);
 ```
 
 Contexts can be accessed statically in class components. In this case, the text 'initialValue' would be rendered inside the `body` element.
@@ -308,7 +268,7 @@ function useContext(initialValue: *): *;
 The current value is either the value provided by the nearest Provider in the Application tree, or it will be the initial value if there is no Provider present in the Application tree.
 
 ```JavaScript
-import { renderApp, useContext, createContext } from '@msinnes/dom';
+import { createRef, useContext, createContext } from '@msinnes/dom';
 
 const ctx = createContext('initialValue');
 
@@ -318,7 +278,7 @@ const MyComponent = () => {
   return value;
 };
 
-renderApp(<MyComponent />, document.body);
+createRef(document.body).render(<MyComponent />);
 ```
 
 ## - `useEffect`

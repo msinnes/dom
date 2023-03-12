@@ -76,7 +76,6 @@ describe('BaseRenderController', () => {
         const componentRef = {};
         const nextStateRef = {};
 
-        const servicesPushFrameMock = jest.spyOn(instance.services, 'pushFrame');
         const EmptyComponent = instance.renderer.createComponent({ isEmptyRender: true });
         EmptyComponent.services.pushFrame(componentRef, nextStateRef);
         expect(instance.queue.length).toEqual(1);

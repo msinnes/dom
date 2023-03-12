@@ -1,6 +1,6 @@
-import { BaseDependable } from '../base/BaseDependable';
+import { BaseDependencyHook } from '../base/BaseDependencyHook';
 
-class Effect extends BaseDependable {
+class Effect extends BaseDependencyHook {
   cleanupFn = null;
   nextDependencies = [];
 

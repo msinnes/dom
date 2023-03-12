@@ -3,7 +3,7 @@ import { abstract } from '@internal/oop';
 import { BaseRenderController } from './BaseRenderController';
 
 const BaseServerRenderController = abstract(class extends BaseRenderController {
-  constructor(render, ssrScope, services) {
+  constructor(render, ssrScope) {
     super(render, ssrScope.body, ssrScope.services);
 
     this.scope = ssrScope;

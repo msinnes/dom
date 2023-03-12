@@ -36,7 +36,6 @@ class Router extends DOM.Component {
   }
 
   render() {
-    const params = this.baseRoute.getParams(window.location.pathname);
     return DOM.createElement(RouterContext.Provider, { value: {
       navigate: this.navigate,
       baseRoute: this.baseRoute,

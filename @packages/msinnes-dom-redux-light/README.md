@@ -72,7 +72,7 @@ And by adding a basic `index.js` we can show a small example of how to implement
 
 ##### `index.js`
 ```JavaScript
-import { renderApp } from '@msinnes/dom';
+import { createRef } from '@msinnes/dom';
 import { StoreProvider, connect, createStore } from '@msinnes/dom-redux-light';
 
 // Action type for use in action and reducer
@@ -107,11 +107,11 @@ const mapDispatchToProps = dispatch => ({
 // Tie the App component back into the store.
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App);
 
-renderApp((
+createRef(document.body).render((
   <StoreProvider store={sotre}>
     <ConnectedApp />
   </StoreProvider>
-), document.body);
+));
 ```
 
 # API
@@ -133,7 +133,7 @@ function createStore(reducer: Function, initialState: *): Store;
 The `dispatch` function executes synchronously and there is not current middleware implementation. That means async actions require wrapping the store's `dispatch` function. An example could look something like this:
 
 ```JavaScript
-import { renderApp } from '@msinnes/dom';
+import { createRef } from '@msinnes/dom';
 import { createStore, StoreProvider } from '@msinnes/dom-redux-light';
 
 import myReducer from '<path-to-reducer>';
@@ -150,7 +150,7 @@ store.dispatch = action => {
   }
 };
 
-renderApp(
+createRef(document.body).render(
   <StoreProvider store={store}>
     {/* Application Components */}
   </StoreProvider>

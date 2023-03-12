@@ -14,7 +14,7 @@ class Context {
     this.values.push(value);
   }
 
-  removeValue(value) {
+  removeValue() {
     this.values.pop();
   }
 }

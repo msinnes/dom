@@ -33,7 +33,6 @@ class DomParent {
 
   insertChild(child) {
     this.elem.insertBefore(child.elem, this.elem.children[this.index]);
-    // this.increment();
   }
 
   removeChild(child) {

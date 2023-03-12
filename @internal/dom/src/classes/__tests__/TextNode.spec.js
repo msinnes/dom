@@ -15,12 +15,8 @@ describe('TextNode', () => {
   });
 
   describe('instance', () => {
-    let createTextNodeMock;
-    let mockTextNode;
     let instance;
     beforeEach(() => {
-      mockTextNode = {};
-      createTextNodeMock = jest.spyOn(document, 'createTextNode');
       instance = new TextNode('text');
     });
 

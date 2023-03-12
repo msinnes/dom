@@ -15,9 +15,7 @@ describe('EmptyComponent', () => {
 
   describe('instance', () => {
     let instance;
-    let props;
     beforeEach(() => {
-      props = {};
       instance = new EmptyComponent();
     });
 

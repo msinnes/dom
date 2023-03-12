@@ -62,14 +62,11 @@ describe('ContextService', () => {
         const consoleWarnOriginal = console.warn;
         console.warn = consoleWarnMock;
 
-        const userContext1 = instance.createEntity('value 1');
-        const userContext2 = instance.createEntity('value 2');
-
         expect(instance.getContextValue({})).toBeUndefined();
         expect(consoleWarnMock).toHaveBeenCalledTimes(1);
         expect(consoleWarnMock).toHaveBeenCalledWith('ImplementationWarning: The input context was not found, returning undefined.');
 
-        console.warn = console.consoleWarnOriginal;
+        console.warn = consoleWarnOriginal;
       });
     });
 

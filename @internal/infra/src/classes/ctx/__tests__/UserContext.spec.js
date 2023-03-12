@@ -46,7 +46,7 @@ describe('UserContext', () => {
         const valueMock = jest.fn();
         const value = (...args) => valueMock(...args);
         valueMock.mockReturnValue(newValueRef);
-        const render = instance.Provider({ value, children: childRef });
+        instance.Provider({ value, children: childRef });
         expect(valueMock).toHaveBeenCalledTimes(1);
         expect(valueMock).toHaveBeenCalledWith('mock value');
         expect(addValueMock).toHaveBeenCalledTimes(1);

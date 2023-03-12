@@ -1,7 +1,7 @@
 import { RemovableService } from '../../base/RemovableService';
 import { InstanceEffects } from '../InstanceEffects';
 
-import { EffectService, ClassEffect } from '../EffectService';
+import { EffectService } from '../EffectService';
 
 describe('EffectService', () => {
   it('should be a class', () => {
