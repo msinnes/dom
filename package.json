@@ -24,7 +24,7 @@
     "publish-packages": "yarn clean-bootstrap && yarn build-packages && lerna version && lerna publish from-package",
     "test": "jest",
     "test-ci": "cypress run --spec \"**/!(all).cy.js\"",
-    "test-e2e": "cypress open",
+    "test-e2e": "cypress run --browser chrome --spec \"**/!(all).cy.js\"",
     "update-libs": "yarn cache clean && yarn clean-bootstrap",
     "watch": "jest --watchAll"
   },
