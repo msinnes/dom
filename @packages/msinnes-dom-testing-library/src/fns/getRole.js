@@ -1,3 +1,5 @@
+import { isFunction } from '@internal/is';
+
 const linkLike = elem => !!elem.href ? 'link' : 'generic';
 
 const isDescendantOf = (elem, cb) => {
@@ -162,7 +164,7 @@ const TagToRoleMap = {
 const getRole = elem => {
   if (elem.role) return elem.role;
   const role = TagToRoleMap[elem.tagName.toLowerCase()];
-  if (role instanceof Function) return role(elem);
+  if (isFunction(role)) return role(elem);
   return role;
 };
 

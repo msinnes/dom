@@ -1,3 +1,3 @@
 import { createRef } from '@msinnes/dom';
 
-createRef(document.body).render('text');
+createRef(document.body).hydrate('text');
