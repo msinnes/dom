@@ -6,7 +6,7 @@ describe('form', () => {
   it('should load the add item form', () => {
     cy.get('body > button').click();
     cy.get('body >').should(elems => {
-      const input = elems.eq(1)[0];
+      const input = elems.eq(0)[0];
       expect(input.tagName).to.equal('INPUT');
       expect(input.type).to.equal('text');
     });

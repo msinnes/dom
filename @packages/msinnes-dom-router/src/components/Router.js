@@ -1,18 +1,15 @@
-import { Component } from '@msinnes/dom';
-import { RouterContext } from '../RouterContext';
-import { createBaseRouteRegex } from '../utils/regex-utils';
-import { getParams } from '../utils/path-utils';
+import * as DOM from '@msinnes/dom';
 
-class Router extends Component {
+import { RouterContext } from '../RouterContext';
+import { BaseRoute } from '../classes/BaseRoute';
+
+class RouterBaseRoute extends BaseRoute {}
+
+class Router extends DOM.Component {
   constructor(props) {
     super(props);
 
-    this.state = 0;
-
-    if (props.basePath) {
-      this.path = props.basePath;
-      this.regex = createBaseRouteRegex(props.basePath);
-    }
+    this.baseRoute = new RouterBaseRoute(props.basePath || '/');
     this.onPopstate = this.onPopstate.bind(this);
     this.navigate = this.navigate.bind(this);
   }
@@ -35,23 +32,16 @@ class Router extends Component {
   }
 
   onPopstate() {
-    this.setState(state => ++state);
+    this.setState();
   }
 
   render() {
-    let params = {};
-    if (this.regex) params = getParams(this.regex, this.path, window.location.pathname);
-
-    return (
-      <RouterContext.Provider value={{
-          navigate: this.navigate,
-          basePath: this.regex,
-          location: window.location,
-          params,
-        }}>
-        {this.props.children}
-      </RouterContext.Provider>
-    );
+    return DOM.createElement(RouterContext.Provider, { value: {
+      navigate: this.navigate,
+      baseRoute: this.baseRoute,
+      location: window.location,
+      params: this.baseRoute.getParams(window.location.pathname),
+    } }, [this.props.children]);
   }
 }
 

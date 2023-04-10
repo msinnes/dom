@@ -1,19 +1,37 @@
 # `@internal/oop`
 
-A lightweight library for basic object oriented patterns not present in core JavaScript.
+A lightweight library for basic object oriented patterns not present in core JavaScript. These abstractions are all present at runtime.
 
-## abstract
+# API Functions
 
-Makes a class abstract. Uses ES6 to extend the class. This is a runtime abstraction.
+## - abstract
 
-## abstractMethod
+Takes in a class and creates and abstract class, a class that will throw an error if instantiated without first extending the class.
 
-Makes a class abstract by creating an abstract method. This should be implemented in a class constructor, and the instance will be checked for the method when it is created. This is a runtime abstraction.
+```TypeScript
+const abstract = T => abstract U extends T;
+```
 
-## extendz
+## - abstractMethod
 
-Will check to see if one class extends another.
+Checks an instance for a function with the input name. This check should be called in a constructor, and inherently makes a class abstract.
 
-## getter
+```TypeScript
+const abstractMethod = (instance, methodName) => void;
+```
 
-A shorthand for adding a getter to a class when an ES6 getter is not optimal.
+## - extendz
+
+Checks if a class extends a superclass.
+
+```TypeScript
+const extendz = (Class, SuperClass) => boolean;
+```
+
+# Exposed API
+
+```js
+export { abstract } from './fns/abstract';
+export { abstractMethod } from './fns/abstractMethod';
+export { extendz } from './fns/extendz';
+```

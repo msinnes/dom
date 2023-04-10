@@ -3,6 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const babel = require('@babel/core');
 const rimraf = require('rimraf');
+const domJsxPlugin = require('../../@packages/msinnes-babel-plugin-dom-jsx');
 
 const pages = ['index', 'contents', 'redux'];
 
@@ -32,7 +33,7 @@ const pageConfig = {
         use: {
           loader: 'babel-loader',
           options: {
-            plugins: ['@babel/plugin-syntax-jsx', '@msinnes/babel-plugin-dom-jsx'],
+            plugins: ['@babel/plugin-syntax-jsx', domJsxPlugin],
             presets: ['@babel/preset-env']
           },
         },
@@ -109,7 +110,13 @@ const getFilesInDir = async dir => {
 const transformFile = file => {
   return new Promise((resolve, reject) => {
     babel.transformFile(file, {
-      plugins: ['@babel/plugin-syntax-jsx', '@msinnes/babel-plugin-dom-jsx'],
+      plugins: ['@babel/plugin-syntax-jsx', domJsxPlugin, ["module-resolver", {
+        "root": ["../../@packages"],
+        "alias": {
+          "@msinnes/dom-server": "./@packages/msinnes-dom-server",
+          "@msinnes/dom-redux-light": "./@packages/msinnes-dom-redux-light",
+        }
+      }]],
       presets: ['@babel/preset-env']
     }, (err, out) => {
       if (err) {

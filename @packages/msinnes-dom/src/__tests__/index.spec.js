@@ -1,92 +1,23 @@
-/**
- * @jest-environment jsdom
- */
-import {
-  createRef,
-  createContext,
-  Component,
-  renderApp,
-  hydrateApp,
-  createElement,
-  cloneElement,
-  // hooks
-  useContext,
-  useState,
-  useMemo,
-  useEffect,
-  useRef,
-} from '..';
+import { createElement, cloneElement } from '@internal/utils';
+import { BaseRenderableComponent } from '@internal/base';
 
-describe('index', () => {
-  describe('createRef', () => {
-    it('should be a function', () => {
-      expect(createRef).toBeInstanceOf(Function);
-    });
-  });
+import * as api from '..';
 
-  describe('createContext', () => {
-    it('should be a function', () => {
-      expect(createContext).toBeInstanceOf(Function);
-    });
-  });
+import { createRef } from '../fns/refs';
+import { createContext } from '../fns/ctx';
+import { infra } from '../infra';
 
-  describe('Component', () => {
-    it('should be a class', () => {
-      expect(Component).toBeInstanceOf(Function);
-    });
-  });
+describe('api', () => {
+  it('should expose the api', () => {
+    expect(api.Component).toBe(BaseRenderableComponent);
+    expect(api.createRef).toBe(createRef);
+    expect(api.createContext).toBe(createContext);
+    expect(api.createElement).toBe(createElement);
+    expect(api.cloneElement).toBe(cloneElement);
 
-  describe('renderApp', () => {
-    it('should be a function', () => {
-      expect(renderApp).toBeInstanceOf(Function);
-    });
-  });
-
-  describe('hydrateApp', () => {
-    it('should be a function', () => {
-      expect(hydrateApp).toBeInstanceOf(Function);
-    });
-  });
-
-  describe('createElement', () => {
-    it('should be a function', () => {
-      expect(createElement).toBeInstanceOf(Function);
-    });
-  });
-
-  describe('cloneElement', () => {
-    it('should be a function', () => {
-      expect(cloneElement).toBeInstanceOf(Function);
-    });
-  });
-
-  describe('useContext', () => {
-    it('should be a function', () => {
-      expect(useContext).toBeInstanceOf(Function);
-    });
-  });
-
-  describe('useState', () => {
-    it('should be a function', () => {
-      expect(useState).toBeInstanceOf(Function);
-    });
-  });
-
-  describe('useMemo', () => {
-    it('should be a function', () => {
-      expect(useMemo).toBeInstanceOf(Function);
-    });
-  });
-
-  describe('useEffect', () => {
-    it('should be a function', () => {
-      expect(useEffect).toBeInstanceOf(Function);
-    });
-  });
-
-  describe('useRef', () => {
-    it('should be a function', () => {
-      expect(useRef).toBeInstanceOf(Function);
-    });
+    expect(api.useContext).toBe(infra.hooks.useContext);
+    expect(api.useEffect).toBe(infra.hooks.useEffect);
+    expect(api.useMemo).toBe(infra.hooks.useMemo);
+    expect(api.useState).toBe(infra.hooks.useState);
   });
 });

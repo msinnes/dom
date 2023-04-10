@@ -10,8 +10,10 @@ const config = {
 const gen = ast => generate(ast).code;
 const parse = text => parser.parse(text, config);
 
-module.exports = (input, plugins) => {
+const process = (input, plugins) => {
   const ast = parse(input);
   traverse(ast, plugins().visitor);
   return gen(ast);
 };
+
+export { process };

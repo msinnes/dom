@@ -1,3 +1,11 @@
 module.exports = {
-  "presets": ["@msinnes/babel-preset-dom-jsx"]
+  "plugins": [
+    ["module-resolver", {
+      "root": ["./@packages"],
+      "alias": {
+        "@msinnes/dom": "./@packages/msinnes-dom",
+      }
+    }],
+  ],
+  "presets": ["@babel/preset-env"],
 };

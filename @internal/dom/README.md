@@ -1,23 +1,63 @@
 # `@internal/dom`
 
-Components, renders, and a renderer for performing dom logic in the render process. Also has DomElement and DomRef for controlling dom interaction.
+Base Dom refs and node wrappers.
 
-## DomRender
+# API Classes
 
-A class for dom renders. Renders have a signature, props, and children. Dom renders are instances of `BaseRender`.
+## - BaseDomNode
 
-## DomRenderer
+Base node wrapper class.
 
-A class for rendering renders. It takes a render and renders components. Dom renderers are instances of `BaseRenderer`.
+```TypeScript
+abstract class BaseDomNode {}
+```
 
-## DomComponent
+## - DomRef
 
-Component for dom rendering. Extends `BaseComponent`.
+Base dom reference object. Directly wraps elements and is exposed for extension in top-level refs.
 
-## DomElement
+```TypeScript
+class DomRef {}
+```
 
-Manages base dom interaction.
+## - ElementNode
 
-## DomRef
+The dom element node wrapper.
 
-Contains base dom references.
+```TypeScript
+class ElementNode extends BaseDomNode {}
+```
+
+## - RootNode
+
+The root element node wrapper.
+
+```TypeScript
+class RootNode extends BaseDomNode {}
+```
+
+## - TextNode
+
+The text node wrapper.
+
+```TypeScript
+class TextNode extends BaseDomNode {}
+```
+
+## - TextRef
+
+Base text reference object
+
+```TypeScript
+class TextRef{}
+```
+
+# Exposed API
+
+```js
+export { DomRef } from './classes/DomRef';
+export { ElementNode } from './classes/ElementNode';
+export { RootNode } from './classes/RootNode';
+export { TextNode } from './classes/TextNode';
+export { TextRef } from './classes/TextRef';
+```

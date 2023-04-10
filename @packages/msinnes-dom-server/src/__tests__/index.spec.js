@@ -1,9 +1,9 @@
-import * as api from '../';
-import { renderToString } from '../renderToString';
+import * as api from '..';
 
-describe('renderToString', () => {
-  it('should be a function', () => {
-    expect(api.renderToString).toBeDefined();
+import { renderToString } from '../fns/renderToString';
+
+describe('api', () => {
+  it('should expose the api', () => {
     expect(api.renderToString).toBe(renderToString);
   });
 });

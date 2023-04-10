@@ -1,5 +1,5 @@
-import { createInfrastructure } from '@internal/infra';
+import { Infra } from '@internal/infra';
 
-const { hooks, services } = createInfrastructure();
+const infra = new Infra();
 
-export { hooks, services };
+export { infra };

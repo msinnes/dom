@@ -9,7 +9,7 @@ describe('page load', () => {
 
   it('should have a button', () => {
     cy.get('body >').should(elems => {
-      const button = elems.eq(1)[0];
+      const button = elems.eq(0)[0];
       expect(button.tagName).to.equal('BUTTON');
       expect(button).to.contain('Click Me');
     })

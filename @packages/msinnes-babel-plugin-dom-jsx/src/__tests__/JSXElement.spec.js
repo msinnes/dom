@@ -1,29 +1,48 @@
-const process = require('./process');
+import { process } from './process';
 
-const plugins = require('..');
+import plugins from '..';
 
-const case1In = '<SomeClass />';
-const case1Out = `({
+describe('JSXElement', () => {
+  it('should process case 1', () => {
+const jsx = '<SomeClass />';
+const expected = `({
   signature: SomeClass
 });`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case2In = '<div />';
-const case2Out = `({
+  it('should process case 2', () => {
+const jsx = '<div />';
+const expected = `({
   signature: "div"
 });`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case3In = '<acronym />';
+  it('should process case 3', () => {
+const jsx = '<acronym />';
+    expect(() => {
+      process(jsx, plugins);
+    }).toThrow('TypeError:');
+  });
 
-const case4In = '<div prop1={\'123\'} />';
-const case4Out = `({
+  it('should process case 4', () => {
+const jsx = '<div prop1={\'123\'} />';
+const expected = `({
   signature: "div",
   props: {
     prop1: '123'
   }
 });`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case5In = '<div prop1={{ subProp: \'123\' }} prop2={123} />';
-const case5Out = `({
+  it('should process case 5', () => {
+const jsx = '<div prop1={{ subProp: \'123\' }} prop2={123} />';
+const expected = `({
   signature: "div",
   props: {
     prop1: {
@@ -32,9 +51,13 @@ const case5Out = `({
     prop2: 123
   }
 });`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case6In = '<div prop1={{ subProp: \'123\' }} prop2="123" />';
-const case6Out = `({
+  it('should process case 6', () => {
+const jsx = '<div prop1={{ subProp: \'123\' }} prop2="123" />';
+const expected = `({
   signature: "div",
   props: {
     prop1: {
@@ -43,38 +66,54 @@ const case6Out = `({
     prop2: "123"
   }
 });`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case7In = `<div>
+  it('should process case 7', () => {
+const jsx = `<div>
   <div />
 </div>`;
-const case7Out = `({
+const expected = `({
   signature: "div",
   children: [{
     signature: "div"
   }]
 });`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case8In = `<div>
+  it('should process case 8', () => {
+const jsx = `<div>
   some text
 </div>`;
-const case8Out = `({
+const expected = `({
   signature: "div",
   children: ["\\n  some text\\n"]
 });`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case9In = `<ul>
+  it('should process case 9', () => {
+const jsx = `<ul>
   {items.map(item => <li>{item}</li>)}
 </ul>`;
-const case9Out = `({
+const expected = `({
   signature: "ul",
   children: [items.map(item => ({
     signature: "li",
     children: [item]
   }))]
 });`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case10In = `<div beforeProp="123" {...props} afterProp={1} />`;
-const case10Out = `({
+  it('should process case 10', () => {
+const jsx = '<div beforeProp="123" {...props} afterProp={1} />';
+const expected = `({
   signature: "div",
   props: {
     beforeProp: "123",
@@ -82,24 +121,36 @@ const case10Out = `({
     afterProp: 1
   }
 });`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case11In = `<div exact />`;
-const case11Out = `({
+  it('should process case 11', () => {
+const jsx = '<div exact />';
+const expected = `({
   signature: "div",
   props: {
     exact: true
   }
 });`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case12In = `<div>
+  it('should process case 12', () => {
+const jsx = `<div>
   {() => {}}
 </div>`;
-const case12Out = `({
+const expected = `({
   signature: "div",
   children: [() => {}]
 });`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case13In = `
+  it('should process case 13', () => {
+const jsx = `
 <View>
   {/* Inline comment*/}
   {/*
@@ -108,108 +159,26 @@ const case13In = `
   */}
 </View>
 `;
-const case13Out = `({
+const expected = `({
   signature: View,
   children: []
 });`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case14In = `
+  it('should process case 14', () => {
+const jsx = `
 <Context.Provider>
   <div />
 </Context.Provider>`;
-const case14Out = `({
+const expected = `({
   signature: Context.Provider,
   children: [{
     signature: "div"
   }]
 });`;
-
-
-describe('JSXElement', () => {
-  describe('when there is only a signature', () => {
-    it('should render an identifier signature', () => {
-      const out = process(case1In, plugins);
-      expect(out).toEqual(case1Out);
-    });
-
-    it('should render an html tag signature', () => {
-      const out = process(case2In, plugins);
-      expect(out).toEqual(case2Out);
-    });
-
-    it('should throw an error if the input is a deprecated html tag', () => {
-      expect(() => {
-        process(case3In, plugins);
-      }).toThrow('TypeError:');
-    });
-  });
-
-  describe('when there are props', () => {
-    it('should render 1 prop', () => {
-      const out = process(case4In, plugins);
-      expect(out).toEqual(case4Out);
-    });
-
-    it('should render 1 prop', () => {
-      const out = process(case5In, plugins);
-      expect(out).toEqual(case5Out);
-    });
-
-    it('should render a string prop', () => {
-      const out = process(case6In, plugins);
-      expect(out).toEqual(case6Out);
-    });
-  });
-
-  describe('when there are children', () => {
-    it('should render an element child', () => {
-      const out = process(case7In, plugins);
-      expect(out).toEqual(case7Out);
-    });
-
-    it('should render a string child', () => {
-      const out = process(case8In, plugins);
-      expect(out).toEqual(case8Out);
-    });
-
-    it('should render an object child', () => {
-      const out = process(case9In, plugins);
-      expect(out).toEqual(case9Out);
-    });
-  });
-
-  describe('when there are props spread onto a component', () => {
-    it('should spread the props correctly', () => {
-      const out = process(case10In, plugins);
-      expect(out).toEqual(case10Out);
-    });
-  });
-
-  describe('when a props does not have a value', () => {
-    it('should set that prop to boolean true', () => {
-      const out = process(case11In, plugins);
-      expect(out).toEqual(case11Out);
-    });
-  });
-
-  describe('when a child is a function', () => {
-    it('should set the function as children', () => {
-      const out = process(case12In, plugins);
-      expect(out).toEqual(case12Out);
-    });
-  });
-
-  describe('comments', () => {
-    it('should remove jsx comments', () => {
-      const out = process(case13In, plugins);
-      expect(out).toEqual(case13Out);
-    });
-  });
-
-  describe('dotted signatures', () => {
-    it('should handle object accessors as signatures', () => {
-      const out = process(case14In, plugins);
-      expect(out).toEqual(case14Out);
-    });
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
   });
 });

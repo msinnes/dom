@@ -1,3 +1,3 @@
-import { hydrateApp } from '@msinnes/dom';
+import { createRef } from '@msinnes/dom';
 
-hydrateApp('text', document.body);
+createRef(document.body).hydrate('text');

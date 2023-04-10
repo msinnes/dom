@@ -1,14 +1,14 @@
 import * as DOM from '@msinnes/dom';
 
-import { CaseResolver } from '../resolver/CaseResolver';
-import { RedirectResolver } from '../resolver/RedirectResolver';
+import { CaseResolver } from '../classes/CaseResolver';
+import { RedirectResolver } from '../classes/RedirectResolver';
 import { RouterContext } from '../RouterContext';
 
 const createResolver = ({ signature, props, children }) => {
   if (signature === Case) {
     return new CaseResolver(props.path, props.exact, props.render || children);
   } else if (signature === Redirect) {
-    return new RedirectResolver(props.path, props.exact, <Redirect to={props.to} />);
+    return new RedirectResolver(props.path, props.exact, DOM.createElement(Redirect, { to: props.to }));
   }
   throw new Error('ImplementationError: Switch components can only take Case and Redirect as children');
 };
@@ -17,7 +17,9 @@ const findCurrentRouteChild = (resolvers = [], pathname) => {
   const len = resolvers.length;
   for (let i = 0; i < len; i++) {
     const resolver = resolvers[i];
-    if (resolver.test(pathname)) return resolver.resolve(pathname);
+    if (resolver.test(pathname)) {
+      return resolver.resolve(pathname);
+    }
   }
   return null;
 };
@@ -28,16 +30,15 @@ const Case = () => {
 
 const Redirect = ({ to }) => {
   const ctx = DOM.useContext(RouterContext);
-  DOM.useEffect(() => {
-    ctx.navigate(to);
-  });
+  DOM.useEffect(() => ctx.navigate(to));
   return null;
 };
 
 const Switch = ({ children }) => {
   const { location } = DOM.useContext(RouterContext);
   const resolvers = DOM.useMemo(() => children.map(createResolver));
-  return findCurrentRouteChild(resolvers, location.pathname);
+  const child = findCurrentRouteChild(resolvers, location.pathname);
+  return child;
 };
 
-export { createResolver, findCurrentRouteChild, Switch, Case, Redirect };
+export { createResolver, findCurrentRouteChild, Case, Redirect, Switch };

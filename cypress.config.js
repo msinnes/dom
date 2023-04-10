@@ -8,4 +8,5 @@ module.exports = defineConfig({
       return require('./cypress/plugins/index.js')(on, config)
     },
   },
+  video: false,
 })

@@ -1,12 +1,8 @@
 # `@msinnes/dom-testing-library`
 
-A jest testing library for `@msinnes/dom` applications. This is the newest piece of the toolkit, so it's documentation and functionality need the most work. That said, this library is the bleeding edge of the toolkit. As it turns out, the rendering engine is rather powerful.
+A jest testing library for `@msinnes/dom` applications. This testing library can be used to execute behavioral testing, end-to-end testing, and limited unit testing on rendered DOM components. The reason we call it 'limited unit testing' because we can't do direct unit testing on shallow rendered components. This library renders the components to a headless DOM (with JSDOM) and then provides an interface for querying that render.
 
-This testing library can be used to execute behavioral testing, end-to-end testing, and limited unit testing on rendered DOM components. The reason we call it 'limited unit testing' because we can't do direct unit testing on shallow rendered components. This library renders the components to a headless DOM (with JSDOM) and then provides an interface for querying that render.
-
-The true power of this libary lies in the fact that screen renders are atomic. Multiple screens can be rendered in parallel. Assertions and actions can be executed independently from screen to screen. There is no deen for DOM cleanup. If a screen renders within the context of a single test, it will descope after the test run. Like any variable in JavaScript, it will be garbage collected as soon as it is descoped.
-
-This library has some helpers that are jest dependent, so the library is currently coupled with jest. This will change soon. The jest-dom helper will be abstracted into a seperate helper library so that this functionality can be run in any testing framework.
+The true power of this libary lies in the fact that screen renders are atomic. Multiple screens can be rendered in parallel. Assertions and actions can be executed independently from screen to screen. There is no deen for DOM cleanup. If a screen renders within the context of a single test, it will descope after the test run.
 
 # Usage
 
@@ -126,7 +122,3 @@ describe('App', () => {
 There is some limited functionality that can be configured when the render function creates the screen. This functionality will be expanded in the next release along with a round of changes to the queries.
 
 This part of the library is unstable, and documentation will be expanded in an upcoming release.
-
- ### - About Jest Helpers
-
- This library currently requires Jest to operate. There are a few provided jest matchers, but these will be moved into an additional npm package, or possible multiple helper libraries. This library will soon be decoupled from jest, and should be functional in any testing environment.

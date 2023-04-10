@@ -1,0 +1,75 @@
+version: 2.1
+orbs:
+  node: circleci/node@5.1.0
+  cypress: cypress-io/cypress@3
+jobs:
+  checkout_install_build:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: yarn
+      - run:
+          command: yarn clean-bootstrap
+          name: Bootstrap Packages
+      - run:
+          command: yarn build
+          name: Build Packages
+      - persist_to_workspace:
+          root: ~/project
+          paths: .
+  unit_test:
+    executor: node/default
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: yarn coverage
+          name: Test Packages with Coverage
+  lint_test:
+    executor: node/default
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: yarn lint
+          name: Lint Packages
+  build_e2e:
+    executor: node/default
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: yarn build-e2e
+          name: Build E2E Packages
+  test_e2e:
+    executor: cypress/default
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: yarn cypress install --force
+          name: Reinstall Cypress
+      - cypress/run-tests:
+          start-command: yarn dev-server
+          cypress-command: yarn test-ci
+workflows:
+  test_modules:
+    jobs:
+      - checkout_install_build
+      - unit_test:
+          requires:
+            - checkout_install_build
+      - lint_test:
+          requires:
+            - checkout_install_build
+      - build_e2e:
+          requires:
+            - unit_test
+            - lint_test
+      - test_e2e:
+          requires:
+            - build_e2e
+
+
+

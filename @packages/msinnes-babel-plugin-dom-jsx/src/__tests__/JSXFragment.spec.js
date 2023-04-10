@@ -1,48 +1,45 @@
-const process = require('./process');
+import { process } from './process';
 
-const plugins = require('..');
+import plugins from '..';
 
-const case1In = `<>
+describe('JSXFragment', () => {
+  it('should process case 1', () => {
+const jsx = `<>
   <div />
   <SomeClass />
-</>`
-const case1Out =`[{
+</>`;
+const expected = `[{
   signature: "div"
 }, {
   signature: SomeClass
 }];`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case2In = `<>
+  it('should process case 2', () => {
+const jsx = `<>
   <div>Title</div>
   text
 </>`;
-const case2Out = `[{
+const expected = `[{
   signature: "div",
   children: ["Title"]
 }, "\\n  text\\n"];`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 
-const case3In = `
+  it('should process case 3', () => {
+const jsx = `
   <>
     {/* Inline comment */}
     {/* Multiline
     comment */}
   </>
 `;
-const case3Out = `[];`;
-
-describe('JSXFragment', () => {
-  it('should process a fragment', () => {
-    const out = process(case1In, plugins);
-    expect(out).toEqual(case1Out);
-  });
-
-  it('should process a fragment with a text node adjacent to an element', () => {
-    const out = process(case2In, plugins);
-    expect(out).toEqual(case2Out);
-  });
-
-  it('should process comments', () => {
-    const out = process(case3In, plugins);
-    expect(out).toEqual(case3Out);
+const expected = `[];`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
   });
 });

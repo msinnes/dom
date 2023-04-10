@@ -15,7 +15,7 @@ describe('form and add item', () => {
   it('should add the item to the list', () => {
     cy.get('body > div > button').eq(0).click();
     cy.get('body >').should(elems => {
-      const div = elems.eq(1)[0];
+      const div = elems.eq(0)[0];
       expect(div.tagName).to.equal('DIV');
     });
     cy.get('body > div >').should(elems => {

@@ -3,13 +3,13 @@ import * as DOM from '@msinnes/dom';
 import { RouterContext } from '../RouterContext';
 
 const Link = ({ to, children, ...linkProps }) => {
-  const { basePath, navigate } = DOM.useContext(RouterContext);
+  const { baseRoute, navigate } = DOM.useContext(RouterContext);
   let props = { ...linkProps };
   if (to) {
     props = {
       ...props,
       onclick: e => {
-        if (!basePath || basePath.test(to)) {
+        if (baseRoute.test(to)) {
           e.preventDefault();
           navigate(to);
         }
@@ -17,7 +17,7 @@ const Link = ({ to, children, ...linkProps }) => {
       href: to,
     };
   }
-  return <a {...props}>{children}</a>;
+  return DOM.createElement('a', {...props}, [children]);
 };
 
 export { Link };

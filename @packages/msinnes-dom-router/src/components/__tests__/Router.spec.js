@@ -1,43 +1,35 @@
-import { Component } from '@msinnes/dom';
-import { render } from '@msinnes/dom-testing-library';
+import * as DOM from '@msinnes/dom';
+import { BaseRoute } from '../../classes/BaseRoute';
 import { RouterContext } from '../../RouterContext';
 
 import { Router } from '../Router';
 
 describe('Router', () => {
-  it('should be a component', () => {
-    expect(Router).toExtend(Component);
+  it('should be a class', () => {
+    expect(Router).toBeAClass();
   });
 
-  it('should render to the dom', () => {
-    const screen = render(
-      <Router>
-        <div>Content</div>
-      </Router>
-    );
-    expect(screen.getByText('Content')).toBeOnScreen(screen);
+  it('should extends component', () => {
+    expect(Router).toExtend(DOM.Component);
   });
 
   describe('instance', () => {
-    const childRef = [];
+    let childRef;
     let instance;
     beforeEach(() => {
-      instance = new Router({ children: childRef });
-      instance.setState = (function (nextState) {
-        this.state = nextState(this.state);
-      }).bind(instance);
+      childRef = [];
+      instance = new Router({});
+      instance.setState = jest.fn();
     });
 
-    it('should initialize with state set to zero', () => {
-      expect(instance.state).toEqual(0);
+    it('should expose a baseRoute', () => {
+      expect(instance.baseRoute).toBeInstanceOf(BaseRoute);
+      expect(instance.baseRoute.path).toEqual('/');
     });
 
-    it('should have a path prop and a regex prop', () => {
-      expect(instance.path).toBeUndefined();
-      expect(instance.regex).toBeUndefined();
-      instance = new Router({ children: [], basePath: 'path' });
-      expect(instance.path).toEqual('path');
-      expect(instance.regex).toEqual(/^\/path[/]?/);
+    it('should pass props.basePath to instance.baseRoute if it exists', () => {
+      instance = new Router({ basePath: '/basePath' });
+      expect(instance.baseRoute.path).toEqual('/basePath');
     });
 
     describe('componentDidMount', () => {
@@ -100,7 +92,8 @@ describe('Router', () => {
 
       it('should increment state by 1', () => {
         instance.onPopstate();
-        expect(instance.state).toEqual(1);
+        expect(instance.setState).toHaveBeenCalledTimes(1);
+        expect(instance.setState).toHaveBeenCalledWith();
       });
     });
 

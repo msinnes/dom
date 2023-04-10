@@ -1,10 +1,7 @@
 import * as DOM from '@msinnes/dom';
-import { render } from '@msinnes/dom-testing-library';
 
-import { ParamsContext } from '../../ParamsContext';
-import { CaseResolver } from '../../resolver/CaseResolver';
-import { RedirectResolver } from '../../resolver/RedirectResolver';
-import { RouterContext } from '../../RouterContext';
+import { CaseResolver } from '../../classes/CaseResolver';
+import { RedirectResolver } from '../../classes/RedirectResolver';
 
 import {
   createResolver,
@@ -37,80 +34,6 @@ describe('createResolver', () => {
     expect(() => {
       createResolver(render);
     }).toThrow('ImplementationError: Switch components can only take Case and Redirect as children');
-    let message;
-  });
-
-  it('should render the correct child when it is found', () => {
-    const switchRender = pathname => (
-      <RouterContext.Provider value={{ location: { pathname } }}>
-        <Switch>
-          <Case path="/home" render="Home" />
-          <Case path="/about" render="About" />
-        </Switch>
-      </RouterContext.Provider>
-    );
-    let screen = render(switchRender('/home'), { url: 'http://url.com/home'});
-    expect(screen.container.textContent).toEqual('Home');
-    screen = render(switchRender('/about'), { url: 'http://url.com/about' });
-    expect(screen.container.textContent).toEqual('About');
-  });
-
-  it('should perform a startsWith match unless an exact prop is passed', () => {
-    const withoutExactRender = pathname => (
-      <RouterContext.Provider value={{ location: { pathname } }}>
-        <Switch>
-          <Case path="/" render="Home" />
-          <Case path="/about" render="About" />
-        </Switch>
-      </RouterContext.Provider>
-    );
-    let screen = render(withoutExactRender('/'), { url: 'http://url.com/' });
-    expect(screen.container.textContent).toEqual('Home');
-    screen = render(withoutExactRender('/about'), { url: 'http://url.com/about' });
-    expect(screen.container.textContent).toEqual('Home');
-
-    const withExactRender = pathname => (
-      <RouterContext.Provider value={{ location: { pathname } }}>
-        <Switch>
-          <Case path="/" render="Home" exact />
-          <Case path="/about" render="About" />
-        </Switch>
-      </RouterContext.Provider>
-    );
-    screen = render(withExactRender('/'), { url: 'http://url.com/' });
-    expect(screen.container.textContent).toEqual('Home');
-    screen = render(withExactRender('/about'), { url: 'http://url.com/about' });
-    expect(screen.container.textContent).toEqual('About');
-  });
-
-  it('should render case children if no render prop is passed', () => {
-    const screen = render((
-      <RouterContext.Provider value={{ location: { pathname: '/' } }}>
-        <Switch>
-          <Case path="/" exact>Home</Case>
-        </Switch>
-      </RouterContext.Provider>
-    ), { url: 'http://url.com/' });
-    expect(screen.container.textContent).toEqual('Home');
-  });
-
-  it('should return null and perform a redirect on the to param if the path param is matched', () => {
-    const navigateMock = jest.fn();
-    const screen = render((
-      <RouterContext.Provider value={{
-        navigate: navigateMock,
-        location: {
-          pathname: '/about',
-        },
-      }}>
-        <Switch>
-          <Case path="/" render="Home" exact />
-          <Redirect path="/about" to="/" />
-        </Switch>
-      </RouterContext.Provider>
-    ), { url: 'http://url.com/about' });
-    expect(navigateMock).toHaveBeenCalledTimes(1);
-    expect(navigateMock).toHaveBeenCalledWith('/')
   });
 });
 
@@ -139,7 +62,6 @@ describe('findCurrentRouteChild', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
     delete global.window;
   });
 
@@ -210,7 +132,7 @@ describe('Case', () => {
   it('should throw an error if rendered', () => {
     expect(() => {
       Case({});
-    }).toThrow('Case Components cannot be rendered')
+    }).toThrow('Case Components cannot be rendered');
   });
 });
 

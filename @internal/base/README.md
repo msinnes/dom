@@ -2,22 +2,66 @@
 
 Base classes for rendering applications in browsers and server side.
 
-## BaseRender
+# API Classes
 
-An abstract class for the underlying render logic.
+## - BaseBrowserRenderController
 
-## BaseRenderer
+The base rendering engine for browser development.
 
-An abstract class for the underlying renderer logic.
+```TypeScript
+class BaseBrowserRenderController extends BaseRenderController {}
+```
 
-## BaseComponent
+## - BaseRenderController
 
-An abstract class for the underlying component logic.
+The base rendering engine for the library.
 
-## BaseController
+```TypeScript
+abstract class BaseRenderableComponent {}
+abstract class BaseRenderController {}
+```
 
-An abstract class for the underlying controller logic.
+## - BaseServerRenderController
 
-## BaseDestroyableController
+The base rendering engine for the nodejs libs.
 
-An abstract class for underlying controller logic that includes destroyable elements. Extends `BaseController`.
+```TypeScript
+class BaseServerRenderController extends BaseRenderController {}
+```
+
+## - Context
+
+A context API for use throughout.
+
+```TypeScript
+class Context {}
+```
+
+## - Frame
+
+A Frame and FrameQueue for processing state changes.
+
+```TypeScript
+class Frame {}
+class FrameQueue {}
+```
+
+## - Renderer
+
+An interface that traverses the input render(s) and applies those changes to the DOM.
+
+```TypeScript
+class Renderer {}
+```
+
+# Exposed API
+
+These classes are exposed in the index file.
+
+##### `.index.js`
+```js
+export { Context as BaseContext } from './classes/Context';
+export { BaseBrowserRenderController } from './classes/BaseBrowserRenderController';
+export { BaseServerRenderController } from './classes/BaseServerRenderController';
+export { BaseRenderableComponent } from './classes/BaseRenderController';
+```

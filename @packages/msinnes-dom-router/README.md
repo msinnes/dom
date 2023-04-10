@@ -72,7 +72,7 @@ And by adding a basic `index.js` we can show a small example of how to implement
 
 ##### `index.js`
 ```JavaScript
-import { renderApp } from '@msinnes/dom';
+import { createRef } from '@msinnes/dom';
 import { Router, Switch, Case, Redirect, Link, useParams } from '../..';
 
 const Home = () => <div>Home</div>;
@@ -115,7 +115,7 @@ const App = () => (
   </Router>
 );
 
-renderApp(<App />, document.body);
+createRef(document.body).render(<App />);
 ```
 
 The app is a simple router component wrapping a Header and Content. The Header is a group of four links, and the Content is a Routing Switch with three content Cases and a default redirect. Two routes, `home` and `about` just print strings to the DOM, but the `params` route reads from the url, providing that value to the page's content.

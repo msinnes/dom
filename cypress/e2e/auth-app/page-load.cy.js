@@ -5,9 +5,9 @@ describe('page load', () => {
 
   it('should have 2 divs on the page', () => {
     cy.get('body >').should(elems => {
-      const div1 = elems.eq(1)[0];
+      const div1 = elems.eq(0)[0];
       expect(div1.tagName).to.equal('DIV');
-      const div2 = elems.eq(2)[0];
+      const div2 = elems.eq(1)[0];
       expect(div2.tagName).to.equal('DIV');
     });
   });

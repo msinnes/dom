@@ -1,5 +1,6 @@
-import { useContext } from '@msinnes/dom';
+import * as DOM from '@msinnes/dom';
 import { render } from '@msinnes/dom-testing-library';
+import '@msinnes/dom-testing-library-jest';
 
 import { RouterContext } from '../RouterContext';
 
@@ -11,14 +12,10 @@ describe('RouterContext', () => {
 
   it('should set an initial value of \'not initialized\'', () => {
     const RouteDefault = () => {
-      const ctx = useContext(RouterContext);
-      return (
-        <div>
-          {ctx}
-        </div>
-      );
+      const ctx = DOM.useContext(RouterContext);
+      return ctx;
     };
-    const screen = render(<RouteDefault />);
-    expect(screen.getByText('not initialized')).toBeOnScreen(screen);
+    const screen = render(DOM.createElement(RouteDefault));
+    expect(screen.getByText('not initialized')).toBeOn(screen);
   });
 });

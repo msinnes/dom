@@ -1,8 +1,11 @@
 import * as DOM from '@msinnes/dom';
-import { RouterContext } from "./RouterContext";
 
-export const useLocation = () => DOM.useContext(RouterContext).location;
+import { RouterContext } from './RouterContext';
 
-export const useNavigate = () => DOM.useContext(RouterContext).navigate;
+const useLocation = () => DOM.useContext(RouterContext).location;
 
-export const useParams = () => DOM.useContext(RouterContext).params;
+const useNavigate = () => DOM.useContext(RouterContext).navigate;
+
+const useParams = () => DOM.useContext(RouterContext).params;
+
+export { useLocation, useNavigate, useParams };

@@ -1,7 +1,7 @@
-const builder = require('./builder');
+import { builder } from './builder';
 
-const validHtmlRefs = require('./json/validHtmlTags.json');
-const deprecatedHtmlRefs = require('./json/deprecatedHtmlTags.json');
+import { validHtmlTags } from '@shared/json/validHtmlTags';
+import { deprecatedHtmlTags } from '@shared/json/deprecatedHtmlTags';
 
 const memberExpressionSignature = node => {
   return builder.memberExpression(node.object.name, node.property.name);
@@ -10,8 +10,8 @@ const memberExpressionSignature = node => {
 const nameSignature = node => {
   const id = node.name;
   let value;
-  if (validHtmlRefs.indexOf(id) >= 0) value = builder.stringLiteral(id);
-  else if (deprecatedHtmlRefs.indexOf(id) >= 0) throw new Error('TypeError: Deprecated html tags are not supported');
+  if (validHtmlTags.indexOf(id) >= 0) value = builder.stringLiteral(id);
+  else if (deprecatedHtmlTags.indexOf(id) >= 0) throw new Error('TypeError: Deprecated html tags are not supported');
   else value = builder.identifier(id);
   return value;
 };
@@ -72,7 +72,7 @@ const getFragment = node => {
   return builder.arrayExpression(kids);
 };
 
-module.exports = () => ({
+export default () => ({
   visitor: {
     JSXElement: path => {
       const node = path.node;

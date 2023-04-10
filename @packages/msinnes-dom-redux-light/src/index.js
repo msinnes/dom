@@ -1,4 +1,4 @@
-export { combineReducers } from './combineReducers';
-export { createStore } from './createStore';
-export { StoreProvider } from './StoreProvider';
-export { connect } from './connect';
+export { connect } from './components/connect';
+export { StoreProvider } from './components/StoreProvider';
+export { combineReducers } from './fns/combineReducers';
+export { createStore } from './fns/createStore';
