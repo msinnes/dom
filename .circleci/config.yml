@@ -3,7 +3,7 @@ orbs:
   node: circleci/node@5.1.0
   cypress: cypress-io/cypress@3
 jobs:
-  build_and_unit_test:
+  checkout_install_build:
     executor: node/default
     steps:
       - checkout
@@ -15,12 +15,25 @@ jobs:
       - run:
           command: yarn build
           name: Build Packages
-      - run:
-          command: yarn coverage
-          name: Test Packages with Coverage
       - persist_to_workspace:
           root: ~/project
           paths: .
+  unit_test:
+    executor: node/default
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: yarn coverage
+          name: Test Packages with Coverage
+  lint_test:
+    executor: node/default
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: yarn lint
+          name: Lint Packages
   build_e2e:
     executor: node/default
     steps:
@@ -43,10 +56,17 @@ jobs:
 workflows:
   test_modules:
     jobs:
-      - build_and_unit_test
+      - checkout_install_build
+      - unit_test:
+          requires:
+            - checkout_install_build
+      - lint_test:
+          requires:
+            - checkout_install_build
       - build_e2e:
           requires:
-            - build_and_unit_test
+            - unit_test
+            - lint_test
       - test_e2e:
           requires:
             - build_e2e
