@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
+const domJsxPlugin = require('../../@packages/msinnes-babel-plugin-dom-jsx');
 
 const configBase = {
   mode: 'development',
@@ -12,7 +13,7 @@ const configBase = {
       use: {
         loader: 'babel-loader',
         options: {
-          plugins: ['@babel/plugin-syntax-jsx', '@msinnes/babel-plugin-dom-jsx'],
+          plugins: ['@babel/plugin-syntax-jsx', domJsxPlugin],
           presets: ['@babel/preset-env']
         },
       },
