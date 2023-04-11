@@ -1,9 +1,9 @@
 {
   "name": "@msinnes/dom-testing-library-jest",
   "version": "0.0.4-alpha.0",
-  "description": "> TODO: description",
+  "description": "A set of jest helpers for @msinnes/dom-testing-library.",
   "author": "msinnes <michael.sinnes@gmail.com>",
-  "homepage": "",
+  "homepage": "https://github.com/msinnes/dom/@packages/msinnes-dom-testing-library-jest/#readme",
   "license": "MIT",
   "main": "src/index.js",
   "repository": {

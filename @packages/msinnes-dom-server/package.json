@@ -1,9 +1,9 @@
 {
   "name": "@msinnes/dom-server",
   "version": "0.0.4-alpha.0",
-  "description": "> TODO: description",
+  "description": "Server rendering library for @msinnes/dom applications.",
   "author": "msinnes <michael.sinnes@gmail.com>",
-  "homepage": "",
+  "homepage": "https://github.com/msinnes/dom/@packages/msinnes-dom-server/#readme",
   "license": "MIT",
   "main": "dist/index.js",
   "files": [

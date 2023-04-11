@@ -1,9 +1,9 @@
 {
   "name": "@msinnes/dom-testing-library",
   "version": "0.0.4-alpha.0",
-  "description": "> TODO: description",
+  "description": "Testing library for @msinnes/dom applications.",
   "author": "msinnes <michael.sinnes@gmail.com>",
-  "homepage": "",
+  "homepage": "https://github.com/msinnes/dom/@packages/msinnes-dom-testing-library/#readme",
   "license": "MIT",
   "main": "src/index.js",
   "files": [
