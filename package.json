@@ -18,12 +18,13 @@
     "dev-server": "node ./scripts/start-test-apps/index.js",
     "lint": "lerna run lint",
     "lint-fix": "lerna run lint-fix",
-    "publish-packages": "yarn clean-bootstrap && yarn build && lerna version && lerna publish from-package",
+    "package:publish": "lerna publish from-package",
+    "package:version": "lerna version",
     "start": "jest --watchAll",
     "start-e2e": "cypress open",
     "test": "jest",
-    "test-ci": "cypress run --spec \"**/!(all).cy.js\"",
-    "test-e2e": "cypress run --browser chrome --spec \"**/!(all).cy.js\""
+    "test-ci": "cypress run",
+    "test-e2e": "cypress run --browser chrome"
   },
   "keywords": [
     "dom", "renderer"

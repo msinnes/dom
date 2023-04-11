@@ -45,39 +45,6 @@ At the top level of the application, we'll need a `.babelrc` and a `webpack.conf
 }
 ```
 
-##### `webpack.config.js`
-```JavaScript
-const path = require('path');
-
-const pages = ['index'];
-
-const getEntry = pages => pages.reduce((acc, page) => ({
-  ...acc,
-  [page]: `./${page}.js`,
-}), {});
-
-module.exports = {
-  entry: getEntry(pages),
-  output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'public/pages'),
-  },
-  resolve: {
-    extensions: ['.js'],
-  },
-  mode: 'development',
-  module: {
-    rules: [
-      {
-        test: /\.js?/,
-        use: 'babel-loader',
-        exclude: /node_modules/,
-      },
-    ],
-  },
-};
-```
-
 And by adding a basic `index.js` we can show a small example of how to render a simple `@msinnes/dom` application to a string.
 
 ##### `index.js` -
@@ -95,7 +62,26 @@ console.log(html);// logs: '<div>Hello World!</div>
 
 ## - `renderToString`
 
-`renderToString` is a function that takes a JSX render end outputs a string. The input render can be anything renderable to the DOM with `@msinnes/dom`, so I'll do my best with the typing below.
+`renderToString` is a function that takes in a JSX render and outputs a string. The input render can be anything renderable to the DOM with `@msinnes/dom`. Using a NodeJS server API, like ExpressJS, this library can provide prerendered HTML to a web browser.
+
+```TypeScript
+interface JSX = {
+  signature: string | DomRef,
+  props: object,
+  children: JSXRender[],
+}
+/**
+ * Any JSXRender that falls under `*` typing will be processed as a string by calling `toString`.
+ */
+type JSXRender = JSX | string | JSXRender[] | undefined | null | *;
+
+function renderToString(JSXRender): string;
+```
+
+
+## - `renderToScreen`
+
+`renderToScreen` is a function that takes in a JSX render and outputs a screen object, which can then be used to respond to the server request. The input render can be anything renderable to the DOM with `@msinnes/dom`. Using a NodeJS server API, like ExpressJS, this library can provide prerendered HTML to a web browser.
 
 ```TypeScript
 interface JSX = {
@@ -104,14 +90,25 @@ interface JSX = {
   children: JSXRender[],
 }
 
-/**
-  * JSXRender is technically type *. If the render is not recognized, let's say you pass in a Date object, then the toString method will be called on that unrecognized object.
-  *
-  * While anything can be passed, this typing represents the regonizable entities. Explicitly, the type would be 'any' or '*'.
-  */
-type JSXRender = JSX | string | JSXRender[] | undefined | null;
+interface Screen = {
+  html: string;
+  url: string;
+}
 
-function renderToString(JSXRender): string;
+/**
+ * Any JSXRender that falls under `*` typing will be processed as a string by calling `toString`.
+ */
+type JSXRender = JSX | string | JSXRender[] | undefined | null | *;
+
+function renderToScreen(JSXRender): Screen;
 ```
 
-It is important to note that `renderToString` only performs a shallow render of the application. The output string will only include a synchronous output base on the input render and associated date.
+# Usage
+
+It is important to note that `renderToString` and `renderToScreen` only perform shallow renders of an application. The output string will only include a synchronous output base on the input render, processed effects, and associated data. It currently does not support asynchronous processes, which includes any call to change application state. I'm pretty sure any call to `setState` or `useState` will be ignord, but it could cause issues.
+
+An example application can be found in the `@e2e/ssr-app` folder. This is a very basic application, but it works in the current end-to-end tests. In this process, each application has 2 entry points. The FE entry-point is in `pages/index.js` and is what gets built in `webpack.pages.config`.
+
+When the server application is build, just before starting, the application will bundle with the routers importing the `pages/App.js` files. The server is built so that the JSX in the router file can be process easily in the server context. Essentially, this step of the build process allows us to keep from having to do something clever with requires. We just build pages and server seperately. When the server delivers a page for any given route, it returns the associated bundle.
+
+These directions are a living document, and I will start adding more steps as I build toward page streaming.

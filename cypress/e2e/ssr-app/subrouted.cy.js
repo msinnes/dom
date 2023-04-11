@@ -77,3 +77,32 @@ describe('subrouted -- anything', () => {
     });
   });
 });
+
+describe('subrouted -- navigation', () => {
+  it('the page should load', () => {
+    cy.visit('http://localhost:8080/subrouted');
+  });
+
+  it('should navigate to about', () => {
+    cy.get('body > ul > li > a').eq(1).click();
+    cy.get('body > div').should('contain', 'About');
+  });
+
+  it('should navigate back to home', () => {
+    cy.get('body > ul > li > a').eq(0).click();
+    cy.get('body > div').should('contain', 'Home');
+  });
+
+  it('should redirect if anything is clicked', () => {
+    cy.get('body > ul > li > a').eq(3).click();
+    cy.get('body > div').should('contain', 'About');
+  });
+
+  it('should navigate away if a link external to the base route is clicked', () => {
+    cy.get('body > ul > li > a').eq(4).click();
+    cy.get('body').should('contain', 'Index');
+    cy.location().should(loc => {
+      expect(loc.pathname).to.equal('/');
+    });
+  });
+});
