@@ -22,6 +22,7 @@ const Header = () => (
     <NavItem to='/subrouted/about'>About</NavItem>
     <NavItem to='/subrouted/param/1'>Params</NavItem>
     <NavItem to='/subrouted/anything'>Anything</NavItem>
+    <NavItem to='/'>Exit</NavItem>
   </Nav>
 );
 

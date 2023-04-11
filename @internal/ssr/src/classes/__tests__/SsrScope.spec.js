@@ -46,6 +46,12 @@ describe('SsrScope', () => {
       expect(instance.dom.dom.window.location.href).toEqual('http://url.com/');
     });
 
+    it('should have a url getter', () => {
+      expect(instance.url).toBeUndefined();
+      instance = new SsrScope({ dom: { url: 'http://url.com' } });
+      expect(instance.url).toEqual('http://url.com/');
+    });
+
     describe('enable', () => {
       it('should be a function', () => {
         expect(instance.enable).toBeInstanceOf(Function);

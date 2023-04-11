@@ -5,7 +5,7 @@ const babel = require('@babel/core');
 const rimraf = require('rimraf');
 const domJsxPlugin = require('../../@packages/msinnes-babel-plugin-dom-jsx');
 
-const pages = ['index', 'contents', 'redux'];
+const pages = ['index', 'contents', 'redux', 'subrouted'];
 
 const getEntry = pages => pages.reduce((acc, page) => ({
   ...acc,
@@ -113,8 +113,10 @@ const transformFile = file => {
       plugins: ['@babel/plugin-syntax-jsx', domJsxPlugin, ["module-resolver", {
         "root": ["../../@packages"],
         "alias": {
+          "@msinnes/dom": "./@packages/msinnes-dom",
           "@msinnes/dom-server": "./@packages/msinnes-dom-server",
           "@msinnes/dom-redux-light": "./@packages/msinnes-dom-redux-light",
+          "@msinnes/dom-router": "./@packages/msinnes-dom-router",
         }
       }]],
       presets: ['@babel/preset-env']

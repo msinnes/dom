@@ -8,11 +8,10 @@
   "scripts": {
     "build": "lerna run build",
     "build-dev": "lerna run build-dev  && yarn copy-built-packages",
-    "build-e2e": "yarn clean-bootstrap && yarn build",
     "clean": "yarn clean:tgz && yarn clean:logs && lerna run clean && lerna clean --yes",
     "clean:logs": "rimraf *.log && rimraf ./@packages/**/*.log && rimraf ./@internal/**/*.log",
     "clean:tgz": "rimraf ./@packages/*/*.tgz && rimraf *.tgz",
-    "clean-bootstrap": "yarn clean && lerna bootstrap",
+    "clean-bootstrap": "yarn clean && lerna bootstrap && yarn build",
     "copy-built-packages": "node ./scripts/copy-built-packages.js",
     "coverage": "yarn test --coverage",
     "create-package": "lerna create",
@@ -20,10 +19,11 @@
     "lint": "lerna run lint",
     "lint-fix": "lerna run lint-fix",
     "publish-packages": "yarn clean-bootstrap && yarn build && lerna version && lerna publish from-package",
+    "start": "jest --watchAll",
+    "start-e2e": "cypress open",
     "test": "jest",
     "test-ci": "cypress run --spec \"**/!(all).cy.js\"",
-    "test-e2e": "cypress run --browser chrome --spec \"**/!(all).cy.js\"",
-    "watch": "jest --watchAll"
+    "test-e2e": "cypress run --browser chrome --spec \"**/!(all).cy.js\""
   },
   "keywords": [
     "dom", "renderer"
