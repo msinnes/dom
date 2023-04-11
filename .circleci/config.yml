@@ -12,9 +12,6 @@ jobs:
       - run:
           command: yarn clean-bootstrap
           name: Bootstrap Packages
-      - run:
-          command: yarn build
-          name: Build Packages
       - persist_to_workspace:
           root: ~/project
           paths: .
@@ -34,14 +31,6 @@ jobs:
       - run:
           command: yarn lint
           name: Lint Packages
-  build_e2e:
-    executor: node/default
-    steps:
-      - attach_workspace:
-          at: ~/project
-      - run:
-          command: yarn build-e2e
-          name: Build E2E Packages
   test_e2e:
     executor: cypress/default
     steps:
@@ -63,13 +52,9 @@ workflows:
       - lint_test:
           requires:
             - checkout_install_build
-      - build_e2e:
-          requires:
-            - unit_test
-            - lint_test
       - test_e2e:
           requires:
-            - build_e2e
+            - checkout_install_build
 
 
 

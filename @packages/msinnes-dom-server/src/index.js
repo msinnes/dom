@@ -1,1 +1,1 @@
-export { renderToString } from './fns/renderToString';
+export { renderToScreen, renderToString } from './fns/renderers';

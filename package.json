@@ -1,7 +1,6 @@
 {
   "name": "dom",
-  "version": "0.0.0",
-  "description": "A dom library with associated jsx babel plugin",
+  "description": "A dom rendering suite with core renderer, state management, routing, test libs, server side rendering, and babel helpers",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com:msinnes/dom.git"
@@ -9,8 +8,6 @@
   "scripts": {
     "build": "lerna run build",
     "build-dev": "lerna run build-dev  && yarn copy-built-packages",
-    "build-e2e": "yarn build-packages && yarn clean-bootstrap && yarn build-packages",
-    "build-packages": "lerna run build",
     "clean": "yarn clean:tgz && yarn clean:logs && lerna run clean && lerna clean --yes",
     "clean:logs": "rimraf *.log && rimraf ./@packages/**/*.log && rimraf ./@internal/**/*.log",
     "clean:tgz": "rimraf ./@packages/*/*.tgz && rimraf *.tgz",
@@ -21,12 +18,13 @@
     "dev-server": "node ./scripts/start-test-apps/index.js",
     "lint": "lerna run lint",
     "lint-fix": "lerna run lint-fix",
-    "publish-packages": "yarn clean-bootstrap && yarn build-packages && lerna version && lerna publish from-package",
+    "package:publish": "lerna publish from-package",
+    "package:version": "lerna version",
+    "start": "jest --watchAll",
+    "start-e2e": "cypress open",
     "test": "jest",
-    "test-ci": "cypress run --spec \"**/!(all).cy.js\"",
-    "test-e2e": "cypress run --browser chrome --spec \"**/!(all).cy.js\"",
-    "update-libs": "yarn cache clean && yarn clean-bootstrap",
-    "watch": "jest --watchAll"
+    "test-ci": "cypress run",
+    "test-e2e": "cypress run --browser chrome"
   },
   "keywords": [
     "dom", "renderer"
