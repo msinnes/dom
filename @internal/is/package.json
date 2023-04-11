@@ -1,6 +1,6 @@
 {
   "name": "@internal/is",
-  "version": "0.0.3-alpha.0",
+  "version": "0.0.4-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -14,7 +14,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-env": "^7.20.2",
-    "@shared/eslint-config": "0.0.3-alpha.0",
+    "@shared/eslint-config": "^0.0.4-alpha.0",
     "eslint": "^8.33.0"
   }
 }
