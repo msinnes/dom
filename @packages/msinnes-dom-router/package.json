@@ -1,12 +1,12 @@
 {
   "name": "@msinnes/dom-router",
   "version": "0.0.4-alpha.0",
-  "description": "router",
+  "description": "A router implementation for use in @msinnes/dom applications.",
   "keywords": [
     "router"
   ],
   "author": "msinnes <michael.sinnes@gmail.com>",
-  "homepage": "",
+  "homepage": "https://github.com/msinnes/dom/@packages/msinnes-dom-router/#readme",
   "license": "MIT",
   "files": [
     "dist/*"

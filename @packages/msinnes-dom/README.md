@@ -1,15 +1,5 @@
 # `@msinnes/dom`
 
-[comment]: <> (TODO: expand on the top-level docs)
-
-```js
-export { useContext, useEffect, useMemo, useState };
-export { BaseRenderableComponent as Component } from '@internal/base';
-export { createElement, cloneElement } from '@internal/utils';
-export { createRef } from './fns/refs';
-export { createContext } from './fns/ctx';
-```
-
 A lightweight DOM rendering library, and the core component to the `@msinnes/dom` rendering suite.
 
 At the top-level, the API is styled like ReactJS. There are class and function components along with hooks, but the API itself is much smaller. The Library itself if less than a fifth the size of React. Gzipped, the core library is around 6Kb. The library launches without an environment, so there is no need to import the library the use jsx. This library extends the JavaScript specification to include jsx.

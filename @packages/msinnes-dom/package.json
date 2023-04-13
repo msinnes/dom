@@ -1,12 +1,12 @@
 {
   "name": "@msinnes/dom",
   "version": "0.0.4-alpha.0",
-  "description": "A dom library",
+  "description": "A dom library.",
   "keywords": [
     "dom"
   ],
   "author": "msinnes <michael.sinnes@gmail.com>",
-  "homepage": "",
+  "homepage": "https://github.com/msinnes/dom/@packages/msinnes-dom/#readme",
   "license": "MIT",
   "main": "dist/index.js",
   "files": [
