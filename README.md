@@ -1,7 +1,5 @@
 # `@msinnes/dom*`
 
-A Front End JavaScript rendering suite, with basic redux integration, robust routing, server-side rendering, test rendering, test helpers, and associated babel helpers.
-
 ## Associated Libs
 
 - [@msinnes/dom](/%40packages/msinnes-dom)
@@ -13,6 +11,29 @@ A Front End JavaScript rendering suite, with basic redux integration, robust rou
 - [@msinnes/babel-plugin-dom-jsx](/%40packages/msinnes-babel-plugin-dom-jsx)
 - [@msinnes/babel-preset-dom-jsx](/%40packages/msinnes-babel-preset-dom-jsx)
 
-## User Documentation
+`@msinnes/dom*` is a Front End JavaScript rendering suite. The core rendering library, `@msinnes/dom` is a React style rendering api complete with JSX integration and hook support. The API itself is not identical, but the rendering paradigm, Context implementation, and hooks are all very similar. The JSX integration comes via babel, which is the only transpiler supported at this time. In addition to the core renderer, the suite includes a state manager and router, `@msinnes/dom-redux-light` and `@msinnes/dom-router`. There is also server-side rendering support in `@msinnes/dom-server` and `@msinnes/dom-testing-library`.
 
-Each of the individual libraries has its associated user docs. As more work is done on the lirary, I will add more robust documentation.
+`@msinnes/dom-testing-library` and `@msinnes/dom-server` are almost identical from a rendering standpoint. Where they diverge is what happens after the page renders. `@msinnes/dom-testing-library` exposes a rendered, queryable screen. Although it was built with testing in mind, `@msinnes/dom-testing-library` is a server-side rendering api. `@msinnes/dom-server` exposes a screen object as well, but this screen is limited in what it exposes to the user. As of now, the current page url and html string are exposed on a rendered screen. The idea is expose all data necessary for pre-processing an html document, but more features are needed to fully pre-process a page.
+
+The APIs in this library are all developed in Jest using a very test-driven pattern (which is why coverage is north of 95% across the board). Since there is so much going on in jest, I also exposed some really basic helpers for use with the testing library in `@msinnes/dom-testing-library-jest`.
+
+# Features
+
+This is just a starting list of features, and a short description of each. In time, I will do my best to cover all features with examples.
+
+- Lightweight -- Flat bundled in ES6 (unminified) the library is 29kb. Fully transpiled to ES5 and minified, the library is 49kb, 1/3 the size of React and React-Dom.
+- No Import Statement -- This library doesn't require you to import it when it isn't used. You only import the API if you actually need to use it.
+- Class Components -- Abstract Class component which can be extended and exposes three lifecycle methods: `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount`.
+- Function Components -- Functions can be used with hooks to develop clean, expressive functionality.
+- Hooks -- Hooks for almost anything you need to build a website, and they process server side without any problem.
+
+This library is Preact/React with hooks out of the box and no engine swap.
+This is just the beginning of the features already available.
+
+# Usage
+
+Each of the individual libraries has its associated user docs, so we will try to start with a much more comprehensive example of how to build an application.
+
+As the documentation grows, I will add more directions on how to compose the libraries. My documentation plan is trying to expand a little bit with each release.
+
+I will start by adding a general overview of how to build a basic single page application rendered in a test environment. I will add some routing and general state management. I will finish by showing how to implement these patterns on the server side.
