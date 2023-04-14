@@ -1,6 +1,6 @@
 {
   "name": "@msinnes/babel-plugin-dom-jsx",
-  "version": "0.0.4-alpha.0",
+  "version": "0.0.5-alpha.0",
   "description": "A dom jsx plugin for transpiling jsx into a renderable format.",
   "keywords": [
     "dom",
