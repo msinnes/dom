@@ -325,3 +325,4 @@ Temporary Items
 dist
 scripts/start-test-apps/public/pages
 cypress/downloads
+cypress/screenshots

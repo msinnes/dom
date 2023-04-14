@@ -3,7 +3,7 @@ import { BaseRenderableComponent } from '@internal/base';
 
 import * as api from '..';
 
-import { createRef } from '../fns/refs';
+import { createRef, useRef } from '../fns/refs';
 import { createContext } from '../fns/ctx';
 import { infra } from '../infra';
 
@@ -18,6 +18,7 @@ describe('api', () => {
     expect(api.useContext).toBe(infra.hooks.useContext);
     expect(api.useEffect).toBe(infra.hooks.useEffect);
     expect(api.useMemo).toBe(infra.hooks.useMemo);
+    expect(api.useRef).toBe(useRef);
     expect(api.useState).toBe(infra.hooks.useState);
   });
 });

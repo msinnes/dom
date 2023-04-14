@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { Component, createRef, createElement, useContext, useEffect, useMemo, useState, createContext } from '..';
+import { Component, createRef, createElement, useContext, useEffect, useMemo, useState, createContext, useRef } from '..';
 
 import { infra } from '../infra';
 
@@ -499,6 +499,15 @@ describe('e2e.hooks', () => {
     };
     ref.render(createElement(ContextFunction));
     expect(document.body.innerHTML).toEqual('context value');
+  });
+
+  it('should render a component with useRef', () => {
+    const App = () => {
+      const Div = useRef('div');
+      return createElement(Div, {}, ['text']);
+    };
+    ref.render(createElement(App));
+    expect(document.body.innerHTML).toEqual('<div>text</div>');
   });
 });
 

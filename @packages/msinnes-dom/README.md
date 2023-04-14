@@ -1,20 +1,61 @@
 # `@msinnes/dom`
 
-A lightweight DOM rendering library, and the core component to the `@msinnes/dom` rendering suite.
+## - A lightweight DOM rendering library.
 
-At the top-level, the API is styled like ReactJS. There are class and function components along with hooks, but the API itself is much smaller. The Library itself if less than a fifth the size of React. Gzipped, the core library is around 6Kb. The library launches without an environment, so there is no need to import the library the use jsx. This library extends the JavaScript specification to include jsx.
+At the top-level, the API is styled like ReactJS. There are class and function components along with hooks, but the API itself is much smaller. The Library itself is less than a fifth the size of React and React-Dom, and this library ports both functionality sets as a single unit. The library launches without an environment, so there is no need to import the library to use jsx.
 
-This library gives the user direct access to the DOM. Any props passed to an DOM element in JSX are the exact same props that will be passed to the DOM element when it renders. Just so we are clear, that includes setting the value `innerHTML`. I suggest you brush up on you're html best practices and read up on the OWASP top 10.
+## - No intermediate DOM logic.
 
-This library does not abstract any logic, and it makes no assumptions on how or what you want to render to the DOM. For instance, React provides a very convenient `onChange` prop that will execute every time you perform an input on a form element. When you set the `onchange` prop on a DOM element, however, this is not the behavior. The `onchange` event handler only fires when an element loses focus. The correct event handler for handling user input is the `oninput` event. When implementing this library, there are no provided shortcuts. This allows us to keep the library small AND fast.
+This library gives the user direct access to the DOM without an intermediate virtal DOM. Any props passed to a DOM element in JSX are the exact same props that will be passed to the DOM element when it renders. Just so we are clear, that includes setting the value `innerHTML`. This library does not hold your hand in the way other libraries do. I suggest you brush up on your html best practices and read up on the OWASP top 10.
+
+## - Part of a rendering Suite
+
+`@msinnes/dom` is the core library of the `@msinnes/dom*` suite, and they are capable of quite a lot when working together. Front-end routing and state management are provided, and both can be tested and executed server side.
 
 # The Rendering Paradigm
 
-`@msinnes/dom` renders structurally. When an app renders, the input jsx is transformed to the DOM. During this process, virutal structures for the Application and DOM are maintained. An `Application Tree` and a `Virtual DOM Tree` are constructed from the input renders as they execute. Subsequent renders are diffed and updated against these virtual structures.
+## - Structural Rendering
 
-JSX, or JavaScript XML, is a means for expressing html rather than writing mutations in vanilla JavaScript. This library treats jsx as an object with 3 properties, signature, props, and children. These three properties coincide with the the properties on an XML's abstract syntax tree: tag, attributes, and children. The renderer uses a pre-ordered, depth first traversal to interpret the view.
+`@msinnes/dom` renders structurally. When an app renders, the input jsx is transformed to the DOM. During this process, a Virtual Application Tree is maintained based on the traversed jsx. As the application tree renders, any DOM nodes recognized along the way are written to the DOM.
 
-2 structures are maintained to manage the views, and application render and a DOM render. When the application undergoes a render process, the output is a DOM render. This DOM render is then passed to a DOM renderer, which updates the view. The 2 layer render process is why component lifecycle methods differ between the 2 libraries. This will change when the 2 layer system is replaced with a faster single layer system.
+Rather than doing a rigorous structural diff to determine if something needs to update or not, we traverse the entire application and update the DOM as we go. This adds the overhead for updating element props but removes the size and complexity of a diffing algorithm.
+
+## - Technical Explanation (Skip this if you want)
+
+The rendering is based on this idea: `Any subset of a set of tree nodes will form an implicit tree as long as the root node of the tree is present in the selected subset.` JSX (JavaScript/XML) is a way of functionally expressing XML and HTML is an XML specification. Any XML paradigm implies a tree structure, so we can tie our Application and DOM Trees by using our Context API. Like the React Context API, this one refereces the nearest parent provided value. Using a `DomParent Context`, we can pick the HTML subtree from the Application  tree. As we pick the DOM nodes, we can preserve the Application Node Ancestry in the subsequesnt DOM tree, which 'draws' a new tree. The shared root node and parent context allow us to write a full DOM tree on a single, pre-ordered traversal.
+
+The real power of this algorithm can be expressed using a simple real-world example: `script` tags at the end of an html document. I ran into some intersting issues when I started `cypress` testing the API. If I wrote some jsx with a `div` element as the first child of the `body` element, it would follow that I should test that the first child of the `body` should be a `div`. Those tests failed because the saw a script tag. The `script` tag delivered as the last node of my HTML document was breaking my test. In most cases the script tag wound up as the first child of the document's `body`.
+
+The algorithm broke the tests because it was appending to an empty list of children, but the browser doesn't see it that way. Instead of blindly appending to an array of children, the DOM context tracks nearest parent AND maintains a pointer to the current position in that parent's children. Because children can be nested, we have to track the position of nested parents, which means nested pointers up and down the context. Since I can write to the `body` element without having to account for `script` tags in the end-to-end tests, I know the algorithm tracks and updates correctly.
+
+## - Simple, Reader Friendly Explanation
+
+JSX, or JavaScript XML, is a means for expressing html rather than writing mutations in vanilla JavaScript. This library treats jsx as an object with 3 properties, signature, props, and children. These three properties coincide with the the properties on an XML's abstract syntax tree: tag, attributes, and children. We deliver the application's representation of the DOM directly to the browser.
+
+## - Don't Be Lazy and Use This
+
+This library does not abstract any logic, and it makes no assumptions on how or what you want to render to the DOM. For instance, React provides a very convenient `onChange` prop that will execute every time you perform an input on a form element. When you set the `onchange` prop on a DOM element, however, this is not the behavior. The `onchange` event handler only fires when an element loses focus. The correct event handler for handling user input is the `oninput` event. When implementing this library, there are no provided shortcuts. This allows us to keep the library small AND fast.
+
+If I didn't scare you off with the `Mozilla` user documentation on input events, just wait. React tells you that setting the `innerHTML` prop is dangerous, and won't let you set that property directly. This is a `What You See Is What You Get` rendering library, and I will set any property you want on an element.
+
+If you don't know why I am writing this warning here, then you need to study front end security safety measures before you continue programming in JavaScript.
+
+# The DOM Interface
+
+Enter the `DomRef` -- A `DomRef` is the central building block of the dom rendering ecosystem. A `DomRef` wraps every DOM element and gives the application a means of interacting with the DOM. These objects lie at the center of the dom ecosystem, and provide the connection between user and DOM.
+
+The `DomRef` logic in this library provides maximum flexibility for `ref` usage. Rather than providing an intermediate virtual ref that has to be...honestly I don't know how React tracks refs...no idea. We don't do whatever that is here. These refs are wrappers around the DOM element, and can be rendered in line as a JSX signature.
+
+```JavaScript
+import { createRef } from '@msinnes/dom';
+
+const Div = createRef('div');
+
+createRef(document.body).render(<Div>Div Inner Text</Div>);
+// document.body.innerHTML => <div>Div Inner Text</div>;
+```
+
+These refs are designed to take over the rendering ecosystem. Instead, these refs are used throughout the application to wrap elements, allowing for an extension of native rendering logic.
 
 # Usage
 
@@ -112,7 +153,7 @@ A factory function for creating DOM interfaces within the `@msinnes/dom` ecosyst
 function createRef(elem: string | HTMLElement): DomRef;
 ```
 
-A `DomRef` is the entry point of the dom rendering ecosystem. First, create a dom ref from an existing dom node, and then render onto that ref.
+The createRef function can take a string or an element, making this function the entrypoint for `@msinnes/dom` applications. First, create a dom ref from an existing dom node, and then render onto that ref.
 
 ```JavaScript
 import { createRef } from '@msinnes/dom';
@@ -123,9 +164,10 @@ createRef(document.body).render((
     <li>Item 2</li>
   </ul>
 ));
+// document.body.innerHTML => <ul><li>Item 1</li><li>Item 2</li></ul>
 ```
 
-A `DomRef` wraps every DOM element and gives the application a means of interacting with the DOM. These object lie at the center of the dom ecosystem, and provide the connection between user and DOM.
+A `DomRef` is allowed to take an existing HTML Element so users can render to a DOM element. In the above example, JSX will be rendered to the body element.
 
 ## - `Component`
 
@@ -141,6 +183,7 @@ class MyComponent extends Component {
 }
 
 renderApp(<MyComponent />, document.body);
+// document.body.innerHTML => My Dom Text
 ```
 
 **Technically, a render can be anything you want, but be careful. Unrecognized inputs render to the DOM as strings via the `toString` method.
@@ -238,6 +281,7 @@ renderApp(<MyComponent />, document.body);
 
 The context `Consumer` component can be used to access a context value through inline jsx. The component's first child must be a function, and the first parameter of the function will be the context value. The function should then return the desired render. This case would render the same way as the prior examples.
 
+#### - I will go ahead and say now that the consumer part of the api was developed based on the React model, but the Consumer component isn't a really nice way of getting these values. The longevity of this feature is up for debate.
 
 # Hooks
 
@@ -332,6 +376,25 @@ const MyComponent = () => {
 ```
 
 The above component is an example of parsing queryParams and passing them down into a search component. Every time `location.query` changes, the memo function will execute. Every time the memo function executes, the value returned from the hook will update. The data returned from the hook will be consistent on subsequent runs that don't re-execute the memo.
+
+## - `useRef`
+
+Allows for a singleton DOM reference, usable in function components that lack an instance reference.
+
+```TypeScript
+function useRef(elem: string | HTMLElement): DomRef;
+```
+
+The reference is memoized using the useMemo hook, and is only calculated when the component mounts. If the ref is then rendered to the dom via the function's returned render, it will be removed when the function component unmounts.
+
+```JavaScript
+const MyLabelComponentWithHooks = () => {
+  const Div = useRef('div');
+  return <Div>Label Text</Div>
+};
+```
+
+The ref can be used inline as if it was a class or function component.
 
 ## - `useState`
 
