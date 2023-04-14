@@ -6,8 +6,8 @@ describe('number input', () => {
   it('should track the text input text', () => {
     cy.get('body > div > input').eq(1).type('{backspace}1');
     cy.get('body > div').should(divs => {
-      const textDiv1 = divs.eq(3)[0];
-      const textDiv2 = divs.eq(4)[0];
+      const textDiv1 = divs.eq(4)[0];
+      const textDiv2 = divs.eq(5)[0];
       expect(textDiv1).to.contain('text 1');
       expect(textDiv2).to.contain('text 0');
     });
