@@ -1,6 +1,3 @@
-import * as Dom from '@msinnes/dom';
-
-import { BaseRenderableComponent } from '@internal/base';
 import { DomRef } from '@internal/dom';
 import { Infra } from '@internal/infra';
 
@@ -9,10 +6,6 @@ import { InfraScope } from './InfraScope';
 
 // this is found in the jsdom configuration docs.
 const DEFAULT_JSDOM_URL = 'about:blank';
-
-// TODO: move this to InfraScope to consolidate import
-Dom.Component = BaseRenderableComponent;
-Dom.createContext = defaultValue => Infra.contextService.createEntity(defaultValue);
 
 class SsrScope {
   get services() {
