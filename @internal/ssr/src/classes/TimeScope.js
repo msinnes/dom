@@ -83,15 +83,10 @@ class TimeScope {
     clearTimeout = this.timeouts.clear.bind(this.timeouts);
   }
 
-  play(ticks = 1) {
-    if (ticks <= 0) return;
-    let i = 0;
-    let len = ticks;
-    while(i < len) {
-      this.timeouts.tick();
-      this.timeouts.process();
-      i++;
-    }
+  // Move the loop logic to the screen.
+  play() {
+    this.timeouts.tick();
+    this.timeouts.process();
   }
 
   run() {

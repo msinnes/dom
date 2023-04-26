@@ -8,7 +8,7 @@ function getBy(fnName, results) {
 
 function getAllBy(fnName, results) {
   if (results.length === 0) throw new Error(`${fnName} did not find any results`);
-      return results;
+  return results;
 }
 
 class Screen {
@@ -43,6 +43,19 @@ class Screen {
     this.queryAllByLabelText = text => queries.byLabelText(text);
     this.queryAllByRole = role => queries.byRole(role);
     this.queryAllByText = text => queries.byText(text);
+
+    this.time = {
+      play: (ticks = 1) => {
+        if (ticks <= 0) return;
+        let i = 0;
+        let len = ticks;
+        while(i < len) {
+          controller.scope.time.play();
+          i++;
+        }
+      },
+      runCurrentTimers: () => controller.scope.time.run(),
+    };
   }
 }
 

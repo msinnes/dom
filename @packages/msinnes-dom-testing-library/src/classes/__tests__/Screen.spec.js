@@ -263,5 +263,57 @@ describe('Screen', () => {
         expect(results[1]).toBe(container.children[1]);
       });
     });
+
+    describe('time', () => {
+      let playMock;
+      let runMock;
+      beforeEach(() => {
+        playMock = jest.fn();
+        runMock = jest.fn();
+        ssrScope.time = {
+          play: playMock,
+          run: runMock,
+        };
+      });
+
+      it('should be an object on the screen', () => {
+        expect(instance.time).toBeDefined();
+        expect(instance.time).toBeInstanceOf(Object);
+      });
+
+      describe('play', () => {
+        it('should be a function', () => {
+          expect(instance.time.play).toBeInstanceOf(Function);
+        });
+
+        it('should call time.play once if no parameter is passed', () => {
+          instance.time.play();
+          expect(playMock).toHaveBeenCalledTimes(1);
+        });
+
+        it('should not do anything if a number less than or equal to 0 is passed', () => {
+          instance.time.play(0);
+          expect(playMock).not.toHaveBeenCalled();
+          instance.time.play(-Infinity);
+          expect(playMock).not.toHaveBeenCalled();
+        });
+
+        it('should tick the clock n times if n is passed as a parameter', () => {
+          instance.time.play(1000);
+          expect(playMock).toHaveBeenCalledTimes(1000);
+        });
+      });
+
+      describe('runCurrentTimers', () => {
+        it('should be a function', () => {
+          expect(instance.time.runCurrentTimers).toBeInstanceOf(Function);
+        });
+
+        it('should execute the run mock', () => {
+          instance.time.runCurrentTimers();
+          expect(runMock).toHaveBeenCalledTimes(1);
+        });
+      });
+    });
   });
 });

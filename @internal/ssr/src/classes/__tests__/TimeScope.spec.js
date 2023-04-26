@@ -276,25 +276,10 @@ describe('TimeScope', () => {
         expect(instance.play).toBeInstanceOf(Function);
       });
 
-      it('should call tick and process once if no parameter is passed', () => {
+      it('should call tick and process once', () => {
         instance.play();
         expect(tickMock).toHaveBeenCalledTimes(1);
         expect(processMock).toHaveBeenCalledTimes(1);
-      });
-
-      it('should not do anything if a number less than or equal to 0 is passed', () => {
-        instance.play(0);
-        expect(tickMock).not.toHaveBeenCalled();
-        expect(processMock).not.toHaveBeenCalled();
-        instance.play(-Infinity);
-        expect(tickMock).not.toHaveBeenCalled();
-        expect(processMock).not.toHaveBeenCalled();
-      });
-
-      it('should tick the clock n times if n is passed as a parameter', () => {
-        instance.play(1000);
-        expect(tickMock).toHaveBeenCalledTimes(1000);
-        expect(processMock).toHaveBeenCalledTimes(1000);
       });
     });
 
