@@ -1,6 +1,7 @@
 import { DomScope } from '../DomScope';
-
 import { InfraScope } from '../InfraScope';
+import { TimeScope } from '../TimeScope';
+
 import { SsrScope } from '../SsrScope';
 
 describe('SsrScope', () => {
@@ -14,6 +15,8 @@ describe('SsrScope', () => {
     let domDisableMock;
     let infraEnableMock;
     let infraDisableMock;
+    let timeEnableMock;
+    let timeDisableMock;
     beforeEach(() => {
       instance = new SsrScope({});
 
@@ -21,6 +24,9 @@ describe('SsrScope', () => {
       domDisableMock = jest.spyOn(instance.dom, 'disable');
       infraEnableMock = jest.spyOn(instance.infra, 'enable');
       infraDisableMock = jest.spyOn(instance.infra, 'disable');
+      // We just want to make sure the mock is called. This is dangerous and we don't need to run it in this case.
+      timeEnableMock = jest.spyOn(instance.time, 'enable').mockImplementation(() => {});
+      timeDisableMock = jest.spyOn(instance.time, 'disable');
     });
 
     it('should have a dom prop', () => {
@@ -31,6 +37,11 @@ describe('SsrScope', () => {
     it('should have an infra prop', () => {
       expect(instance.infra).toBeDefined();
       expect(instance.infra).toBeInstanceOf(InfraScope);
+    });
+
+    it('should have a time prop', () => {
+      expect(instance.time).toBeDefined();
+      expect(instance.time).toBeInstanceOf(TimeScope);
     });
 
     it('should expose the body element on a body getter', () => {
@@ -61,6 +72,7 @@ describe('SsrScope', () => {
         instance.enable();
         expect(domEnableMock).toHaveBeenCalledTimes(1);
         expect(infraEnableMock).toHaveBeenCalledTimes(1);
+        expect(timeEnableMock).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -73,6 +85,7 @@ describe('SsrScope', () => {
         instance.disable();
         expect(domDisableMock).toHaveBeenCalledTimes(1);
         expect(infraDisableMock).toHaveBeenCalledTimes(1);
+        expect(timeDisableMock).toHaveBeenCalledTimes(1);
       });
     });
   });
