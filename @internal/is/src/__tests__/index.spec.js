@@ -5,7 +5,7 @@ import { isFunction } from '../fns/function';
 import { isNull } from '../fns/null';
 import { isObjectLiteral } from '../fns/object';
 import { isString, isEmptyString } from '../fns/string';
-import { isUndefined } from '../fns/undefined';
+import { isUndefined, isDefined } from '../fns/undefined';
 
 describe('api', () => {
   it('should expose the api', () => {
@@ -17,5 +17,6 @@ describe('api', () => {
     expect(api.isString).toBe(isString);
     expect(api.isEmptyString).toBe(isEmptyString);
     expect(api.isUndefined).toBe(isUndefined);
+    expect(api.isDefined).toBe(isDefined);
   });
 });
