@@ -1,10 +1,10 @@
+import { isDefined } from '@internal/is';
+
 class Timeout {
   elapsed = 0;
 
   get remaining() {
-    let difference = this.wait - this.elapsed;
-    if (difference < 0) difference = 0;
-    return difference;
+    return this.wait - this.elapsed;
   }
 
   constructor(fn, wait) {
@@ -44,15 +44,32 @@ class Timeouts {
     }
   }
 
-  process() {
+  getExpired() {
     const remove = [];
+    const results = [];
     this.each((timeout, id) => {
       if (!timeout.remaining) {
-        timeout.fn();
+        results.push(timeout);
         remove.push(id);
       }
     });
     remove.forEach(id => this.clear(id));
+    return results;
+  }
+
+  getNext() {
+    let next;
+    let nextId;
+    this.each((timeout, id) => {
+      if (!next || next.wait > timeout.wait) {
+        next = timeout;
+        nextId = id;
+      }
+    });
+    if (next) {
+      this.clear(nextId);
+    }
+    return next;
   }
 
   set(fn, wait) {
@@ -71,7 +88,17 @@ const setTimeoutOriginal = setTimeout;
 const clearTimeoutOriginal = clearTimeout;
 
 class TimeScope {
+  runExpiredTimers = true;
   timeouts = new Timeouts();
+
+  constructor(config) {
+    if (isDefined(config.runExpiredTimers)) this.runExpiredTimers = config.runExpiredTimers;
+  }
+
+  digest() {
+    if (this.runExpiredTimers) return this.getExpiredTimers();
+    return [];
+  }
 
   disable() {
     setTimeout = setTimeoutOriginal;
@@ -83,14 +110,18 @@ class TimeScope {
     clearTimeout = this.timeouts.clear.bind(this.timeouts);
   }
 
-  // Move the loop logic to the screen.
-  play() {
-    this.timeouts.tick();
-    this.timeouts.process();
+  getExpiredTimers() {
+    return [
+      ...this.timeouts.getExpired(),
+    ];
   }
 
-  run() {
-    this.timeouts.process();
+  getNextTimer() {
+    return this.timeouts.getNext();
+  }
+
+  tick() {
+    this.timeouts.tick();
   }
 }
 

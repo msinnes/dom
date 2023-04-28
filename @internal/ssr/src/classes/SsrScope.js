@@ -24,7 +24,13 @@ class SsrScope {
     this.body = new DomRef(this.dom.dom.window.document.body);
 
     this.infra = new InfraScope(new Infra());
-    this.time = new TimeScope();
+    this.time = new TimeScope(config.time);
+  }
+
+  digest() {
+    return [
+      ...this.time.digest(),
+    ];
   }
 
   enable() {

@@ -45,16 +45,31 @@ class Screen {
     this.queryAllByText = text => queries.byText(text);
 
     this.time = {
+      // There should be a next function which will only process a single timer and call digest
+      // This is for super granular control over timer execution and rendering
+      // This will execute the timer with the lowest remaining value, but the 0 floor on remaining needs to be removed.
+      next: undefined,
+
+      // Need to make sure this pattern works here.
+      // If everything works as expected, this should leave any timers in the queue and just advance the time on them.
+      // For this to work, the remaining prop needs to be able to run negative.
+      // This way we can order timers based on which one should execute first.
+      // The lower the remaining time, the earlier it should execute
       play: (ticks = 1) => {
         if (ticks <= 0) return;
         let i = 0;
         let len = ticks;
         while(i < len) {
-          controller.scope.time.play();
+          controller.scope.time.tick();
+          controller.digest();
           i++;
         }
       },
-      runCurrentTimers: () => controller.scope.time.run(),
+      // This should only run the current timers and then digest the scope
+      // This is how to run all timers if they don't process on digest (runExpiredTimers = false)
+      // This should call digest to clear any other handlers configured to run
+      // It will have to be call multiple times to digest subsequent timers if it is implemented correctly
+      runCurrentTimers: undefined,
     };
   }
 }

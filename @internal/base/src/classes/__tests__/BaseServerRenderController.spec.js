@@ -29,6 +29,7 @@ describe('BaseServerRenderController', () => {
       };
       ssrScopeRef = {
         body: new DomRef(bodyRef),
+        digest: jest.fn(),
         enable: jest.fn(),
         disable: jest.fn(),
         services: servicesRef,
@@ -49,6 +50,78 @@ describe('BaseServerRenderController', () => {
       expect(instance.renderer.root.elem.elem).toBe(bodyRef);
     });
 
+    describe('digest', () => {
+      let digestEffectsMock;
+      let rootRenderMock;
+
+      beforeEach(() => {
+        digestEffectsMock = instance.scope.services.digestEffects;
+        rootRenderMock = jest.spyOn(instance.renderer, 'rootRender').mockImplementation(() => {});
+        ssrScopeRef.digest.mockReturnValue([]);
+      });
+
+      it('should be a function', () => {
+        expect(instance.digest).toBeInstanceOf(Function);
+      });
+
+      it('should call ssrScope.digest', () => {
+        instance.digest();
+        expect(ssrScopeRef.digest).toHaveBeenCalledTimes(1);
+      });
+
+      it('should process frames and rerender if there are frames after processing the effects', () => {
+        instance.queue = [];
+        const renderFrameMock = jest.spyOn(instance, 'renderFrame').mockImplementation(() => {
+          instance.queue.pop();
+        });
+        ssrScopeRef.digest.mockReturnValueOnce([{
+          fn:() => {
+            instance.queue.push({});
+          }
+        }]);
+        instance.digest();
+        expect(rootRenderMock).toHaveBeenCalledTimes(1);
+        expect(renderFrameMock).toHaveBeenCalledTimes(1);
+        expect(digestEffectsMock).toHaveBeenCalledTimes(1);
+        expect(ssrScopeRef.digest).toHaveBeenCalledTimes(2);
+      });
+
+      it('should throw an error if an infinite loop runs in the effect module', () => {
+        instance.queue = [];
+        const renderFrameMock = jest.spyOn(instance, 'renderFrame').mockImplementation(() => {
+          instance.queue.pop();
+        });
+        ssrScopeRef.digest.mockReturnValueOnce([{
+          fn:() => {
+            instance.queue.push({});
+          }
+        }]);
+        digestEffectsMock.mockImplementation(() => {
+          instance.queue.push({});
+        });
+        expect(() => instance.digest()).toThrow('ImplementationError: Maximum call depth exceeded for DOM Effects.');
+        expect(rootRenderMock).toHaveBeenCalledTimes(51);
+        expect(renderFrameMock).toHaveBeenCalledTimes(51);
+        expect(digestEffectsMock).toHaveBeenCalledTimes(50);
+      });
+
+      it('should throw an error if an infinite loop runs in the async module', () => {
+        instance.queue = [];
+        const renderFrameMock = jest.spyOn(instance, 'renderFrame').mockImplementation(() => {
+          instance.queue.pop();
+        });
+        ssrScopeRef.digest.mockReturnValue([{
+          fn:() => {
+            instance.queue.push({});
+          }
+        }]);
+        expect(() => instance.digest()).toThrow('ImplementationError: Maximum call depth exceeded for Asynchronous Processing.');
+        expect(rootRenderMock).toHaveBeenCalledTimes(50);
+        expect(renderFrameMock).toHaveBeenCalledTimes(50);
+        expect(digestEffectsMock).toHaveBeenCalledTimes(50);
+      });
+    });
+
     describe('processEffects', () => {
       let digestEffectsMock;
       let rootRenderMock;
@@ -62,7 +135,7 @@ describe('BaseServerRenderController', () => {
         expect(instance.processEffects).toBeInstanceOf(Function);
       });
 
-      it('should process any effects withing the instane scope', () => {
+      it('should process any effects within the instance scope', () => {
         instance.processEffects();
         expect(digestEffectsMock).toHaveBeenCalledTimes(1);
       });
@@ -89,7 +162,7 @@ describe('BaseServerRenderController', () => {
         digestEffectsMock.mockImplementation(() => {
           instance.queue.push({});
         });
-        expect(() => instance.processEffects()).toThrow('ImplementationError: Maximum call depth exceeded');
+        expect(() => instance.processEffects()).toThrow('ImplementationError: Maximum call depth exceeded for DOM Effects.');
         expect(rootRenderMock).toHaveBeenCalledTimes(50);
         expect(renderFrameMock).toHaveBeenCalledTimes(50);
       });

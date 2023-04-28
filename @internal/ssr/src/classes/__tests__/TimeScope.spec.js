@@ -30,7 +30,7 @@ describe('Timeout', () => {
     it('should have a remaining getter which is floored to 0', () => {
       expect(instance.remaining).toEqual(0);
       instance.elapsed = 100;
-      expect(instance.remaining).toEqual(0);
+      expect(instance.remaining).toEqual(-100);
       instance.wait = 200;
       expect(instance.remaining).toEqual(100);
     });
@@ -124,28 +124,53 @@ describe('Timeouts', () => {
       });
     });
 
-    describe('process', () => {
-      let mockFn;
+    describe('getExpired', () => {
+      let mockFn1;
+      let mockFn2;
       beforeEach(() => {
-        mockFn = jest.fn();
-        tickMock = jest.fn();
-        instance.set(mockFn);
-        instance.set(mockFn);
-        instance.set(mockFn, 1);
+        mockFn1 = jest.fn();
+        mockFn2 = jest.fn();
+        instance.set(mockFn1, 1);
+        instance.set(mockFn2);
       });
 
       it('should be a function', () => {
-        expect(instance.process).toBeInstanceOf(Function);
+        expect(instance.getExpired).toBeInstanceOf(Function);
       });
 
-      it('should process any timeouts with a remaining value of 0', () => {
-        instance.process();
-        expect(mockFn).toHaveBeenCalledTimes(2);
-      });
-
-      it('should clear any executed timeouts', () => {
-        instance.process();
+      it('should return an array with all expired timers', () => {
+        const expired = instance.getExpired();
+        expect(expired.length).toEqual(1);
+        expect(expired[0].fn).toBe(mockFn2);
         expect(instance.timeouts.length).toEqual(1);
+        expect(instance.timeouts[0].fn).toBe(mockFn1);
+      });
+    });
+
+    describe('getNext', () => {
+      let mockFn1;
+      let mockFn2;
+      beforeEach(() => {
+        mockFn1 = jest.fn();
+        mockFn2 = jest.fn();
+        instance.set(mockFn1, 1);
+        instance.set(mockFn2);
+      });
+
+      it('should be a function', () => {
+        expect(instance.getNext).toBeInstanceOf(Function);
+      });
+
+      it('should return an array with all expired timers', () => {
+        const next = instance.getNext();
+        expect(next.fn).toBe(mockFn2);
+        expect(instance.timeouts.length).toEqual(1);
+        expect(instance.timeouts[0].fn).toBe(mockFn1);
+      });
+
+      it('should return undefined if there are no timeouts', () => {
+        instance = new Timeouts();
+        expect(instance.getNext()).toBeUndefined();
       });
     });
 
@@ -207,13 +232,45 @@ describe('TimeScope', () => {
     let setTimeoutOriginal;
     let clearTimeoutOriginal;
     beforeEach(() => {
-      instance = new TimeScope();
+      instance = new TimeScope({});
       setTimeoutOriginal = setTimeout;
       clearTimeoutOriginal = clearTimeout;
     });
 
     it('should have a timeouts prop', () => {
       expect(instance.timeouts).toBeInstanceOf(Timeouts);
+    });
+
+    it('should have a runExpiredTimers prop defaulted to true', () => {
+      expect(instance.runExpiredTimers).toBe(true);
+    });
+
+    it('should set runExpiredTimers if a value is passed', () => {
+      instance = new TimeScope({ runExpiredTimers: true });
+      expect(instance.runExpiredTimers).toBe(true);
+      instance = new TimeScope({ runExpiredTimers: false });
+      expect(instance.runExpiredTimers).toBe(false);
+    });
+
+    describe('digest', () => {
+      it('should be a function', () => {
+        expect(instance.digest).toBeInstanceOf(Function);
+      });
+
+      it('should make a call to instance.run if runExpiredTimers is true', () => {
+        const fn = () => {};
+        const getExpiredTimersMock = jest.fn().mockReturnValue([fn]);
+        instance.getExpiredTimers = getExpiredTimersMock;
+        let results = instance.digest();
+        expect(getExpiredTimersMock).toHaveBeenCalledTimes(1);
+        expect(results.length).toEqual(1);
+        expect(results[0]).toBe(fn);
+        instance = new TimeScope({ runExpiredTimers: false });
+        instance.run = getExpiredTimersMock;
+        results = instance.digest();
+        expect(getExpiredTimersMock).toHaveBeenCalledTimes(1);
+        expect(results.length).toEqual(0);
+      });
     });
 
     describe('enable', () => {
@@ -262,37 +319,40 @@ describe('TimeScope', () => {
       });
     });
 
-    describe('play', () => {
-      let processMock;
-      let tickMock;
-      beforeEach(() => {
-        processMock = jest.fn();
-        tickMock = jest.fn();
-        instance.timeouts.process = processMock;
-        instance.timeouts.tick = tickMock;
-      });
-
+    describe('getExpiredTimers', () => {
       it('should be a function', () => {
-        expect(instance.play).toBeInstanceOf(Function);
+        expect(instance.getExpiredTimers).toBeInstanceOf(Function);
       });
 
-      it('should call tick and process once', () => {
-        instance.play();
-        expect(tickMock).toHaveBeenCalledTimes(1);
-        expect(processMock).toHaveBeenCalledTimes(1);
+      it('should return an array of expired timers from timeouts', () => {
+        const mockFn = jest.fn();
+        instance.timeouts.getExpired = jest.fn().mockReturnValue([{ fn: mockFn }]);
+        expect(instance.getExpiredTimers()[0].fn).toBe(mockFn);
       });
     });
 
-    describe('run', () => {
+    describe('getNextTimer', () => {
       it('should be a function', () => {
-        expect(instance.run).toBeInstanceOf(Function);
+        expect(instance.getNextTimer).toBeInstanceOf(Function);
+      });
+
+      it('should return the next timer from timeouts', () => {
+        const mockFn = jest.fn();
+        instance.timeouts.getNext = jest.fn().mockReturnValue({ fn: mockFn });
+        expect(instance.getNextTimer().fn).toBe(mockFn);
+      });
+    });
+
+    describe('tick', () => {
+      it('should be a function', () => {
+        expect(instance.tick).toBeInstanceOf(Function);
       });
 
       it('should call timeouts.process', () => {
-        const processMock = jest.fn();
-        instance.timeouts.process = processMock;
-        instance.run();
-        expect(processMock).toHaveBeenCalledTimes(1);
+        const tickMock = jest.fn();
+        instance.timeouts.tick = tickMock;
+        instance.tick();
+        expect(tickMock).toHaveBeenCalledTimes(1);
       });
     });
   });

@@ -14,7 +14,7 @@ describe('Screen', () => {
     beforeEach(() => {
       container = { tagName: 'DIV' };
       ssrScope = { body: { elem: container } };
-      renderController = { scope: ssrScope };
+      renderController = { scope: ssrScope, digest: jest.fn() };
       instance = new Screen(renderController);
     });
 
@@ -265,14 +265,14 @@ describe('Screen', () => {
     });
 
     describe('time', () => {
-      let playMock;
       let runMock;
+      let tickMock;
       beforeEach(() => {
-        playMock = jest.fn();
         runMock = jest.fn();
+        tickMock = jest.fn();
         ssrScope.time = {
-          play: playMock,
           run: runMock,
+          tick: tickMock,
         };
       });
 
@@ -286,32 +286,23 @@ describe('Screen', () => {
           expect(instance.time.play).toBeInstanceOf(Function);
         });
 
-        it('should call time.play once if no parameter is passed', () => {
+        it('should call time.tick and controller.digest once if no parameter is passed', () => {
           instance.time.play();
-          expect(playMock).toHaveBeenCalledTimes(1);
+          expect(tickMock).toHaveBeenCalledTimes(1);
+          expect(renderController.digest).toHaveBeenCalledTimes(1);
         });
 
         it('should not do anything if a number less than or equal to 0 is passed', () => {
           instance.time.play(0);
-          expect(playMock).not.toHaveBeenCalled();
+          expect(tickMock).not.toHaveBeenCalled();
           instance.time.play(-Infinity);
-          expect(playMock).not.toHaveBeenCalled();
+          expect(tickMock).not.toHaveBeenCalled();
         });
 
         it('should tick the clock n times if n is passed as a parameter', () => {
           instance.time.play(1000);
-          expect(playMock).toHaveBeenCalledTimes(1000);
-        });
-      });
-
-      describe('runCurrentTimers', () => {
-        it('should be a function', () => {
-          expect(instance.time.runCurrentTimers).toBeInstanceOf(Function);
-        });
-
-        it('should execute the run mock', () => {
-          instance.time.runCurrentTimers();
-          expect(runMock).toHaveBeenCalledTimes(1);
+          expect(tickMock).toHaveBeenCalledTimes(1000);
+          expect(renderController.digest).toHaveBeenCalledTimes(1000);
         });
       });
     });

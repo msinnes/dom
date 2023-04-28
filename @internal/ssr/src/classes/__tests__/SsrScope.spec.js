@@ -18,7 +18,7 @@ describe('SsrScope', () => {
     let timeEnableMock;
     let timeDisableMock;
     beforeEach(() => {
-      instance = new SsrScope({});
+      instance = new SsrScope({ dom: {}, time: {} });
 
       domEnableMock = jest.spyOn(instance.dom, 'enable');
       domDisableMock = jest.spyOn(instance.dom, 'disable');
@@ -53,14 +53,46 @@ describe('SsrScope', () => {
     });
 
     it('should pass config.dom to the DomScope', () => {
-      instance = new SsrScope({ dom: { url: 'http://url.com' } });
+      instance = new SsrScope({ dom: { url: 'http://url.com' }, time: {} });
       expect(instance.dom.dom.window.location.href).toEqual('http://url.com/');
+    });
+
+    it('should pass config.time to the TimeScope', () => {
+      instance = new SsrScope({ dom: {}, time: { runExpiredTimers: true } });
+      expect(instance.time.runExpiredTimers).toBe(true);
+      instance = new SsrScope({ dom: {}, time: { runExpiredTimers: false } });
+      expect(instance.time.runExpiredTimers).toBe(false);
     });
 
     it('should have a url getter', () => {
       expect(instance.url).toBeUndefined();
-      instance = new SsrScope({ dom: { url: 'http://url.com' } });
+      instance = new SsrScope({ dom: { url: 'http://url.com' }, time: {} });
       expect(instance.url).toEqual('http://url.com/');
+    });
+
+    describe('digest', () => {
+      let fn;
+      let timeDigestMock;
+      beforeEach(() => {
+        fn = () => {};
+        timeDigestMock = jest.fn().mockReturnValue([fn]);
+        instance.time.digest = timeDigestMock;
+      });
+
+      it('should be a function', () => {
+        expect(instance.digest).toBeInstanceOf(Function);
+      });
+
+      it('should call time.digest', () => {
+        instance.digest();
+        expect(timeDigestMock).toHaveBeenCalledTimes(1);
+      });
+
+      it('should return an array of concatenated handlers', () => {
+        const result = instance.digest();
+        expect(result.length).toEqual(1);
+        expect(result).toMatchObject([fn]);
+      });
     });
 
     describe('enable', () => {
