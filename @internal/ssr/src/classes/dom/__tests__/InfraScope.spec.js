@@ -1,11 +1,17 @@
 import * as Dom from '@msinnes/dom';
 import { Infra } from '@internal/infra';
 
+import { Scope } from '../../base/Scope';
+
 import { InfraScope } from '../InfraScope';
 
 describe('InfraScope', () => {
   it('should be a class', () => {
     expect(InfraScope).toBeAClass();
+  });
+
+  it('should extends Scope', () => {
+    expect(InfraScope).toExtend(Scope);
   });
 
   describe('instance', () => {

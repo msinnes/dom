@@ -1,12 +1,17 @@
-import { DomScope } from '../DomScope';
-import { InfraScope } from '../InfraScope';
-import { TimeScope } from '../TimeScope';
+import { DigestibleScope } from '../base/DigestibleScope';
+import { DomScope } from '../dom/DomScope';
+import { InfraScope } from '../dom/InfraScope';
+import { TimeScope } from '../time/TimeScope';
 
 import { SsrScope } from '../SsrScope';
 
 describe('SsrScope', () => {
   it('should be a class', () => {
     expect(SsrScope).toBeAClass();
+  });
+
+  it('should extends DigestibleScope', () => {
+    expect(SsrScope).toExtend(DigestibleScope);
   });
 
   describe('instance', () => {

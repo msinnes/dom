@@ -1,10 +1,16 @@
 import { JSDOM } from 'jsdom';
 
+import { Scope } from '../../base/Scope';
+
 import { DomScope } from '../DomScope';
 
 describe('DomScope', () => {
   it('should be a class', () => {
     expect(DomScope).toBeAClass();
+  });
+
+  it('should extends Scope', () => {
+    expect(DomScope).toExtend(Scope);
   });
 
   describe('instance', () => {
