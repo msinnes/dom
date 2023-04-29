@@ -13,8 +13,8 @@ describe('Screen', () => {
 
     beforeEach(() => {
       container = { tagName: 'DIV' };
-      ssrScope = { body: { elem: container } };
-      renderController = { scope: ssrScope, digest: jest.fn() };
+      ssrScope = { body: { elem: container }, enable: jest.fn(), disable: jest.fn() };
+      renderController = { scope: ssrScope, digest: jest.fn(), processHandler: jest.fn() };
       instance = new Screen(renderController);
     });
 
@@ -267,18 +267,52 @@ describe('Screen', () => {
     describe('time', () => {
       let runMock;
       let tickMock;
+      let getNextTimerMock;
+      let getExpiredTimersMock;
       beforeEach(() => {
         runMock = jest.fn();
         tickMock = jest.fn();
+        getNextTimerMock = jest.fn();
+        getExpiredTimersMock = jest.fn();
         ssrScope.time = {
           run: runMock,
           tick: tickMock,
+          getNextTimer: getNextTimerMock,
+          getExpiredTimers: getExpiredTimersMock,
         };
       });
 
       it('should be an object on the screen', () => {
         expect(instance.time).toBeDefined();
         expect(instance.time).toBeInstanceOf(Object);
+      });
+
+      describe('next', () => {
+        it('should be a function', () => {
+          expect(instance.time.next).toBeInstanceOf(Function);
+        });
+
+        it('should enable and disable the scope', () => {
+          instance.time.next();
+          expect(ssrScope.enable).toHaveBeenCalledTimes(1);
+          expect(ssrScope.disable).toHaveBeenCalledTimes(1);
+        });
+
+        it('should call scope.time.getNextTimer and pass it to controller.processHandler', () => {
+          const timer = {};
+          getNextTimerMock.mockReturnValue(timer);
+          instance.time.next();
+          expect(getNextTimerMock).toHaveBeenCalledTimes(1);
+          expect(renderController.processHandler).toHaveBeenCalledTimes(1);
+          expect(renderController.processHandler).toHaveBeenCalledWith(timer);
+        });
+
+        it('should call scope.time.getNextTimer and not do anything if there is no next timer', () => {
+          getNextTimerMock.mockReturnValue();
+          instance.time.next();
+          expect(getNextTimerMock).toHaveBeenCalledTimes(1);
+          expect(renderController.processHandler).toHaveBeenCalledTimes(0);
+        });
       });
 
       describe('play', () => {
@@ -303,6 +337,39 @@ describe('Screen', () => {
           instance.time.play(1000);
           expect(tickMock).toHaveBeenCalledTimes(1000);
           expect(renderController.digest).toHaveBeenCalledTimes(1000);
+        });
+
+        it('should enable and disable the scope', () => {
+          instance.time.play();
+          expect(ssrScope.enable).toHaveBeenCalledTimes(1);
+          expect(ssrScope.disable).toHaveBeenCalledTimes(1);
+          instance.time.play(10);
+          expect(ssrScope.enable).toHaveBeenCalledTimes(2);
+          expect(ssrScope.disable).toHaveBeenCalledTimes(2);
+        });
+      });
+
+      describe('runExpiredTimers', () => {
+        it('should be a function', () => {
+          expect(instance.time.runExpiredTimers).toBeInstanceOf(Function);
+        });
+
+        it('should enable and disable the scope', () => {
+          getExpiredTimersMock.mockReturnValue([]);
+          instance.time.runExpiredTimers();
+          expect(ssrScope.enable).toHaveBeenCalledTimes(1);
+          expect(ssrScope.disable).toHaveBeenCalledTimes(1);
+        });
+
+        it('should call scope.time.getExpiredTimers and pass each one to controller.processHandler', () => {
+          const timer1 = {};
+          const timer2 = {};
+          getExpiredTimersMock.mockReturnValue([timer1, timer2]);
+          instance.time.runExpiredTimers();
+          expect(getExpiredTimersMock).toHaveBeenCalledTimes(1);
+          expect(renderController.processHandler).toHaveBeenCalledTimes(2);
+          expect(renderController.processHandler).toHaveBeenCalledWith(timer1);
+          expect(renderController.processHandler).toHaveBeenCalledWith(timer2);
         });
       });
     });

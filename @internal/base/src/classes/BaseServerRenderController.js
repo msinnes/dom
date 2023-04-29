@@ -13,16 +13,7 @@ const BaseServerRenderController = abstract(class extends BaseRenderController {
     if (trace >= 50) throw new Error('ImplementationError: Maximum call depth exceeded for Asynchronous Processing.');
     const results = this.scope.digest();
     if (results.length) {
-      results.forEach(result => {
-        result.fn();
-        if (this.queue.length) {
-          while(this.queue.length) {
-            this.renderFrame();
-          }
-          super.render();
-          this.processEffects();
-        }
-      });
+      results.forEach(this.processHandler.bind(this));
       this.digest(trace + 1);
     }
   }
@@ -39,10 +30,22 @@ const BaseServerRenderController = abstract(class extends BaseRenderController {
     }
   }
 
+  processHandler(handler) {
+    handler.fn();
+    if (this.queue.length) {
+      while(this.queue.length) {
+        this.renderFrame();
+      }
+      super.render();
+      this.processEffects();
+    }
+  }
+
   render() {
     this.scope.enable();
     super.render();
     this.processEffects();
+    this.digest();
     this.scope.disable();
   }
 });

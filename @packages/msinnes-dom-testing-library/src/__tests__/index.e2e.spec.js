@@ -216,3 +216,279 @@ describe('text queries', () => {
     });
   });
 });
+
+describe('timeouts', () => {
+  it('should run an immediate timer', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text');
+        });
+      }, []);
+      return text;
+    };
+    const screen = render(Dom.createElement(App));
+    expect(screen.container.innerHTML).toEqual('async text');
+  });
+
+  it('should clear nested setTimeout calls', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setTimeout(() => {
+            setTimeout(() => {
+              setText('async text');
+            });
+          });
+        });
+      }, []);
+      return text;
+    };
+    const screen = render(Dom.createElement(App));
+    expect(screen.container.innerHTML).toEqual('async text');
+  });
+
+  it('should process a sequence of timeouts utilizing the play functionality', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text 1');
+          setTimeout(() => {
+            setText('async text 2');
+            setTimeout(() => {
+              setText('async text 3');
+            }, 1);
+          }, 1);
+        }, 1);
+      }, []);
+      return text;
+    };
+    const screen = render(Dom.createElement(App));
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.play();
+    expect(screen.container.innerHTML).toEqual('async text 1');
+    screen.time.play();
+    expect(screen.container.innerHTML).toEqual('async text 2');
+    screen.time.play();
+    expect(screen.container.innerHTML).toEqual('async text 3');
+  });
+
+  it('should process a sequence of timeouts utilizing the play functionality with parameters passed', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text 1');
+          setTimeout(() => {
+            setText('async text 2');
+            setTimeout(() => {
+              setText('async text 3');
+            }, 10);
+          }, 10);
+        }, 10);
+      }, []);
+      return text;
+    };
+    const screen = render(Dom.createElement(App));
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.play();
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.play(10);
+    expect(screen.container.innerHTML).toEqual('async text 1');
+    screen.time.play(30);
+    expect(screen.container.innerHTML).toEqual('async text 3');
+  });
+
+  it('should throw an error if an infinite loop occurs', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      setTimeout(() => {
+        setText('async text');
+      });
+      return text;
+    };
+    expect(() => {
+      render(Dom.createElement(App));
+    }).toThrow('ImplementationError: Maximum call depth exceeded for Asynchronous Processing.');
+  });
+
+  it('should throw the correct error if a hook is used asynchronously', () => {
+    const App = () => {
+      let text = 'text';
+      setTimeout(() => {
+        Dom.useEffect(() => {
+          text = 'new text';
+        });
+      });
+      return text;
+    };
+    expect(() => {
+      render(Dom.createElement(App));
+    }).toThrow('InternalError: There is no active context on the controller');
+  });
+
+  it('should not run immediate timers if the app configuration is overridden', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text');
+        });
+      }, []);
+      return text;
+    };
+    const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+    expect(screen.container.innerHTML).toEqual('default text');
+  });
+
+  it('should not execute a collection of timers when play is called if the app configuration is overridden', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text 1');
+          setTimeout(() => {
+            setText('async text 2');
+            setTimeout(() => {
+              setText('async text 3');
+            }, 1);
+          }, 1);
+        }, 1);
+      }, []);
+      return text;
+    };
+    const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.play();
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.play();
+    expect(screen.container.innerHTML).toEqual('default text');
+  });
+
+  it('should allow the user to process expired timers one by one', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text 1');
+          setTimeout(() => {
+            setText('async text 2');
+            setTimeout(() => {
+              setText('async text 3');
+            }, 1);
+          }, 1);
+        }, 1);
+      }, []);
+      return text;
+    };
+    const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.play(1);
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.next();
+    expect(screen.container.innerHTML).toEqual('async text 1');
+    screen.time.next();
+    expect(screen.container.innerHTML).toEqual('async text 1');
+    screen.time.play(1);
+    screen.time.next();
+    expect(screen.container.innerHTML).toEqual('async text 2');
+    screen.time.play(1);
+    screen.time.next();
+    expect(screen.container.innerHTML).toEqual('async text 3');
+  });
+
+  it('should stack parallel timers and run them one by one', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text 1');
+        }, 2);
+      }, []);
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text 2');
+        });
+      }, []);
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text 3');
+        }, 1);
+      }, []);
+      return text;
+    };
+    const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.play(2);
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.next();
+    expect(screen.container.innerHTML).toEqual('async text 2');
+    screen.time.next();
+    expect(screen.container.innerHTML).toEqual('async text 3');
+    screen.time.next();
+    expect(screen.container.innerHTML).toEqual('async text 1');
+  });
+
+  it('should allow the user to process expired timers by a batch', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text 1');
+          setTimeout(() => {
+            setText('async text 2');
+            setTimeout(() => {
+              setText('async text 3');
+            }, 1);
+          }, 1);
+        }, 1);
+      }, []);
+      return text;
+    };
+    const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.play(1);
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.runExpiredTimers();
+    expect(screen.container.innerHTML).toEqual('async text 1');
+    screen.time.runExpiredTimers();
+    expect(screen.container.innerHTML).toEqual('async text 1');
+    screen.time.play(1);
+    screen.time.runExpiredTimers();
+    expect(screen.container.innerHTML).toEqual('async text 2');
+    screen.time.play(1);
+    screen.time.runExpiredTimers();
+    expect(screen.container.innerHTML).toEqual('async text 3');
+  });
+
+  it('should stack parallel timers and run them as a batch', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text 1');
+        }, 2);
+      }, []);
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text 2');
+        });
+      }, []);
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text 3');
+        }, 1);
+      }, []);
+      return text;
+    };
+    const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.play(2);
+    expect(screen.container.innerHTML).toEqual('default text');
+    screen.time.runExpiredTimers();
+    expect(screen.container.innerHTML).toEqual('async text 1');
+  });
+});

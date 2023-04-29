@@ -172,6 +172,17 @@ describe('Timeouts', () => {
         instance = new Timeouts();
         expect(instance.getNext()).toBeUndefined();
       });
+
+      it('should return undefined if there are all expired timeouts are exhausted', () => {
+        let next = instance.getNext();
+        expect(next.fn).toBe(mockFn2);
+        expect(instance.timeouts.length).toEqual(1);
+        expect(instance.timeouts[0].fn).toBe(mockFn1);
+        next = instance.getNext();
+        expect(next).toBeUndefined();
+        expect(instance.timeouts.length).toEqual(1);
+        expect(instance.timeouts[0].fn).toBe(mockFn1);
+      });
     });
 
     describe('set', () => {
@@ -326,8 +337,21 @@ describe('TimeScope', () => {
 
       it('should return an array of expired timers from timeouts', () => {
         const mockFn = jest.fn();
-        instance.timeouts.getExpired = jest.fn().mockReturnValue([{ fn: mockFn }]);
+        instance.timeouts.getExpired = jest.fn().mockReturnValue([{ fn: mockFn, remaining: 0 }]);
         expect(instance.getExpiredTimers()[0].fn).toBe(mockFn);
+      });
+
+      it('should order timers based on their remaining value', () => {
+        const timer1 = { fn: () => {}, remaining: -100 };
+        const timer2 = { fn: () => {}, remaining: 0 };
+        const timer3 = { fn: () => {}, remaining: -1000 };
+        const timer4 = { fn: () => {}, remaining: -200 };
+        instance.timeouts.getExpired = jest.fn().mockReturnValue([timer1, timer2, timer3, timer4]);
+        const results = instance.getExpiredTimers();
+        expect(results[0]).toBe(timer3);
+        expect(results[1]).toBe(timer4);
+        expect(results[2]).toBe(timer1);
+        expect(results[3]).toBe(timer2);
       });
     });
 

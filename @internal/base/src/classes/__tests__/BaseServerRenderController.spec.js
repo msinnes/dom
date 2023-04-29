@@ -69,7 +69,7 @@ describe('BaseServerRenderController', () => {
         expect(ssrScopeRef.digest).toHaveBeenCalledTimes(1);
       });
 
-      it('should process frames and rerender if there are frames after processing the effects', () => {
+      it('should process frames and rerender if there are frames after digesting the scope', () => {
         instance.queue = [];
         const renderFrameMock = jest.spyOn(instance, 'renderFrame').mockImplementation(() => {
           instance.queue.pop();
@@ -168,18 +168,50 @@ describe('BaseServerRenderController', () => {
       });
     });
 
+    describe('processHandler', () => {
+      let digestEffectsMock;
+      let rootRenderMock;
+
+      beforeEach(() => {
+        digestEffectsMock = instance.scope.services.digestEffects;
+        rootRenderMock = jest.spyOn(instance.renderer, 'rootRender').mockImplementation(() => {});
+        ssrScopeRef.digest.mockReturnValue([]);
+      });
+
+      it('should be a function', () => {
+        expect(instance.processHandler).toBeInstanceOf(Function);
+      });
+
+      it('should process frames and rerender if there are frames after executing the handler', () => {
+        instance.queue = [];
+        const renderFrameMock = jest.spyOn(instance, 'renderFrame').mockImplementation(() => {
+          instance.queue.pop();
+        });
+        instance.processHandler({
+          fn:() => {
+            instance.queue.push({});
+          }
+        });
+        expect(rootRenderMock).toHaveBeenCalledTimes(1);
+        expect(renderFrameMock).toHaveBeenCalledTimes(1);
+        expect(digestEffectsMock).toHaveBeenCalledTimes(1);
+      });
+    });
+
     describe('render', () => {
       let processEffectsMock;
+      let digestMock;
 
       beforeEach(() => {
         processEffectsMock = jest.spyOn(instance, 'processEffects').mockImplementation(() => {});
+        digestMock = jest.spyOn(instance, 'digest').mockImplementation(() => {});
       });
 
       it('should be a function', () => {
         expect(instance.render).toBeInstanceOf(Function);
       });
 
-      it('should call scope.enable, super.render, instance.processEffects, and scope.disable', () => {
+      it('should call scope.enable, super.render, instance.processEffects, instance.digest, and scope.disable', () => {
         const renderMock = jest.fn();
         const componentRenderRef = {};
         const rootFirstChildRef = {};
@@ -192,6 +224,8 @@ describe('BaseServerRenderController', () => {
         expect(renderMock).toHaveBeenCalledWith(componentRenderRef, instance.renderer.root, rootFirstChildRef);
         expect(processEffectsMock).toHaveBeenCalledTimes(1);
         expect(processEffectsMock).toHaveBeenCalledWith();
+        expect(digestMock).toHaveBeenCalledTimes(1);
+        expect(digestMock).toHaveBeenCalledWith();
         expect(ssrScopeRef.disable).toHaveBeenCalledTimes(1);
       });
     });

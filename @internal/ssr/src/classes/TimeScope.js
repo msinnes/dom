@@ -61,7 +61,7 @@ class Timeouts {
     let next;
     let nextId;
     this.each((timeout, id) => {
-      if (!next || next.wait > timeout.wait) {
+      if ((!next && timeout.remaining <= 0) || (next && next.wait > timeout.wait)) {
         next = timeout;
         nextId = id;
       }
@@ -113,7 +113,7 @@ class TimeScope {
   getExpiredTimers() {
     return [
       ...this.timeouts.getExpired(),
-    ];
+    ].sort((a, b) => a.remaining - b.remaining);
   }
 
   getNextTimer() {
