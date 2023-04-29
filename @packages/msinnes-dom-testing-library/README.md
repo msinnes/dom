@@ -91,7 +91,7 @@ describe('App', () => {
     // query for the button
     const button = screen.getByText('Click (Click\'d: 0)');
     // assert that the button is on screen
-    expect(button).toBeOnScreen(screen);
+    expect(button).toBeDefined();
   });
 
   it('should increment the counter', () => {
@@ -104,7 +104,7 @@ describe('App', () => {
     // check for the next expected render
     const reRenderedButton = screen.getByText('Click (Click\'d: 1)');
     // assert that the button is on screen
-    expect(reRenderedButton).toBeOnScreen(screen);
+    expect(reRenderedButton).toBeDefined();
   });
 });
 ```
@@ -119,6 +119,95 @@ describe('App', () => {
  function render(jsxRender: JSXRender, config?: renderConfig);
  ```
 
-There is some limited functionality that can be configured when the render function creates the screen. This functionality will be expanded in the next release along with a round of changes to the queries.
+### - `config`
 
-This part of the library is unstable, and documentation will be expanded in an upcoming release.
+A configuration can be passed to the render function as a second argument. There is limited functionality, but it will expand as more features are added.
+
+#### `runExpiredTimers -- Boolean`
+
+Tells the rendering engine whether to run any timers that have expired. If a `setTimeout` is called without a second parameter or the second parameter is 0, the timer will execute inline with the render. This simulates clearing the call-queue with a render. Even if timers are nested, the simulated queue will run recursively until the queue is empty.
+
+```JavaScript
+import * as DOM from '@msinnes/dom';
+import { render } from '@msinnes/dom-testing-library';
+
+const App = () => {
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    setTimeout(() => {
+      setText('async text');
+    });
+  }, []);
+  return text;
+};
+
+const screen1 = render(<App />); // Value defaults to true
+const screen2 = render(<App />, { runExpiredTimers: false });
+
+console.log(screen1.container.innerHTML); // <-- 'async text'
+console.log(screen2.container.innerHTML); // <-- 'default text'
+```
+
+In this case `screen1` will render the text produced asynchronously, but `screen2` will render the default text. This allows for more control over the timers throughout the rendering process.
+
+#### `url -- String`
+
+The location to pass to `JSDOM` during page load. If no url is passed, the location will be the default location. This feature is required in order to render routed application on a server, or in a testing environment.
+
+```JavaScript
+// TODO: add an example after some work has been done on the ssr routing api. I need to make sure that the screen will render routing even if there is no url passed to the page.
+```
+
+## - `Screen`
+
+The `Screen` class represents a user interface for rendering `@msinnes/dom` apps in a NodeJS environment. Although I have not found a use case outside of testing, this screen object could be used in any type of application. It is not tied to any testing environment. That said, the screen object is a good mechanism for testing rendered applications.
+
+```JavaScript
+import * as DOM from '@msinnes/dom';
+import { render } from '@msinnes/dom-testing-library';
+
+const screen = render(<div>text</div>);
+
+expect(screen.container.innerHTML).toEqual('<div>text</div>');
+```
+
+Instances of the `Screen` class render atomically. It is entirely possible to render multiple applications simultaneously in the same test suite. Queries can be made against any screen object without worrying about affecting a query or action in an application rendered in parallel.
+
+
+### `Screen.container`
+
+The root visual element of rendered screen. Correspondes to the document.body element, not the ref associated with the element.
+
+### `Screen.time`
+
+The time interface for executing asyncronous timers. Depending on configuration, timers can run automatically, can be batch processed, or they can be executed one by one.
+
+#### `Screen.time.next - () => void`
+
+Processes the next expired timer associated with the screen instance. If no timers have expired, then nothing will happen.
+
+#### `Screen.time.play - (ticks: ?number) => void`
+
+Will tick all timers and digest the scope. If the screen is not configured to run expired timers (`runExpiredTimers = false`) then none of the timers will be executed. This allows the user to advance the clock and run any timers that expired in that time.
+
+#### `Screen.time.runExpiredTimers - () => void`
+
+Will run all timers that have expired, running them in expiration order. If no timers have expired, then no timers will execute.
+
+### `Screen.(getBy|getAllBy|queryBy)* (Queries)`
+
+Screen instances support DOM queries. There are three variations on all queries. `getBy` will query the DOM, throwing an error if nothing is found, or throwing an error if more than one result is found. `getAllBy` will query the DOM, throwing an error if no results are found. `queryBy` will run a base query on the dom, returning an array with found results if any exist. `queryBy` will not throw an error if no results are found.
+
+#### `Screen.*ByLabelText`
+
+A query family for querying by a form element's label text.
+
+#### `Screen.*ByRole`
+
+A query family for querying by an element's role.
+
+#### `Screen.*ByText`
+
+A query family for querying an element based on its text content.
+
+

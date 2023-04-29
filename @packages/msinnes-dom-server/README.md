@@ -103,12 +103,51 @@ type JSXRender = JSX | string | JSXRender[] | undefined | null | *;
 function renderToScreen(JSXRender): Screen;
 ```
 
+### - `config`
+
+A configuration can be passed to the renderToString function or the renderToScreen function as a second argument. There is limited functionality, but it will expand as more features are added.
+
+#### `runExpiredTimers -- Boolean`
+
+Tells the rendering engine whether to run any timers that have expired. If a `setTimeout` is called without a second parameter or the second parameter is 0, the timer will execute inline with the render. This simulates clearing the call-queue with a render. Even if timers are nested, the simulated queue will run recursively until the queue is empty.
+
+```JavaScript
+import * as DOM from '@msinnes/dom';
+import { render } from '@msinnes/dom-testing-library';
+
+const App = () => {
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    setTimeout(() => {
+      setText('async text');
+    });
+  }, []);
+  return text;
+};
+
+const screen1 = render(<App />); // Value defaults to true
+const screen2 = render(<App />, { runExpiredTimers: false });
+
+console.log(screen1.container.innerHTML); // <-- 'async text'
+console.log(screen2.container.innerHTML); // <-- 'default text'
+```
+
+In this case `screen1` will render the text produced asynchronously, but `screen2` will render the default text. This allows for more control over the timers throughout the rendering process.
+
+#### `url -- String`
+
+The location to pass to `JSDOM` during page load. If no url is passed, the location will be the default location. This feature is required in order to render routed application on a server, or in a testing environment.
+
+```JavaScript
+// TODO: add an example after some work has been done on the ssr routing api. I need to make sure that the screen will render routing even if there is no url passed to the page.
+```
+
 # Usage
 
-It is important to note that `renderToString` and `renderToScreen` only perform shallow renders of an application. The output string will only include a synchronous output base on the input render, processed effects, and associated data. It currently does not support asynchronous processes, which includes any call to change application state. I'm pretty sure any call to `setState` or `useState` will be ignord, but it could cause issues.
+`renderToString` and `renderToScreen` currently support limited async rendering functionality based on configuration. A shallow render is performed and any supported asynchronous handlers will be executed.
 
 An example application can be found in the `@e2e/ssr-app` folder. This is a very basic application, but it works in the current end-to-end tests. In this process, each application has 2 entry points. The FE entry-point is in `pages/index.js` and is what gets built in `webpack.pages.config`.
 
-When the server application is build, just before starting, the application will bundle with the routers importing the `pages/App.js` files. The server is built so that the JSX in the router file can be process easily in the server context. Essentially, this step of the build process allows us to keep from having to do something clever with requires. We just build pages and server seperately. When the server delivers a page for any given route, it returns the associated bundle.
+When the server application is built, just before starting, the application will bundle with the routers importing the `pages/App.js` files. The server is built so that the JSX in the router file can be process easily in the server context. Essentially, this step of the build process allows us to keep from having to do something clever with requires. We just build pages and server seperately. When the server delivers a page for any given route, it returns the associated bundle.
 
 These directions are a living document, and I will start adding more steps as I build toward page streaming.
