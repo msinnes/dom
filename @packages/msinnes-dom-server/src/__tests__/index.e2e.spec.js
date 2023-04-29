@@ -103,4 +103,78 @@ describe('e2e', () => {
     const html = api.renderToString(Dom.createElement(Comp));
     expect(html).toEqual('');
   });
+
+  it('should render a component that has expired timers by default', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text');
+        });
+      }, []);
+      return text;
+    };
+    const html = api.renderToString(Dom.createElement(App));
+    expect(html).toEqual('async text');
+  });
+
+  it('should render a component with nested timers by default', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setTimeout(() => {
+            setTimeout(() => {
+              setText('async text');
+            });
+          });
+        });
+      }, []);
+      return text;
+    };
+    const html = api.renderToString(Dom.createElement(App));
+    expect(html).toEqual('async text');
+  });
+
+  it('should throw an error if an infinite loop occurs', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      setTimeout(() => {
+        setText('async text');
+      });
+      return text;
+    };
+    expect(() => {
+      api.renderToString(Dom.createElement(App));
+    }).toThrow('ImplementationError: Maximum call depth exceeded for Asynchronous Processing.');
+  });
+
+  it('should throw the correct error if a hook is used asynchronously', () => {
+    const App = () => {
+      let text = 'text';
+      setTimeout(() => {
+        Dom.useEffect(() => {
+          text = 'new text';
+        });
+      });
+      return text;
+    };
+    expect(() => {
+      api.renderToString(Dom.createElement(App));
+    }).toThrow('InternalError: There is no active context on the controller');
+  });
+
+  it('should not run immediate timers if the app configuration is overridden', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText('async text');
+        });
+      }, []);
+      return text;
+    };
+    const html = api.renderToString(Dom.createElement(App), { runExpiredTimers: false });
+    expect(html).toEqual('default text');
+  });
 });

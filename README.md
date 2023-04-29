@@ -21,14 +21,14 @@ The APIs in this library are all developed in Jest using a very test-driven patt
 
 This is just a starting list of features, and a short description of each. In time, I will do my best to cover all features with examples.
 
-- Lightweight -- Flat bundled in ES6 (unminified) the library is 29kb. Fully transpiled to ES5 and minified, the library is 49kb, 1/3 the size of React and React-Dom.
+- Lightweight -- Flat bundled in ES6 (unminified) the library is 29kb. Fully transpiled to ES5 and minified, the library is 49kb, 1/3 the size of React and React-Dom. Flat bundled, minified, and gzipped, the library is 7kb, which puts it on par with Preact.
 - No Import Statement -- This library doesn't require you to import it when it isn't used. You only import the API if you actually need to use it.
 - Class Components -- Abstract Class component which can be extended and exposes three lifecycle methods: `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount`.
 - Function Components -- Functions can be used with hooks to develop clean, expressive functionality.
 - Hooks -- Hooks for almost anything you need to build a website, and they process server side without any problem.
+- Limited Async Rendering Server Side -- Asynchronous processing will now run in both the server and testing environments. Timeouts are currently supported.
 
-This library is Preact/React with hooks out of the box and no engine swap.
-This is just the beginning of the features already available.
+This library delivers the functionality of React at the size of Preact. There is no engine swap, and a healthy suite of libraries is already available for routing, testing, and state management.
 
 # Usage
 

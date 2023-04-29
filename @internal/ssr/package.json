@@ -18,6 +18,7 @@
     "@internal/base": "^0.0.4-alpha.0",
     "@internal/dom": "^0.0.4-alpha.0",
     "@internal/infra": "^0.0.4-alpha.0",
+    "@internal/is": "^0.0.4-alpha.0",
     "jsdom": "^19.0.0"
   },
   "devDependencies": {

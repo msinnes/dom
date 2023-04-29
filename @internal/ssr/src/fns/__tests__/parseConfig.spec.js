@@ -6,10 +6,14 @@ describe('parseConfig', () => {
   });
 
   it('should return a default config', () => {
-    expect(parseConfig()).toMatchObject({ dom: {} });
+    expect(parseConfig()).toMatchObject({ dom: {}, time: {} });
   });
 
-  it('should return a default config', () => {
-    expect(parseConfig({ url: 'url' })).toMatchObject({ dom: { url: 'url' } });
+  it('should return a url configuration', () => {
+    expect(parseConfig({ url: 'url' })).toMatchObject({ dom: { url: 'url' }, time: {} });
+  });
+
+  it('should return a temporal configuration', () => {
+    expect(parseConfig({ runExpiredTimers: true })).toMatchObject({ dom: {}, time: { runExpiredTimers: true }});
   });
 });

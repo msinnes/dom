@@ -1,6 +1,7 @@
 import { DomScope } from '../DomScope';
-
 import { InfraScope } from '../InfraScope';
+import { TimeScope } from '../TimeScope';
+
 import { SsrScope } from '../SsrScope';
 
 describe('SsrScope', () => {
@@ -14,13 +15,18 @@ describe('SsrScope', () => {
     let domDisableMock;
     let infraEnableMock;
     let infraDisableMock;
+    let timeEnableMock;
+    let timeDisableMock;
     beforeEach(() => {
-      instance = new SsrScope({});
+      instance = new SsrScope({ dom: {}, time: {} });
 
       domEnableMock = jest.spyOn(instance.dom, 'enable');
       domDisableMock = jest.spyOn(instance.dom, 'disable');
       infraEnableMock = jest.spyOn(instance.infra, 'enable');
       infraDisableMock = jest.spyOn(instance.infra, 'disable');
+      // We just want to make sure the mock is called. This is dangerous and we don't need to run it in this case.
+      timeEnableMock = jest.spyOn(instance.time, 'enable').mockImplementation(() => {});
+      timeDisableMock = jest.spyOn(instance.time, 'disable');
     });
 
     it('should have a dom prop', () => {
@@ -33,6 +39,11 @@ describe('SsrScope', () => {
       expect(instance.infra).toBeInstanceOf(InfraScope);
     });
 
+    it('should have a time prop', () => {
+      expect(instance.time).toBeDefined();
+      expect(instance.time).toBeInstanceOf(TimeScope);
+    });
+
     it('should expose the body element on a body getter', () => {
       expect(instance.body.elem).toBe(instance.dom.dom.window.document.body);
     });
@@ -42,14 +53,46 @@ describe('SsrScope', () => {
     });
 
     it('should pass config.dom to the DomScope', () => {
-      instance = new SsrScope({ dom: { url: 'http://url.com' } });
+      instance = new SsrScope({ dom: { url: 'http://url.com' }, time: {} });
       expect(instance.dom.dom.window.location.href).toEqual('http://url.com/');
+    });
+
+    it('should pass config.time to the TimeScope', () => {
+      instance = new SsrScope({ dom: {}, time: { runExpiredTimers: true } });
+      expect(instance.time.runExpiredTimers).toBe(true);
+      instance = new SsrScope({ dom: {}, time: { runExpiredTimers: false } });
+      expect(instance.time.runExpiredTimers).toBe(false);
     });
 
     it('should have a url getter', () => {
       expect(instance.url).toBeUndefined();
-      instance = new SsrScope({ dom: { url: 'http://url.com' } });
+      instance = new SsrScope({ dom: { url: 'http://url.com' }, time: {} });
       expect(instance.url).toEqual('http://url.com/');
+    });
+
+    describe('digest', () => {
+      let fn;
+      let timeDigestMock;
+      beforeEach(() => {
+        fn = () => {};
+        timeDigestMock = jest.fn().mockReturnValue([fn]);
+        instance.time.digest = timeDigestMock;
+      });
+
+      it('should be a function', () => {
+        expect(instance.digest).toBeInstanceOf(Function);
+      });
+
+      it('should call time.digest', () => {
+        instance.digest();
+        expect(timeDigestMock).toHaveBeenCalledTimes(1);
+      });
+
+      it('should return an array of concatenated handlers', () => {
+        const result = instance.digest();
+        expect(result.length).toEqual(1);
+        expect(result).toMatchObject([fn]);
+      });
     });
 
     describe('enable', () => {
@@ -61,6 +104,7 @@ describe('SsrScope', () => {
         instance.enable();
         expect(domEnableMock).toHaveBeenCalledTimes(1);
         expect(infraEnableMock).toHaveBeenCalledTimes(1);
+        expect(timeEnableMock).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -73,6 +117,7 @@ describe('SsrScope', () => {
         instance.disable();
         expect(domDisableMock).toHaveBeenCalledTimes(1);
         expect(infraDisableMock).toHaveBeenCalledTimes(1);
+        expect(timeDisableMock).toHaveBeenCalledTimes(1);
       });
     });
   });

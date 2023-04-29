@@ -1,6 +1,13 @@
 import * as Dom from '@msinnes/dom';
+import { BaseRenderableComponent } from '@internal/base';
+import { Infra } from '@internal/infra';
 
-// Store original api values for instance clearing;
+
+// Top level rewrite so the individual instances can see the component and contexts, which are both singletons.
+Dom.Component = BaseRenderableComponent;
+Dom.createContext = defaultValue => Infra.contextService.createEntity(defaultValue);
+
+// Store original api values for instance clearing. All hooks are tied to individual rendering instances.
 const useContextOriginal = Dom.useContext;
 const useEffectOriginal = Dom.useEffect;
 const useMemoOriginal = Dom.useMemo;
