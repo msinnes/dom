@@ -34,9 +34,9 @@ describe('Timeouts', () => {
       it('should return an array with all expired timers', () => {
         const expired = instance.getExpired();
         expect(expired.length).toEqual(1);
-        expect(expired[0].fn).toBe(mockFn2);
+        expired[0].fn();
+        expect(mockFn2).toHaveBeenCalledTimes(1);
         expect(instance.timers.length).toEqual(1);
-        expect(instance.timers[0].fn).toBe(mockFn1);
       });
     });
 
@@ -56,9 +56,9 @@ describe('Timeouts', () => {
 
       it('should the next expired timer', () => {
         const next = instance.getNext();
-        expect(next.fn).toBe(mockFn2);
+        next.fn();
+        expect(mockFn2).toHaveBeenCalledTimes(1);
         expect(instance.timers.length).toEqual(1);
-        expect(instance.timers[0].fn).toBe(mockFn1);
       });
 
       it('should return undefined if there are no timeouts', () => {
@@ -68,13 +68,14 @@ describe('Timeouts', () => {
 
       it('should return undefined if there are all expired timeouts are exhausted', () => {
         let next = instance.getNext();
-        expect(next.fn).toBe(mockFn2);
+        next.fn();
+        expect(mockFn2).toHaveBeenCalledTimes(1);
         expect(instance.timers.length).toEqual(1);
-        expect(instance.timers[0].fn).toBe(mockFn1);
         next = instance.getNext();
         expect(next).toBeUndefined();
         expect(instance.timers.length).toEqual(1);
-        expect(instance.timers[0].fn).toBe(mockFn1);
+        instance.timers[0].fn();
+        expect(mockFn1).toHaveBeenCalledTimes(1);
       });
     });
   });

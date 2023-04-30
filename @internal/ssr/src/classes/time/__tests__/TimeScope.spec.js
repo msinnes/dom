@@ -18,10 +18,14 @@ describe('TimeScope', () => {
     let instance;
     let setTimeoutOriginal;
     let clearTimeoutOriginal;
+    let setIntervalOriginal;
+    let clearIntervalOriginal;
     beforeEach(() => {
       instance = new TimeScope({});
       setTimeoutOriginal = setTimeout;
       clearTimeoutOriginal = clearTimeout;
+      setIntervalOriginal = setInterval;
+      clearIntervalOriginal = clearInterval;
     });
 
     it('should have a timeouts prop', () => {
@@ -88,6 +92,26 @@ describe('TimeScope', () => {
         expect(instance.timeouts.timers.length).toEqual(0);
         instance.disable();
       });
+
+      it('should reset setInterval to timers.set', () => {
+        instance.enable();
+        expect(setInterval).not.toBe(setIntervalOriginal);
+        const fn = () => {};
+        setInterval(fn);
+        expect(instance.intervals.timers.length).toEqual(1);
+        instance.disable();
+      });
+
+      it('should set clearInterval to timers.clear', () => {
+        instance.enable();
+        expect(clearInterval).not.toBe(clearIntervalOriginal);
+        const fn = () => {};
+        const id = setInterval(fn);
+        expect(instance.intervals.timers.length).toEqual(1);
+        clearInterval(id);
+        expect(instance.intervals.timers.length).toEqual(0);
+        instance.disable();
+      });
     });
 
     describe('disable', () => {
@@ -107,6 +131,20 @@ describe('TimeScope', () => {
         expect(clearTimeout).not.toBe(clearTimeoutOriginal);
         instance.disable();
         expect(clearTimeout).toBe(clearTimeoutOriginal);
+      });
+
+      it('should restore setInterval', () => {
+        instance.enable();
+        expect(setInterval).not.toBe(setIntervalOriginal);
+        instance.disable();
+        expect(setInterval).toBe(setIntervalOriginal);
+      });
+
+      it('should restore clearInterval', () => {
+        instance.enable();
+        expect(clearInterval).not.toBe(clearIntervalOriginal);
+        instance.disable();
+        expect(clearInterval).toBe(clearIntervalOriginal);
       });
     });
 
@@ -183,9 +221,16 @@ describe('TimeScope', () => {
         expect(instance.tick).toBeInstanceOf(Function);
       });
 
-      it('should call timeouts.process', () => {
+      it('should call timeouts.tick', () => {
         const tickMock = jest.fn();
         instance.timeouts.tick = tickMock;
+        instance.tick();
+        expect(tickMock).toHaveBeenCalledTimes(1);
+      });
+
+      it('should call intervals.tick', () => {
+        const tickMock = jest.fn();
+        instance.intervals.tick = tickMock;
         instance.tick();
         expect(tickMock).toHaveBeenCalledTimes(1);
       });

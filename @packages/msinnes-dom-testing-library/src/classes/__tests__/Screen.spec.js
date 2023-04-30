@@ -349,14 +349,14 @@ describe('Screen', () => {
         });
       });
 
-      describe('runExpiredTimers', () => {
+      describe('run', () => {
         it('should be a function', () => {
-          expect(instance.time.runExpiredTimers).toBeInstanceOf(Function);
+          expect(instance.time.run).toBeInstanceOf(Function);
         });
 
         it('should enable and disable the scope', () => {
           getExpiredTimersMock.mockReturnValue([]);
-          instance.time.runExpiredTimers();
+          instance.time.run();
           expect(ssrScope.enable).toHaveBeenCalledTimes(1);
           expect(ssrScope.disable).toHaveBeenCalledTimes(1);
         });
@@ -365,11 +365,22 @@ describe('Screen', () => {
           const timer1 = {};
           const timer2 = {};
           getExpiredTimersMock.mockReturnValue([timer1, timer2]);
-          instance.time.runExpiredTimers();
+          instance.time.run();
           expect(getExpiredTimersMock).toHaveBeenCalledTimes(1);
           expect(renderController.processHandler).toHaveBeenCalledTimes(2);
           expect(renderController.processHandler).toHaveBeenCalledWith(timer1);
           expect(renderController.processHandler).toHaveBeenCalledWith(timer2);
+        });
+      });
+
+      describe('tick', () => {
+        it('should be a function', () => {
+          expect(instance.time.tick).toBeInstanceOf(Function);
+        });
+
+        it('should call scope.time.tick', () => {
+          instance.time.tick();
+          expect(tickMock).toHaveBeenCalledTimes(1);
         });
       });
     });

@@ -63,7 +63,7 @@ class Screen {
         }
         controller.scope.disable();
       },
-      runExpiredTimers: () => {
+      run: () => {
         controller.scope.enable();
         const timers = controller.scope.time.getExpiredTimers();
         timers.forEach(timer => {
@@ -71,6 +71,7 @@ class Screen {
         });
         controller.scope.disable();
       },
+      tick: () => controller.scope.time.tick(),
     };
   }
 }

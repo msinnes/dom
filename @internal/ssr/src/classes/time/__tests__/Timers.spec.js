@@ -115,8 +115,10 @@ describe('Timers', () => {
         const fn = jest.fn();
         instance.set(fn, 100);
         expect(instance.timers.length).toEqual(1);
-        expect(instance.timers[0].fn).toBe(fn);
+        expect(instance.timers[0].fn).toBeInstanceOf(Function);
         expect(instance.timers[0].wait).toEqual(100);
+        instance.timers[0].fn();
+        expect(fn).toHaveBeenCalledTimes(1);
       });
     });
 

@@ -7,6 +7,8 @@ import { Timeouts } from './Timeouts';
 
 const setTimeoutOriginal = setTimeout;
 const clearTimeoutOriginal = clearTimeout;
+const setIntervalOriginal = setInterval;
+const clearIntervalOriginal = clearInterval;
 
 class TimeScope extends DigestibleScope {
   runExpiredTimers = true;
@@ -26,11 +28,15 @@ class TimeScope extends DigestibleScope {
   disable() {
     setTimeout = setTimeoutOriginal;
     clearTimeout = clearTimeoutOriginal;
+    setInterval = setIntervalOriginal;
+    clearInterval = clearIntervalOriginal;
   }
 
   enable() {
     setTimeout = this.timeouts.set.bind(this.timeouts);
     clearTimeout = this.timeouts.clear.bind(this.timeouts);
+    setInterval = this.intervals.set.bind(this.intervals);
+    clearInterval = this.intervals.clear.bind(this.intervals);
   }
 
   getExpiredTimers() {
@@ -51,6 +57,7 @@ class TimeScope extends DigestibleScope {
 
   tick() {
     this.timeouts.tick();
+    this.intervals.tick();
   }
 }
 

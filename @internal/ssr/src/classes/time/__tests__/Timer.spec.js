@@ -18,7 +18,9 @@ describe('Timer', () => {
     });
 
     it('should set the fn prop', () => {
-      expect(instance.fn).toBe(mockFn);
+      expect(instance.fn).toBeInstanceOf(Function);
+      instance.fn();
+      expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
     it('should set a wait prop if one is passed', () => {
@@ -27,7 +29,7 @@ describe('Timer', () => {
       expect(instance.wait).toEqual(100);
     });
 
-    it('should have a remaining getter which is floored to 0', () => {
+    it('should have a remaining getter', () => {
       expect(instance.remaining).toEqual(0);
       instance.elapsed = 100;
       expect(instance.remaining).toEqual(-100);

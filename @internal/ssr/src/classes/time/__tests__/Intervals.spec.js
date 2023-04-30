@@ -38,21 +38,33 @@ describe('Intervals', () => {
         instance.tick();
         results = instance.getExpired();
         expect(results.length).toEqual(1);
-        expect(results[0].fn).toBe(mockFn1);
+        results[0].fn();
+        expect(mockFn1).toHaveBeenCalledTimes(1);
         instance.tick();
         results = instance.getExpired();
         expect(results.length).toEqual(2);
-        expect(results[0].fn).toBe(mockFn1);
-        expect(results[1].fn).toBe(mockFn2);
+        results[0].fn();
+        expect(mockFn1).toHaveBeenCalledTimes(2);
+        results[1].fn();
+        expect(mockFn2).toHaveBeenCalledTimes(1);
         instance.tick();
         results = instance.getExpired();
         expect(results.length).toEqual(1);
-        expect(results[0].fn).toBe(mockFn1);
+        results[0].fn();
+        expect(mockFn1).toHaveBeenCalledTimes(3);
         instance.tick();
         results = instance.getExpired();
         expect(results.length).toEqual(2);
-        expect(results[0].fn).toBe(mockFn1);
-        expect(results[1].fn).toBe(mockFn2);
+        results[0].fn();
+        expect(mockFn1).toHaveBeenCalledTimes(4);
+        results[1].fn();
+        expect(mockFn2).toHaveBeenCalledTimes(2);
+      });
+
+      it('should not return an interval if it has run this tick', () => {
+        instance.timers[0].ranThisTick = true;
+        const results = instance.getExpired();
+        expect(results.length).toEqual(0);
       });
     });
 
@@ -75,17 +87,37 @@ describe('Intervals', () => {
         expect(next).toBeUndefined();
         instance.tick();
         next = instance.getNext();
-        expect(next.fn).toBe(mockFn1);
+        next.fn();
+        expect(mockFn1).toHaveBeenCalledTimes(1);
         instance.tick();
         next = instance.getNext();
-        expect(next.fn).toBe(mockFn1);
+        next.fn();
+        expect(mockFn1).toHaveBeenCalledTimes(2);
         next = instance.getNext();
-        expect(next.fn).toBe(mockFn2);
+        next.fn();
+        expect(mockFn2).toHaveBeenCalledTimes(1);
         instance.tick();
         next = instance.getNext();
-        expect(next.fn).toBe(mockFn1);
+        next.fn();
+        expect(mockFn1).toHaveBeenCalledTimes(3);
         next = instance.getNext();
         expect(next).toBeUndefined();
+      });
+
+      it('should not get the next timer if it has already run this tick', () => {
+        instance.timers[0].ranThisTick = true;
+        instance.timers[0].wait = 0;
+        const next = instance.getNext();
+        expect(next).toBeUndefined();
+      });
+
+      it('should not replace the next timer if the timer with lower remaining value has already ran this tick', () => {
+        instance.timers[0].wait = 0;
+        instance.timers[1].wait = -1;
+        instance.timers[1].ranThisTick = true;
+        const next = instance.getNext();
+        next.fn();
+        expect(mockFn1).toHaveBeenCalledTimes(1);
       });
     });
   });
