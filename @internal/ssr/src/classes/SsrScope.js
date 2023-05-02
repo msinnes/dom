@@ -1,14 +1,17 @@
 import { DomRef } from '@internal/dom';
 import { Infra } from '@internal/infra';
 
-import { DomScope } from './DomScope';
-import { InfraScope } from './InfraScope';
-import { TimeScope } from './TimeScope';
+import { DigestibleScope } from './base/DigestibleScope';
+
+import { DomScope } from './dom/DomScope';
+import { InfraScope } from './dom/InfraScope';
+
+import { TimeScope } from './time/TimeScope';
 
 // this is found in the jsdom configuration docs.
 const DEFAULT_JSDOM_URL = 'about:blank';
 
-class SsrScope {
+class SsrScope extends DigestibleScope {
   get services() {
     return this.infra.services;
   }
@@ -20,6 +23,7 @@ class SsrScope {
   }
 
   constructor(config) {
+    super();
     this.dom = new DomScope(config.dom);
     this.body = new DomRef(this.dom.dom.window.document.body);
 

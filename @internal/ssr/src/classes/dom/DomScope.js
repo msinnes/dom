@@ -1,7 +1,10 @@
 import { JSDOM } from 'jsdom';
 
-class DomScope {
+import { Scope } from '../base/Scope';
+
+class DomScope extends Scope {
   constructor(config) {
+    super();
     this.dom = new JSDOM('', config);
   }
 

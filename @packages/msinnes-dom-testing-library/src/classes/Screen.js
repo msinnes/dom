@@ -63,13 +63,22 @@ class Screen {
         }
         controller.scope.disable();
       },
-      runExpiredTimers: () => {
+      run: () => {
         controller.scope.enable();
         const timers = controller.scope.time.getExpiredTimers();
         timers.forEach(timer => {
           controller.processHandler(timer);
         });
         controller.scope.disable();
+      },
+      tick: (ticks = 1) => {
+        if (ticks <= 0) return;
+        let i = 0;
+        let len = ticks;
+        while(i < len) {
+          controller.scope.time.tick();
+          i++;
+        }
       },
     };
   }

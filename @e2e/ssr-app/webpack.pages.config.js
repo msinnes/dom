@@ -1,6 +1,6 @@
 const path = require('path');
 
-const pages = ['index', 'contents', 'redux', 'set-timeout', 'subrouted'];
+const pages = ['index', 'contents', 'redux', 'timers', 'subrouted'];
 
 const getEntry = pages => pages.reduce((acc, page) => ({
   ...acc,

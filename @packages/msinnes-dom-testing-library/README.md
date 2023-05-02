@@ -210,4 +210,133 @@ A query family for querying by an element's role.
 
 A query family for querying an element based on its text content.
 
+# Asynchronous Testing
 
+Currently Timeouts and Intervals are supported. Default behavior will run timers when the view 'digests.' The digest cycle begins once the dom view has rendered. If any handles have been opened during the render cycle -- if some component or service triggers an asynchronous action -- the renderer will process those handles, rendering the applcation and reprocessing recursively until the call stack is exhausted.
+
+There is currently a maximum recursive depth of 50, just like there is with dom effect processing (component handles that execute after the render cycle). It is important to point out now that these recursive counters are disjoint. At any time during the digest process, recursive effect process starts at 0. Quantitatively, this means that any button click could trigger up to 2500 recursive operations. Qualitatively, it means that this testing framework empowers the user to test things like nested intervals. In the right hands, that kind of concept can be very powerful. If done wrong, nesting timers mixed with poor application design have the potential of creating long running tests.
+
+## Timers
+
+There are two main approaches when testing with timers in this package. One approach involves letting the library run the screen and process timers in order as they come. The other approach prevents automatic timer execution for granular testing.
+
+---
+### - Automated approach `Screen.time.play`
+
+Let's say I am writing a test, and it is going to write a counter to the screen. The counter will increment every second.
+
+```JavaScript
+import * as DOM from '@msinnes/dom';
+import { render } from '@msinnes/dom-testing-library';
+
+const App = () => {
+  const [count, setCount] = DOM.useState(0);
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    setInterval(() => {
+      setCount(count + 1);
+      setText(`async text ${count}`);
+    }, 1000);
+  }, []);
+  return text;
+};
+
+test('this could be a test written in any JavaScript testing library', () => {
+  const screen = render(<App />);
+  // At this point nothing asynchronous has processed.
+  expect(screen.container.innerHTML).equals('default text');
+  // We can run time for 1000 milliseconds.
+  screen.time.play(1000);
+  // The timer will execute once the app has 'ticked' 1000 times, digesting and rendering recursively.
+  expect(screen.container.innerHTML).equals('async text 0');
+  // Run time for 10 seconds.
+  screen.time.play(10000);
+  // The app will re-render 10 times.
+  expect(screen.container.innerHTML).equals('async text 10');
+});
+```
+
+We will say that this testing library exists and that the above tests are of how to implement it. We should note that although this library simulates browser behavior, it does so in a tightly controlled manner. The clock ticks in millisecond increments, and all code executes 'instantly' with respect to the ticking clock. Any handles left open during the render process will automatically, and the screen will do its best to behave just like a running browser.
+
+---
+### - Manual Approach `Screen.time.(next|run|tick)`
+
+Now we are going to test an application with several timers, and we are going to pass a configuration to the render function.
+
+```JavaScript
+import * as DOM from '@msinnes/dom';
+import { render } from '@msinnes/dom-testing-library';
+
+const App = () => {
+  const [count1, setCount1] = DOM.useState(0);
+  const [text1, setText1] = DOM.useState('default text 1');
+  const [count2, setCount2] = DOM.useState(0);
+  const [text2, setText2] = DOM.useState('default text 2');
+  const [text3, setText3] = DOM.useState('default text 3');
+  DOM.useEffect(() => {
+    setInterval(() => {
+      setCount1(count1 + 1);
+      setText1(`async text ${count1}}`);
+    }, 500);
+  }, []);
+  DOM.useEffect(() => {
+    setInterval(() => {
+      setCount2(count2 + 1);
+      setText2(`async text ${count2}`);
+    }, 1000);
+  }, []);
+  DOM.useEffect(() => {
+    setTimeout(() => {
+      setText3(`async text`);
+    }, 2000);
+  }, []);
+  return (
+    <>
+      <p>{text1}</p>
+      <p>{text2}</p>
+      <p>{text3}</p>
+    </>
+  );
+};
+
+test('this could be a test written in any JavaScript testing library', () => {
+  const screen = render(<App />);
+  // Nothing has happened.
+  expect(screen.container.children[0].innerHTML).equals('default text 1');
+  expect(screen.container.children[1].innerHTML).equals('default text 2');
+  expect(screen.container.children[2].innerHTML).equals('default text 3');
+
+  screen.time.tick(500);
+  // We can execute the next timer, which will process the first interval
+  screen.time.next();
+  // The first node has updated.
+  expect(screen.container.children[0].innerHTML).equals('async text 0');
+  expect(screen.container.children[1].innerHTML).equals('default text 2');
+  expect(screen.container.children[2].innerHTML).equals('default text 3');
+
+  screen.time.tick(500);
+  // We can execute the next timer, which will execute the first interval
+  screen.time.next();
+  // The first node has updated again.
+  expect(screen.container.children[0].innerHTML).equals('async text 1');
+  expect(screen.container.children[1].innerHTML).equals('default text 2');
+  expect(screen.container.children[2].innerHTML).equals('default text 3');
+  // We can execute the next timer, which will execute the second interval
+  screen.time.next();
+  // The second node has updated.
+  expect(screen.container.children[0].innerHTML).equals('async text 1');
+  expect(screen.container.children[1].innerHTML).equals('async text 0');
+  expect(screen.container.children[2].innerHTML).equals('default text 3');
+
+  // Advance the screen a full second.
+  screen.time.tick(1000);
+  // Execute expire timers
+  screen.time.run();
+  // All nodes have updated, but the first interval has only executed once when it should have run twice.
+  expect(screen.container.children[0].innerHTML).equals('async text 2');
+  expect(screen.container.children[1].innerHTML).equals('async text 1');
+  expect(screen.container.children[2].innerHTML).equals('async text');
+});
+```
+
+This example shows how to control timers manually. The last example shows that long running intervals do not accumulate. The library is designed to support this type of accumulation, but it will require a few changes to get that working correctly. The main issue comes because we have to limit timer execution to `once per tick.` Let's say we try and process an immediate interval, immediate code execution resolves to an exceeded call stack by definition. Because of this behavior an interval with 0 wait time will process the same as an interval with a wait time of 1.

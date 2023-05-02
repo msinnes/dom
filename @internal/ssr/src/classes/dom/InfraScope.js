@@ -2,6 +2,7 @@ import * as Dom from '@msinnes/dom';
 import { BaseRenderableComponent } from '@internal/base';
 import { Infra } from '@internal/infra';
 
+import { Scope } from '../base/Scope';
 
 // Top level rewrite so the individual instances can see the component and contexts, which are both singletons.
 Dom.Component = BaseRenderableComponent;
@@ -13,10 +14,11 @@ const useEffectOriginal = Dom.useEffect;
 const useMemoOriginal = Dom.useMemo;
 const useStateOriginal = Dom.useState;
 
-class InfraScope {
+class InfraScope extends Scope {
   static contextService = this.contextService;
 
   constructor(infra) {
+    super();
     this.contextService = infra.contextService;
     this.hooks = infra.hooks;
     this.services = infra.services;

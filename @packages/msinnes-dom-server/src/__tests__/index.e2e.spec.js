@@ -177,4 +177,95 @@ describe('e2e', () => {
     const html = api.renderToString(Dom.createElement(App), { runExpiredTimers: false });
     expect(html).toEqual('default text');
   });
+
+  it('should not run any intervals with a delay', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setInterval(() => {
+          setText('async text');
+        }, 10);
+      }, []);
+      return text;
+    };
+    const html = api.renderToString(Dom.createElement(App));
+    expect(html).toEqual('default text');
+  });
+
+  it('should only run an interval once if it has no delay', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setInterval(() => {
+          setText('async text');
+        });
+      }, []);
+      return text;
+    };
+    const html = api.renderToString(Dom.createElement(App));
+    expect(html).toEqual('async text');
+  });
+
+  it('should execute multiple intervals', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setInterval(() => {
+          setText('async text 1');
+        });
+      }, []);
+
+      Dom.useEffect(() => {
+        setInterval(() => {
+          setText('async text 2');
+        }, 10);
+      }, []);
+
+      Dom.useEffect(() => {
+        setInterval(() => {
+          setText('async text 3');
+        }, 0);
+      }, []);
+      return text;
+    };
+    const html = api.renderToString(Dom.createElement(App));
+    expect(html).toEqual('async text 3');
+  });
+
+  it('should not execute an interval if runExpiredTimers is configured as false', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        setInterval(() => {
+          setText('async text');
+        });
+      }, []);
+      return text;
+    };
+    const html = api.renderToString(Dom.createElement(App), { runExpiredTimers: false });
+    expect(html).toEqual('default text');
+  });
+
+  it('should run intervals and timeouts together', () => {
+    const App = () => {
+      const [text1, setText1] = Dom.useState('default text 1');
+      const [text2, setText2] = Dom.useState('default text 2');
+      Dom.useEffect(() => {
+        setInterval(() => {
+          setText1('async text 1');
+        });
+      }, []);
+      Dom.useEffect(() => {
+        setTimeout(() => {
+          setText2('async text 2');
+        });
+      }, []);
+      return Dom.createElement('div', {}, [
+        Dom.createElement('p', {}, [text1]),
+        Dom.createElement('p', {}, [text2]),
+      ]);
+    };
+    const html = api.renderToString(Dom.createElement(App));
+    expect(html).toEqual('<div><p>async text 1</p><p>async text 2</p></div>');
+  });
 });
