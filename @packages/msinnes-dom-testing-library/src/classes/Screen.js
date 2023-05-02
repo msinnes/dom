@@ -71,7 +71,15 @@ class Screen {
         });
         controller.scope.disable();
       },
-      tick: () => controller.scope.time.tick(),
+      tick: (ticks = 1) => {
+        if (ticks <= 0) return;
+        let i = 0;
+        let len = ticks;
+        while(i < len) {
+          controller.scope.time.tick();
+          i++;
+        }
+      },
     };
   }
 }

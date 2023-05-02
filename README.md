@@ -21,19 +21,13 @@ The APIs in this library are all developed in Jest using a very test-driven patt
 
 This is just a starting list of features, and a short description of each. In time, I will do my best to cover all features with examples.
 
-- Lightweight -- Flat bundled in ES6 (unminified) the library is 29kb. Fully transpiled to ES5 and minified, the library is 49kb, 1/3 the size of React and React-Dom. Flat bundled, minified, and gzipped, the library is 7kb, which puts it on par with Preact.
+- Lightweight -- Flat bundled in ES6 (unminified) the library is 29kb. Flat bundled, minified, and gzipped, the library is 7kb, which puts it on par with Preact. Fully transpiled to ES5 and minified, the library is 49kb, 1/3 the size of React and React-Dom.
 - No Import Statement -- This library doesn't require you to import it when it isn't used. You only import the API if you actually need to use it.
 - Class Components -- Abstract Class component which can be extended and exposes three lifecycle methods: `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount`.
 - Function Components -- Functions can be used with hooks to develop clean, expressive functionality.
 - Hooks -- Hooks for almost anything you need to build a website, and they process server side without any problem.
-- Limited Async Rendering Server Side -- Asynchronous processing will now run in both the server and testing environments. Timeouts are currently supported.
+- Limited Async Rendering Server Side -- Asynchronous processing will now run in both the server and testing environments. Timeouts and Intervals are currently supported.
 
 This library delivers the functionality of React at the size of Preact. There is no engine swap, and a healthy suite of libraries is already available for routing, testing, and state management.
 
-# Usage
 
-Each of the individual libraries has its associated user docs, so we will try to start with a much more comprehensive example of how to build an application.
-
-As the documentation grows, I will add more directions on how to compose the libraries. My documentation plan is trying to expand a little bit with each release.
-
-I will start by adding a general overview of how to build a basic single page application rendered in a test environment. I will add some routing and general state management. I will finish by showing how to implement these patterns on the server side.

@@ -151,3 +151,9 @@ An example application can be found in the `@e2e/ssr-app` folder. This is a very
 When the server application is built, just before starting, the application will bundle with the routers importing the `pages/App.js` files. The server is built so that the JSX in the router file can be process easily in the server context. Essentially, this step of the build process allows us to keep from having to do something clever with requires. We just build pages and server seperately. When the server delivers a page for any given route, it returns the associated bundle.
 
 These directions are a living document, and I will start adding more steps as I build toward page streaming.
+
+# Asynchronous Rendering
+
+Currently only timeouts and intervals are supported. They are the test platform for building the async features, and they helped lay the foundation for async rendering. There are only two ways to render, by processing timers or not processing timers (setting `runExpiredTimers` to false). If timers are executed, immediate timers will process before the html string is calculated. If timers are not executed, the app will preprocess the initial render and return the html string.
+
+The next steps for async rendering are `setImmediate` support and fetch support.

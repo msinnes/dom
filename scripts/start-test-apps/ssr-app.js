@@ -5,7 +5,7 @@ const babel = require('@babel/core');
 const rimraf = require('rimraf');
 const domJsxPlugin = require('../../@packages/msinnes-babel-plugin-dom-jsx');
 
-const pages = ['index', 'contents', 'redux', 'set-timeout', 'subrouted'];
+const pages = ['index', 'contents', 'redux', 'timers', 'subrouted'];
 
 const getEntry = pages => pages.reduce((acc, page) => ({
   ...acc,

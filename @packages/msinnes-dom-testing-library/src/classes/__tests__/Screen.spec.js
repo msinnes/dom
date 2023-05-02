@@ -382,6 +382,20 @@ describe('Screen', () => {
           instance.time.tick();
           expect(tickMock).toHaveBeenCalledTimes(1);
         });
+
+        it('should call scope.time.tick n times if a value is passed', () => {
+          instance.time.tick(10);
+          expect(tickMock).toHaveBeenCalledTimes(10);
+        });
+
+        it('should do nothing if a value less than or equal to 0 is passed', () => {
+          instance.time.tick(0);
+          expect(tickMock).toHaveBeenCalledTimes(0);
+          instance.time.tick(-10);
+          expect(tickMock).toHaveBeenCalledTimes(0);
+          instance.time.tick();
+          expect(tickMock).toHaveBeenCalledTimes(1);
+        });
       });
     });
   });
