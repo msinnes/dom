@@ -24,11 +24,11 @@ class SsrScope extends DigestibleScope {
 
   constructor(config) {
     super();
-    this.dom = new DomScope(config.dom);
-    this.body = new DomRef(this.dom.dom.window.document.body);
-
     this.infra = new InfraScope(new Infra());
     this.time = new TimeScope(config.time);
+
+    this.dom = new DomScope(config.dom, this.time);
+    this.body = new DomRef(this.dom.dom.window.document.body);
   }
 
   digest() {

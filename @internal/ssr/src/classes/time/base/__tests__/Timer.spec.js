@@ -29,6 +29,13 @@ describe('Timer', () => {
       expect(instance.elapsed).toEqual(0);
     });
 
+    it('should have an args prop', () => {
+      expect(instance.args).toBeInstanceOf(Array);
+      expect(instance.args.length).toEqual(0);
+      instance = new Timer(() => {}, 0, ['arg1', 'arg2']);
+      expect(instance.args).toMatchObject(['arg1', 'arg2']);
+    });
+
     it('should have a remaining getter', () => {
       expect(instance.remaining).toEqual(0);
       instance.elapsed = 100;
@@ -53,6 +60,14 @@ describe('Timer', () => {
         expect(mockFn).toHaveBeenCalledTimes(0);
         instance.exec();
         expect(mockFn).toHaveBeenCalledTimes(1);
+        expect(mockFn).toHaveBeenCalledWith();
+      });
+
+      it('should call the mock with args', () => {
+        instance = new Timer(mockFn, 0, ['arg1', 'arg2']);
+        instance.exec();
+        expect(mockFn).toHaveBeenCalledTimes(1);
+        expect(mockFn).toHaveBeenCalledWith('arg1', 'arg2');
       });
     });
 

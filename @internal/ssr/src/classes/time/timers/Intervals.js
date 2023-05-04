@@ -21,8 +21,8 @@ class Interval extends Timer {
 }
 
 class Intervals extends Timers {
-  create(fn, wait) {
-    return new Interval(fn, wait);
+  create(fn, wait, ...args) {
+    return new Interval(fn, wait, args);
   }
 
   getExpired() {

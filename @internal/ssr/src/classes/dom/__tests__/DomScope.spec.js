@@ -1,6 +1,7 @@
 import { JSDOM } from 'jsdom';
 
 import { Scope } from '../../base/Scope';
+import { TimeScope } from '../../time/TimeScope';
 
 import { DomScope } from '../DomScope';
 
@@ -15,8 +16,11 @@ describe('DomScope', () => {
 
   describe('instance', () => {
     let instance;
+
+    let mockTimeScope;
     beforeEach(() => {
-      instance = new DomScope({});
+      mockTimeScope = new TimeScope({ runExpiredTimers: true });
+      instance = new DomScope({}, mockTimeScope);
     });
 
     it('should have a jsdom instance', () => {
@@ -25,13 +29,25 @@ describe('DomScope', () => {
     });
 
     it('should set location if config.url is passed', () => {
-      instance = new DomScope({ url: 'http://url.com/path?id=1#hash' });
+      instance = new DomScope({ url: 'http://url.com/path?id=1#hash' }, mockTimeScope);
       const location = instance.dom.window.location;
       expect(location.href).toEqual('http://url.com/path?id=1#hash');
       expect(location.origin).toEqual('http://url.com');
       expect(location.pathname).toEqual('/path');
       expect(location.search).toEqual('?id=1');
       expect(location.hash).toEqual('#hash');
+    });
+
+    it('should overwrite timers on the window object', () => {
+      const mockFn = jest.fn();
+      let id = instance.dom.window.setTimeout(mockFn, 10);
+      expect(mockTimeScope.timeouts.timers.length).toEqual(1);
+      instance.dom.window.clearTimeout(id);
+      expect(mockTimeScope.timeouts.timers.length).toEqual(0);
+      id = instance.dom.window.setInterval(mockFn, 10);
+      expect(mockTimeScope.intervals.timers.length).toEqual(1);
+      instance.dom.window.clearInterval(id);
+      expect(mockTimeScope.intervals.timers.length).toEqual(0);
     });
 
     describe('enable', () => {

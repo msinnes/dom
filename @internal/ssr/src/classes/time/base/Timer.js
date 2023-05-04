@@ -10,13 +10,14 @@ class Timer {
     return this.wait - this.elapsed;
   }
 
-  constructor(fn, wait) {
+  constructor(fn, wait, args) {
     this.fn = fn;
     this.wait = wait || 0;
+    this.args = args || [];
   }
 
   exec() {
-    this.fn();
+    this.fn(...this.args);
   }
 
   isBefore(timer) {

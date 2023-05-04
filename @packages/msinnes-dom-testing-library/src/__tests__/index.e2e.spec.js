@@ -737,6 +737,34 @@ describe('timers', () => {
       expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 5</p></div>');
     });
 
+    it('should play a screen with timeouts and intervals', () => {
+      let i = 0;
+      const App = () => {
+        const [text1, setText1] = Dom.useState('default text');
+        const [text2, setText2] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          setTimeout(() => {
+            setText1('async text');
+          }, 5);
+        }, []);
+
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setText2(`async text ${i++}`);
+          });
+        }, []);
+
+        return Dom.createElement('div', {}, [
+          Dom.createElement('p', {}, [text1]),
+          Dom.createElement('p', {}, [text2]),
+        ]);
+      };
+      const screen = render(Dom.createElement(App));
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 0</p></div>');
+      screen.time.play(5);
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 5</p></div>');
+    });
+
     it('should manually tick timeouts and intervals', () => {
       let i = 0;
       const App = () => {
@@ -779,6 +807,74 @@ describe('timers', () => {
       screen.time.tick();
       screen.time.next();
       expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 4</p></div>');
+    });
+
+    it('should manually tick timeouts and intervals', () => {
+      let i = 0;
+      const App = () => {
+        const [text1, setText1] = Dom.useState('default text');
+        const [text2, setText2] = Dom.useState('default text');
+
+        Dom.useEffect(() => {
+          setTimeout(() => {
+            setText1('async text');
+          }, 5);
+        }, []);
+
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setText2(`async text ${i++}`);
+          });
+        }, []);
+        return Dom.createElement('div', {}, [
+          Dom.createElement('p', {}, [text1]),
+          Dom.createElement('p', {}, [text2]),
+        ]);
+      };
+      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 0</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 1</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 2</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 3</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 3</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 4</p></div>');
+    });
+
+    it('should process timers run against the window object', () => {
+      const App = () => {
+        const [text1, setText1] = Dom.useState('default text');
+        const [text2, setText2] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          window.setTimeout(() => {
+            setText1('async text');
+          });
+        }, []);
+
+        Dom.useEffect(() => {
+          window.setInterval(() => {
+            setText2('async text');
+          });
+        }, []);
+        return Dom.createElement('div', {}, [
+          Dom.createElement('p', {}, [text1]),
+          Dom.createElement('p', {}, [text2]),
+        ]);
+      };
+      const screen = render(Dom.createElement(App));
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text</p></div>');
     });
   });
 });

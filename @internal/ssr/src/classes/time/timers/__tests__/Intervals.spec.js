@@ -77,10 +77,12 @@ describe('Intervals', () => {
     describe('create', () => {
       it('shold return an Interval instance', () => {
         const fn = () => {};
-        const timer = instance.create(fn, 1);
+        const timer = instance.create(fn, 1, 'arg1');
         expect(timer).toBeInstanceOf(Interval);
         expect(timer.fn).toBe(fn);
         expect(timer.wait).toEqual(1);
+        expect(timer.args).toBeInstanceOf(Array);
+        expect(timer.args[0]).toEqual('arg1');
       });
     });
 

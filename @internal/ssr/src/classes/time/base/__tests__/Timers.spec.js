@@ -90,6 +90,8 @@ describe('Timers', () => {
         expect(timer).toBeInstanceOf(Timer);
         expect(timer.fn).toBe(fn);
         expect(timer.wait).toEqual(1);
+        expect(timer.args).toBeInstanceOf(Array);
+        expect(timer.args.length).toEqual(0);
       });
     });
 
