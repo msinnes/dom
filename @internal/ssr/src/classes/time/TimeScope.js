@@ -2,6 +2,7 @@ import { isDefined } from '@internal/is';
 
 import { DigestibleScope } from '../base/DigestibleScope';
 
+import { Immediates } from './timers/Immediates';
 import { Intervals } from './timers/Intervals';
 import { Timeouts } from './timers/Timeouts';
 
@@ -9,9 +10,12 @@ const setTimeoutOriginal = setTimeout;
 const clearTimeoutOriginal = clearTimeout;
 const setIntervalOriginal = setInterval;
 const clearIntervalOriginal = clearInterval;
+const setImmediateOriginal = setImmediate;
+const clearImmediateOriginal = clearImmediate;
 
 class TimeScope extends DigestibleScope {
   runExpiredTimers = true;
+  immediates = new Immediates();
   intervals = new Intervals();
   timeouts = new Timeouts();
 
@@ -26,6 +30,8 @@ class TimeScope extends DigestibleScope {
   }
 
   disable() {
+    setImmediate = setImmediateOriginal;
+    clearImmediate = clearImmediateOriginal;
     setTimeout = setTimeoutOriginal;
     clearTimeout = clearTimeoutOriginal;
     setInterval = setIntervalOriginal;
@@ -33,6 +39,8 @@ class TimeScope extends DigestibleScope {
   }
 
   enable() {
+    setImmediate = this.immediates.set.bind(this.immediates);
+    clearImmediate = this.immediates.clear.bind(this.immediates);
     setTimeout = this.timeouts.set.bind(this.timeouts);
     clearTimeout = this.timeouts.clear.bind(this.timeouts);
     setInterval = this.intervals.set.bind(this.intervals);
@@ -41,6 +49,7 @@ class TimeScope extends DigestibleScope {
 
   getExpiredTimers() {
     return [
+      ...this.immediates.getExpired(),
       ...this.timeouts.getExpired(),
       ...this.intervals.getExpired(),
     ].sort((a, b) => a.remaining - b.remaining);
@@ -48,12 +57,14 @@ class TimeScope extends DigestibleScope {
 
   getNextTimer() {
     const nextTimers = [
+      this.immediates.getNext(),
       this.timeouts.getNext(),
       this.intervals.getNext(),
     ];
 
     let next;
     nextTimers.forEach(timer => {
+      // This timer.isBefore(next) call needs to be nested
       if (next && timer) next = timer.isBefore(next) ? timer : next;
       else if (timer) next = timer;
     });
@@ -61,6 +72,7 @@ class TimeScope extends DigestibleScope {
   }
 
   tick() {
+    this.immediates.tick();
     this.timeouts.tick();
     this.intervals.tick();
   }
