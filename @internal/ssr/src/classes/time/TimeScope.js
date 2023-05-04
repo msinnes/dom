@@ -2,16 +2,18 @@ import { isDefined } from '@internal/is';
 
 import { DigestibleScope } from '../base/DigestibleScope';
 
+import { AnimationFrames } from './timers/AnimationFrames';
 import { Intervals } from './timers/Intervals';
 import { Timeouts } from './timers/Timeouts';
 
-const setTimeoutOriginal = setTimeout;
-const clearTimeoutOriginal = clearTimeout;
-const setIntervalOriginal = setInterval;
-const clearIntervalOriginal = clearInterval;
+const setTimeoutOriginal = global.setTimeout;
+const clearTimeoutOriginal = global.clearTimeout;
+const setIntervalOriginal = global.setInterval;
+const clearIntervalOriginal = global.clearInterval;
 
 class TimeScope extends DigestibleScope {
   runExpiredTimers = true;
+  animationFrames = new AnimationFrames();
   intervals = new Intervals();
   timeouts = new Timeouts();
 
@@ -26,23 +28,28 @@ class TimeScope extends DigestibleScope {
   }
 
   disable() {
-    setTimeout = setTimeoutOriginal;
-    clearTimeout = clearTimeoutOriginal;
-    setInterval = setIntervalOriginal;
-    clearInterval = clearIntervalOriginal;
+    global.setTimeout = setTimeoutOriginal;
+    global.clearTimeout = clearTimeoutOriginal;
+    global.setInterval = setIntervalOriginal;
+    global.clearInterval = clearIntervalOriginal;
+    delete global.requestAnimationFrame;
+    delete global.cancelAnimationFrame;
   }
 
   enable() {
-    setTimeout = this.timeouts.set.bind(this.timeouts);
-    clearTimeout = this.timeouts.clear.bind(this.timeouts);
-    setInterval = this.intervals.set.bind(this.intervals);
-    clearInterval = this.intervals.clear.bind(this.intervals);
+    global.setTimeout = this.timeouts.set.bind(this.timeouts);
+    global.clearTimeout = this.timeouts.clear.bind(this.timeouts);
+    global.setInterval = this.intervals.set.bind(this.intervals);
+    global.clearInterval = this.intervals.clear.bind(this.intervals);
+    global.requestAnimationFrame = this.animationFrames.set.bind(this.animationFrames);
+    global.cancelAnimationFrame = this.animationFrames.clear.bind(this.animationFrames);
   }
 
   getExpiredTimers() {
     return [
       ...this.timeouts.getExpired(),
       ...this.intervals.getExpired(),
+      ...this.animationFrames.getExpired(),
     ].sort((a, b) => a.remaining - b.remaining);
   }
 
@@ -50,6 +57,7 @@ class TimeScope extends DigestibleScope {
     const nextTimers = [
       this.timeouts.getNext(),
       this.intervals.getNext(),
+      this.animationFrames.getNext(),
     ];
 
     let next;
@@ -64,6 +72,7 @@ class TimeScope extends DigestibleScope {
   tick() {
     this.timeouts.tick();
     this.intervals.tick();
+    this.animationFrames.tick();
   }
 }
 

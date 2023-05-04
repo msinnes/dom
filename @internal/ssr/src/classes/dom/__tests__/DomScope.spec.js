@@ -48,6 +48,10 @@ describe('DomScope', () => {
       expect(mockTimeScope.intervals.timers.length).toEqual(1);
       instance.dom.window.clearInterval(id);
       expect(mockTimeScope.intervals.timers.length).toEqual(0);
+      id = instance.dom.window.requestAnimationFrame(mockFn, 10);
+      expect(mockTimeScope.animationFrames.timers.length).toEqual(1);
+      instance.dom.window.cancelAnimationFrame(id);
+      expect(mockTimeScope.animationFrames.timers.length).toEqual(0);
     });
 
     describe('enable', () => {

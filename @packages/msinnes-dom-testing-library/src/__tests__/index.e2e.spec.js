@@ -685,6 +685,48 @@ describe('timers', () => {
     });
   });
 
+  describe('animationFrames', () => {
+    it('should render an animationFrame', () => {
+      const App = () => {
+        const [text, setText] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          requestAnimationFrame(() => {
+            setText('async text');
+          });
+        }, []);
+        return text;
+      };
+      const screen = render(Dom.createElement(App));
+      expect(screen.container.innerHTML).toEqual('default text');
+      screen.time.play(16);
+      expect(screen.container.innerHTML).toEqual('async text');
+    });
+
+    it('should cancal an animationFrame', () => {
+      const App = () => {
+        const [frameId, setFrameId] = Dom.useState();
+        const [text, setText] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          setFrameId(requestAnimationFrame(() => {
+            setText('async text');
+          }));
+        }, []);
+        // settingFrameId will trigger a re-render, and this will clear the animationFrame request
+        Dom.useEffect(() => {
+          if (frameId) {
+            cancelAnimationFrame(frameId);
+            setFrameId();
+          }
+        }, [frameId]);
+        return text;
+      };
+      const screen = render(Dom.createElement(App));
+      expect(screen.container.innerHTML).toEqual('default text');
+      screen.time.play(16);
+      expect(screen.container.innerHTML).toEqual('default text');
+    });
+  });
+
   describe('composite', () => {
     it('should render a screen with timeouts and intervals', () => {
       const App = () => {

@@ -11,6 +11,8 @@ class DomScope extends Scope {
     this.dom.window.clearTimeout = timeScope.timeouts.clear.bind(timeScope.timeouts);
     this.dom.window.setInterval = timeScope.intervals.set.bind(timeScope.intervals);
     this.dom.window.clearInterval = timeScope.intervals.clear.bind(timeScope.intervals);
+    this.dom.window.requestAnimationFrame = timeScope.animationFrames.set.bind(timeScope.animationFrames);
+    this.dom.window.cancelAnimationFrame = timeScope.animationFrames.clear.bind(timeScope.animationFrames);
   }
 
   enable() {
