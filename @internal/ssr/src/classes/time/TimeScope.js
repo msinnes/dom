@@ -2,8 +2,8 @@ import { isDefined } from '@internal/is';
 
 import { DigestibleScope } from '../base/DigestibleScope';
 
-import { Intervals } from './Intervals';
-import { Timeouts } from './Timeouts';
+import { Intervals } from './timers/Intervals';
+import { Timeouts } from './timers/Timeouts';
 
 const setTimeoutOriginal = setTimeout;
 const clearTimeoutOriginal = clearTimeout;
@@ -47,12 +47,17 @@ class TimeScope extends DigestibleScope {
   }
 
   getNextTimer() {
-    const nextInterval = this.intervals.getNext();
-    const nextTimeout = this.timeouts.getNext();
+    const nextTimers = [
+      this.timeouts.getNext(),
+      this.intervals.getNext(),
+    ];
 
-    if (nextInterval && nextTimeout) return (nextInterval.remaining < nextTimeout.remaining) ? nextInterval : nextTimeout;
-    if (nextInterval) return nextInterval;
-    if (nextTimeout) return nextTimeout;
+    let next;
+    nextTimers.forEach(timer => {
+      if (next && timer) next = timer.isBefore(next) ? timer : next;
+      else if (timer) next = timer;
+    });
+    return next;
   }
 
   tick() {

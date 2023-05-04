@@ -1,6 +1,6 @@
 import { DigestibleScope } from '../../base/DigestibleScope';
-import { Intervals } from '../Intervals';
-import { Timeouts } from '../Timeouts';
+import { Intervals } from '../timers/Intervals';
+import { Timeouts } from '../timers/Timeouts';
 
 import { TimeScope } from '../TimeScope';
 
@@ -210,8 +210,8 @@ describe('TimeScope', () => {
       it('should return the timer with the lowest remaining value if there is a timeout and an interval', () => {
         const mockFn1 = jest.fn();
         const mockFn2 = jest.fn();
-        instance.intervals.getNext = jest.fn().mockReturnValue({ fn: mockFn1, remaining: -1 });
-        instance.timeouts.getNext = jest.fn().mockReturnValue({ fn: mockFn2, remaining: 0 });
+        instance.intervals.getNext = jest.fn().mockReturnValue({ fn: mockFn1, remaining: -1, isBefore: timer => -1 < timer.remaining });
+        instance.timeouts.getNext = jest.fn().mockReturnValue({ fn: mockFn2, remaining: 0, isBefore: timer => 0 < timer.remaining });
         expect(instance.getNextTimer().fn).toBe(mockFn1);
       });
     });

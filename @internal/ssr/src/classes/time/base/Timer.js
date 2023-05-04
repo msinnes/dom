@@ -1,21 +1,29 @@
+// TODO: abstract this out
 class Timer {
   elapsed = 0;
-  ranThisTick = false;
+
+  get expired() {
+    return this.remaining <= 0;
+  }
 
   get remaining() {
     return this.wait - this.elapsed;
   }
 
   constructor(fn, wait) {
-    this.fn = () => {
-      this.ranThisTick = true;
-      fn();
-    };
+    this.fn = fn;
     this.wait = wait || 0;
   }
 
+  exec() {
+    this.fn();
+  }
+
+  isBefore(timer) {
+    return this.remaining < timer.remaining;
+  }
+
   tick() {
-    this.ranThisTick = false;
     this.elapsed++;
   }
 }
