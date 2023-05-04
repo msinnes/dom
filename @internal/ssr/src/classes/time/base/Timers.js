@@ -26,6 +26,10 @@ const Timers = abstract(class {
     }
   }
 
+  create(fn, wait, ...args) {
+    return new Timer(fn, wait, args);
+  }
+
   each(cb) {
     let i = 0;
     const len = this.timers.length;
@@ -34,10 +38,10 @@ const Timers = abstract(class {
     }
   }
 
-  set(fn, wait) {
+  set(...args) {
     const id = this.nextId++;
     this.ids.push(id);
-    this.timers.push(new Timer(fn, wait));
+    this.timers.push(this.create(...args));
     return id;
   }
 

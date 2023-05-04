@@ -1,6 +1,63 @@
-import { Timers } from '../Timers';
+import { Timer } from '../../base/Timer';
+import { Timers } from '../../base/Timers';
 
-import { Intervals } from '../Intervals';
+import { Interval, Intervals } from '../Intervals';
+
+describe('Interval', () => {
+  it('should be a class', () => {
+    expect(Interval).toBeAClass();
+  });
+
+  it('should extend Timer', () => {
+    expect(Interval).toExtend(Timer);
+  });
+
+  describe('instance', () => {
+    let instance;
+
+    let mockFn;
+    beforeEach(() => {
+      mockFn = jest.fn();
+      instance = new Interval(mockFn);
+    });
+
+    it('should have a ticks prop', () => {
+      expect(instance.ticks).toEqual(0);
+    });
+
+    it('should have a lastRun prop set to null', () => {
+      expect(instance.lastRun).toEqual(null);
+    });
+
+    it('should have a ran prop', () => {
+      expect(instance.ran).toBe(false);
+      instance.lastRun = 0;
+      expect(instance.ran).toBe(true);
+      instance.lastRun = 1;
+      expect(instance.ran).toBe(false);
+      instance.ticks = 1;
+      expect(instance.ran).toBe(true);
+      instance.lastRun = 2;
+      expect(instance.ran).toBe(false);
+    });
+
+    describe('exec', () => {
+      it('should set the lastRun prop to ticks and call super', () => {
+        instance.exec();
+        expect(instance.lastRun).toEqual(0);
+        expect(mockFn).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('tick', () => {
+      it('should increment ticks and call super', () => {
+        instance.tick();
+        expect(instance.ticks).toEqual(1);
+        expect(instance.elapsed).toEqual(1);
+      });
+    });
+  });
+});
 
 describe('Intervals', () => {
   it('should be a class', () => {
@@ -15,6 +72,18 @@ describe('Intervals', () => {
     let instance;
     beforeEach(() => {
       instance = new Intervals();
+    });
+
+    describe('create', () => {
+      it('shold return an Interval instance', () => {
+        const fn = () => {};
+        const timer = instance.create(fn, 1, 'arg1');
+        expect(timer).toBeInstanceOf(Interval);
+        expect(timer.fn).toBe(fn);
+        expect(timer.wait).toEqual(1);
+        expect(timer.args).toBeInstanceOf(Array);
+        expect(timer.args[0]).toEqual('arg1');
+      });
     });
 
     describe('getExpired', () => {
@@ -105,7 +174,7 @@ describe('Intervals', () => {
       });
 
       it('should not get the next timer if it has already run this tick', () => {
-        instance.timers[0].ranThisTick = true;
+        instance.timers[0].lastRun = 0;
         instance.timers[0].wait = 0;
         const next = instance.getNext();
         expect(next).toBeUndefined();
@@ -114,7 +183,7 @@ describe('Intervals', () => {
       it('should not replace the next timer if the timer with lower remaining value has already ran this tick', () => {
         instance.timers[0].wait = 0;
         instance.timers[1].wait = -1;
-        instance.timers[1].ranThisTick = true;
+        instance.timers[1].lastRun = 0;
         const next = instance.getNext();
         next.fn();
         expect(mockFn1).toHaveBeenCalledTimes(1);

@@ -685,6 +685,48 @@ describe('timers', () => {
     });
   });
 
+  describe('animationFrames', () => {
+    it('should render an animationFrame', () => {
+      const App = () => {
+        const [text, setText] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          requestAnimationFrame(() => {
+            setText('async text');
+          });
+        }, []);
+        return text;
+      };
+      const screen = render(Dom.createElement(App));
+      expect(screen.container.innerHTML).toEqual('default text');
+      screen.time.play(16);
+      expect(screen.container.innerHTML).toEqual('async text');
+    });
+
+    it('should cancal an animationFrame', () => {
+      const App = () => {
+        const [frameId, setFrameId] = Dom.useState();
+        const [text, setText] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          setFrameId(requestAnimationFrame(() => {
+            setText('async text');
+          }));
+        }, []);
+        // settingFrameId will trigger a re-render, and this will clear the animationFrame request
+        Dom.useEffect(() => {
+          if (frameId) {
+            cancelAnimationFrame(frameId);
+            setFrameId();
+          }
+        }, [frameId]);
+        return text;
+      };
+      const screen = render(Dom.createElement(App));
+      expect(screen.container.innerHTML).toEqual('default text');
+      screen.time.play(16);
+      expect(screen.container.innerHTML).toEqual('default text');
+    });
+  });
+
   describe('composite', () => {
     it('should render a screen with timeouts and intervals', () => {
       const App = () => {
@@ -726,6 +768,34 @@ describe('timers', () => {
             setText2(`async text ${i++}`);
           });
         }, []);
+        return Dom.createElement('div', {}, [
+          Dom.createElement('p', {}, [text1]),
+          Dom.createElement('p', {}, [text2]),
+        ]);
+      };
+      const screen = render(Dom.createElement(App));
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 0</p></div>');
+      screen.time.play(5);
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 5</p></div>');
+    });
+
+    it('should play a screen with timeouts and intervals', () => {
+      let i = 0;
+      const App = () => {
+        const [text1, setText1] = Dom.useState('default text');
+        const [text2, setText2] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          setTimeout(() => {
+            setText1('async text');
+          }, 5);
+        }, []);
+
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setText2(`async text ${i++}`);
+          });
+        }, []);
+
         return Dom.createElement('div', {}, [
           Dom.createElement('p', {}, [text1]),
           Dom.createElement('p', {}, [text2]),
@@ -779,6 +849,74 @@ describe('timers', () => {
       screen.time.tick();
       screen.time.next();
       expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 4</p></div>');
+    });
+
+    it('should manually tick timeouts and intervals', () => {
+      let i = 0;
+      const App = () => {
+        const [text1, setText1] = Dom.useState('default text');
+        const [text2, setText2] = Dom.useState('default text');
+
+        Dom.useEffect(() => {
+          setTimeout(() => {
+            setText1('async text');
+          }, 5);
+        }, []);
+
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setText2(`async text ${i++}`);
+          });
+        }, []);
+        return Dom.createElement('div', {}, [
+          Dom.createElement('p', {}, [text1]),
+          Dom.createElement('p', {}, [text2]),
+        ]);
+      };
+      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 0</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 1</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 2</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 3</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 3</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 4</p></div>');
+    });
+
+    it('should process timers run against the window object', () => {
+      const App = () => {
+        const [text1, setText1] = Dom.useState('default text');
+        const [text2, setText2] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          window.setTimeout(() => {
+            setText1('async text');
+          });
+        }, []);
+
+        Dom.useEffect(() => {
+          window.setInterval(() => {
+            setText2('async text');
+          });
+        }, []);
+        return Dom.createElement('div', {}, [
+          Dom.createElement('p', {}, [text1]),
+          Dom.createElement('p', {}, [text2]),
+        ]);
+      };
+      const screen = render(Dom.createElement(App));
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text</p></div>');
     });
   });
 });

@@ -1,4 +1,4 @@
-import { Timers } from '../Timers';
+import { Timers } from '../../base/Timers';
 
 import { Timeouts } from '../Timeouts';
 

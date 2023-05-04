@@ -31,7 +31,7 @@ const BaseServerRenderController = abstract(class extends BaseRenderController {
   }
 
   processHandler(handler) {
-    handler.fn();
+    handler.exec();
     if (this.queue.length) {
       while(this.queue.length) {
         this.renderFrame();

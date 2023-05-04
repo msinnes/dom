@@ -1,11 +1,11 @@
-import { Timers } from './Timers';
+import { Timers } from '../base/Timers';
 
 class Timeouts extends Timers {
   getExpired() {
     const remove = [];
     const results = [];
     this.each((timer, id) => {
-      if (timer.remaining <= 0) {
+      if (timer.expired) {
         results.push(timer);
         remove.push(id);
       }
@@ -18,7 +18,7 @@ class Timeouts extends Timers {
     let next;
     let nextId;
     this.each((timer, id) => {
-      if ((!next && timer.remaining <= 0) || (next && next.wait > timer.wait)) {
+      if ((!next && timer.expired) || (next && timer.isBefore(next))) {
         next = timer;
         nextId = id;
       }

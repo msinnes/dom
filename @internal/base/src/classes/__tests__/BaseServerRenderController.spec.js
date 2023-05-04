@@ -75,7 +75,7 @@ describe('BaseServerRenderController', () => {
           instance.queue.pop();
         });
         ssrScopeRef.digest.mockReturnValueOnce([{
-          fn:() => {
+          exec:() => {
             instance.queue.push({});
           }
         }]);
@@ -92,7 +92,7 @@ describe('BaseServerRenderController', () => {
           instance.queue.pop();
         });
         ssrScopeRef.digest.mockReturnValueOnce([{
-          fn:() => {
+          exec:() => {
             instance.queue.push({});
           }
         }]);
@@ -111,7 +111,7 @@ describe('BaseServerRenderController', () => {
           instance.queue.pop();
         });
         ssrScopeRef.digest.mockReturnValue([{
-          fn:() => {
+          exec:() => {
             instance.queue.push({});
           }
         }]);
@@ -188,7 +188,7 @@ describe('BaseServerRenderController', () => {
           instance.queue.pop();
         });
         instance.processHandler({
-          fn:() => {
+          exec:() => {
             instance.queue.push({});
           }
         });

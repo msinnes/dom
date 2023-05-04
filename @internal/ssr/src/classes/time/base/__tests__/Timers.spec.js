@@ -1,3 +1,5 @@
+import { Timer } from '../Timer';
+
 import { Timers } from '../Timers';
 
 class TestableTimers extends Timers {
@@ -65,8 +67,8 @@ describe('Timers', () => {
       it('should clear a timeout based on its id', () => {
         instance.clear(id2);
         expect(instance.ids.length).toEqual(2);
-        expect(instance.ids[0]).toEqual(id1);
-        expect(instance.ids[1]).toEqual(id3);
+        expect(instance.ids[0]).toBe(id1);
+        expect(instance.ids[1]).toBe(id3);
         expect(instance.timers.length).toEqual(2);
       });
 
@@ -74,6 +76,22 @@ describe('Timers', () => {
         instance.clear(0);
         expect(instance.ids.length).toEqual(3);
         expect(instance.timers.length).toEqual(3);
+      });
+    });
+
+    describe('create', () => {
+      it('should be a function', () => {
+        expect(instance.clear).toBeInstanceOf(Function);
+      });
+
+      it('should create a Timer', () => {
+        const fn = () => {};
+        const timer = instance.create(fn, 1);
+        expect(timer).toBeInstanceOf(Timer);
+        expect(timer.fn).toBe(fn);
+        expect(timer.wait).toEqual(1);
+        expect(timer.args).toBeInstanceOf(Array);
+        expect(timer.args.length).toEqual(0);
       });
     });
 
@@ -112,13 +130,16 @@ describe('Timers', () => {
       });
 
       it('should add a timeout to the list of timeouts', () => {
+        const createSpy = jest.spyOn(instance, 'create');
         const fn = jest.fn();
         instance.set(fn, 100);
         expect(instance.timers.length).toEqual(1);
-        expect(instance.timers[0].fn).toBeInstanceOf(Function);
+        expect(instance.timers[0].fn).toBe(fn);
         expect(instance.timers[0].wait).toEqual(100);
         instance.timers[0].fn();
         expect(fn).toHaveBeenCalledTimes(1);
+        expect(createSpy).toHaveBeenCalledTimes(1);
+        expect(createSpy).toHaveBeenCalledWith(fn, 100);
       });
     });
 

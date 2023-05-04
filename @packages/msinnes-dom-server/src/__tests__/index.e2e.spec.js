@@ -268,4 +268,18 @@ describe('e2e', () => {
     const html = api.renderToString(Dom.createElement(App));
     expect(html).toEqual('<div><p>async text 1</p><p>async text 2</p></div>');
   });
+
+  it('should not render any animationFrames', () => {
+    const App = () => {
+      const [text, setText] = Dom.useState('default text');
+      Dom.useEffect(() => {
+        requestAnimationFrame(() => {
+          setText('async text');
+        });
+      }, []);
+      return text;
+    };
+    const html = api.renderToString(Dom.createElement(App));
+    expect(html).toEqual('default text');
+  });
 });
