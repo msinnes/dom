@@ -26,7 +26,7 @@ This is just a starting list of features, and a short description of each. In ti
 - Class Components -- Abstract Class component which can be extended and exposes three lifecycle methods: `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount`.
 - Function Components -- Functions can be used with hooks to develop clean, expressive functionality.
 - Hooks -- Hooks for almost anything you need to build a website, and they process server side without any problem.
-- Limited Async Rendering Server Side -- Asynchronous processing will now run in both the server and testing environments. Timeouts and Intervals are currently supported.
+- Limited Async Rendering Server Side -- Asynchronous processing will now run in both the server and testing environments. Timeouts and Intervals are currently supported as well as initial support for requestAnimationFrame.
 
 This library delivers the functionality of React at the size of Preact. There is no engine swap, and a healthy suite of libraries is already available for routing, testing, and state management.
 

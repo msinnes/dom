@@ -48,6 +48,9 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: yarn
+      - run:
+          command: yarn version prepatch --yes
+          name: Version Packages
   publish_packages:
     executor: node/default
     steps:
