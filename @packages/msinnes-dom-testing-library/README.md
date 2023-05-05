@@ -212,7 +212,7 @@ A query family for querying an element based on its text content.
 
 # Asynchronous Testing
 
-Currently Timeouts and Intervals are supported. Default behavior will run timers when the view 'digests.' The digest cycle begins once the dom view has rendered. If any handles have been opened during the render cycle -- if some component or service triggers an asynchronous action -- the renderer will process those handles, rendering the applcation and reprocessing recursively until the call stack is exhausted.
+Currently Timeouts and Intervals are supported. `requestAnimationFrame` is supported as well, but only basic animation logic should be unit tested at this time. Default behavior will run timers when the view 'digests.' The digest cycle begins once the dom view has rendered. If any handles have been opened during the render cycle -- if some component or service triggers an asynchronous action -- the renderer will process those handles, rendering the applcation and reprocessing recursively until the call stack is exhausted.
 
 There is currently a maximum recursive depth of 50, just like there is with dom effect processing (component handles that execute after the render cycle). It is important to point out now that these recursive counters are disjoint. At any time during the digest process, recursive effect process starts at 0. Quantitatively, this means that any button click could trigger up to 2500 recursive operations. Qualitatively, it means that this testing framework empowers the user to test things like nested intervals. In the right hands, that kind of concept can be very powerful. If done wrong, nesting timers mixed with poor application design have the potential of creating long running tests.
 
