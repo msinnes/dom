@@ -42,19 +42,57 @@ jobs:
       - cypress/run-tests:
           start-command: yarn dev-server
           cypress-command: yarn test-ci
+  version_packages:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: yarn
+  publish_packages:
+    executor: node/default
+    steps:
+      - checkout
+      - run:
+          command: git checkout master
+          name: Checkout Master Branch
 workflows:
   test_modules:
     jobs:
-      - checkout_install_build
+      - checkout_install_build:
+          filters:
+            branches:
+              ignore: master
       - unit_test:
           requires:
             - checkout_install_build
+          filters:
+            branches:
+              ignore: master
       - lint_test:
           requires:
             - checkout_install_build
+          filters:
+            branches:
+              ignore: master
       - test_e2e:
           requires:
             - checkout_install_build
-
+          filters:
+            branches:
+              ignore: master
+  version_modules:
+    jobs:
+      - version_packages:
+          filters:
+            branches:
+              only: master
+  publish_modules:
+    jobs:
+      - publish_packages:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
 
 
