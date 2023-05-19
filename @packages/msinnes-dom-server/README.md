@@ -107,7 +107,7 @@ function renderToScreen(JSXRender): Screen;
 
 A configuration can be passed to the renderToString function or the renderToScreen function as a second argument. There is limited functionality, but it will expand as more features are added.
 
-#### `runExpiredTimers -- Boolean`
+#### `digestExpiredTimers -- Boolean`
 
 Tells the rendering engine whether to run any timers that have expired. If a `setTimeout` is called without a second parameter or the second parameter is 0, the timer will execute inline with the render. This simulates clearing the call-queue with a render. Even if timers are nested, the simulated queue will run recursively until the queue is empty.
 
@@ -126,7 +126,7 @@ const App = () => {
 };
 
 const screen1 = render(<App />); // Value defaults to true
-const screen2 = render(<App />, { runExpiredTimers: false });
+const screen2 = render(<App />, { digestExpiredTimers: false });
 
 console.log(screen1.container.innerHTML); // <-- 'async text'
 console.log(screen2.container.innerHTML); // <-- 'default text'
@@ -154,4 +154,4 @@ These directions are a living document, and I will start adding more steps as I 
 
 # Asynchronous Rendering
 
-Currently only timeouts, intervals, and `requestAnimationFrame` are supported -- although `reqeustAnimationFrame` will never process in the ssr package. Only immediate timers are processed. They are the test platform for building the async features, and they helped lay the foundation for async rendering. There are only two ways to render, by processing timers or not processing timers (setting `runExpiredTimers` to false). If timers are executed, immediate timers will process before the html string is calculated. If timers are not executed, the app will preprocess the initial render and return the html string.
+Currently only timeouts, intervals, and `requestAnimationFrame` are supported -- although `reqeustAnimationFrame` will never process in the ssr package. Only immediate timers are processed. They are the test platform for building the async features, and they helped lay the foundation for async rendering. There are only two ways to render, by processing timers or not processing timers (setting `digestExpiredTimers` to false). If timers are executed, immediate timers will process before the html string is calculated. If timers are not executed, the app will preprocess the initial render and return the html string.

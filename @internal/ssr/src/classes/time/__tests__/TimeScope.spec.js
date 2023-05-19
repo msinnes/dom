@@ -41,15 +41,15 @@ describe('TimeScope', () => {
       expect(instance.animationFrames).toBeInstanceOf(AnimationFrames);
     });
 
-    it('should have a runExpiredTimers prop defaulted to true', () => {
-      expect(instance.runExpiredTimers).toBe(true);
+    it('should have a digestExpiredTimers prop defaulted to true', () => {
+      expect(instance.digestExpiredTimers).toBe(true);
     });
 
-    it('should set runExpiredTimers if a value is passed', () => {
-      instance = new TimeScope({ runExpiredTimers: true });
-      expect(instance.runExpiredTimers).toBe(true);
-      instance = new TimeScope({ runExpiredTimers: false });
-      expect(instance.runExpiredTimers).toBe(false);
+    it('should set digestExpiredTimers if a value is passed', () => {
+      instance = new TimeScope({ digestExpiredTimers: true });
+      expect(instance.digestExpiredTimers).toBe(true);
+      instance = new TimeScope({ digestExpiredTimers: false });
+      expect(instance.digestExpiredTimers).toBe(false);
     });
 
     describe('digest', () => {
@@ -57,7 +57,7 @@ describe('TimeScope', () => {
         expect(instance.digest).toBeInstanceOf(Function);
       });
 
-      it('should make a call to instance.getExpiredTimers if runExpiredTimers is true', () => {
+      it('should make a call to instance.getExpiredTimers if digestExpiredTimers is true', () => {
         const fn = () => {};
         const getExpiredTimersMock = jest.fn().mockReturnValue([fn]);
         instance.getExpiredTimers = getExpiredTimersMock;
@@ -65,7 +65,7 @@ describe('TimeScope', () => {
         expect(getExpiredTimersMock).toHaveBeenCalledTimes(1);
         expect(results.length).toEqual(1);
         expect(results[0]).toBe(fn);
-        instance = new TimeScope({ runExpiredTimers: false });
+        instance = new TimeScope({ digestExpiredTimers: false });
         instance.run = getExpiredTimersMock;
         results = instance.digest();
         expect(getExpiredTimersMock).toHaveBeenCalledTimes(1);

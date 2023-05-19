@@ -3,7 +3,7 @@ import { JSDOM } from 'jsdom';
 import { Scope } from '../base/Scope';
 
 class DomScope extends Scope {
-  constructor(config, timeScope) {
+  constructor(config, timeScope, fetchScope) {
     super();
     this.dom = new JSDOM('', config);
     // Override timers on the window instance.
@@ -13,6 +13,8 @@ class DomScope extends Scope {
     this.dom.window.clearInterval = timeScope.intervals.clear.bind(timeScope.intervals);
     this.dom.window.requestAnimationFrame = timeScope.animationFrames.set.bind(timeScope.animationFrames);
     this.dom.window.cancelAnimationFrame = timeScope.animationFrames.clear.bind(timeScope.animationFrames);
+    // Override fetch on the window instance.
+    this.dom.window.fetch = fetchScope.createRequest.bind(fetchScope);
   }
 
   enable() {

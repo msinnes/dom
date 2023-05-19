@@ -123,7 +123,7 @@ describe('App', () => {
 
 A configuration can be passed to the render function as a second argument. There is limited functionality, but it will expand as more features are added.
 
-#### `runExpiredTimers -- Boolean`
+#### `digestExpiredTimers -- Boolean`
 
 Tells the rendering engine whether to run any timers that have expired. If a `setTimeout` is called without a second parameter or the second parameter is 0, the timer will execute inline with the render. This simulates clearing the call-queue with a render. Even if timers are nested, the simulated queue will run recursively until the queue is empty.
 
@@ -142,7 +142,7 @@ const App = () => {
 };
 
 const screen1 = render(<App />); // Value defaults to true
-const screen2 = render(<App />, { runExpiredTimers: false });
+const screen2 = render(<App />, { digestExpiredTimers: false });
 
 console.log(screen1.container.innerHTML); // <-- 'async text'
 console.log(screen2.container.innerHTML); // <-- 'default text'
@@ -188,9 +188,9 @@ Processes the next expired timer associated with the screen instance. If no time
 
 #### `Screen.time.play - (ticks: ?number) => void`
 
-Will tick all timers and digest the scope. If the screen is not configured to run expired timers (`runExpiredTimers = false`) then none of the timers will be executed. This allows the user to advance the clock and run any timers that expired in that time.
+Will tick all timers and digest the scope. If the screen is not configured to run expired timers (`digestExpiredTimers = false`) then none of the timers will be executed. This allows the user to advance the clock and run any timers that expired in that time.
 
-#### `Screen.time.runExpiredTimers - () => void`
+#### `Screen.time.run - () => void`
 
 Will run all timers that have expired, running them in expiration order. If no timers have expired, then no timers will execute.
 

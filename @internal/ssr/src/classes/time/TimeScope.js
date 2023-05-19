@@ -12,18 +12,18 @@ const setIntervalOriginal = global.setInterval;
 const clearIntervalOriginal = global.clearInterval;
 
 class TimeScope extends DigestibleScope {
-  runExpiredTimers = true;
+  digestExpiredTimers = true;
   animationFrames = new AnimationFrames();
   intervals = new Intervals();
   timeouts = new Timeouts();
 
   constructor(config) {
     super();
-    if (isDefined(config.runExpiredTimers)) this.runExpiredTimers = config.runExpiredTimers;
+    if (isDefined(config.digestExpiredTimers)) this.digestExpiredTimers = config.digestExpiredTimers;
   }
 
   digest() {
-    if (this.runExpiredTimers) return this.getExpiredTimers();
+    if (this.digestExpiredTimers) return this.getExpiredTimers();
     return [];
   }
 

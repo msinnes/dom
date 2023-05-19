@@ -1,5 +1,6 @@
 import { DigestibleScope } from '../base/DigestibleScope';
 import { DomScope } from '../dom/DomScope';
+import { FetchScope } from '../fetch/FetchScope';
 import { InfraScope } from '../dom/InfraScope';
 import { TimeScope } from '../time/TimeScope';
 
@@ -22,8 +23,10 @@ describe('SsrScope', () => {
     let infraDisableMock;
     let timeEnableMock;
     let timeDisableMock;
+    let fetchEnableMock;
+    let fetchDisableMock;
     beforeEach(() => {
-      instance = new SsrScope({ dom: {}, time: {} });
+      instance = new SsrScope({ dom: {}, fetch: {}, time: {} });
 
       domEnableMock = jest.spyOn(instance.dom, 'enable');
       domDisableMock = jest.spyOn(instance.dom, 'disable');
@@ -32,6 +35,8 @@ describe('SsrScope', () => {
       // We just want to make sure the mock is called. This is dangerous and we don't need to run it in this case.
       timeEnableMock = jest.spyOn(instance.time, 'enable').mockImplementation(() => {});
       timeDisableMock = jest.spyOn(instance.time, 'disable');
+      fetchEnableMock = jest.spyOn(instance.fetch, 'enable');
+      fetchDisableMock = jest.spyOn(instance.fetch, 'disable');
     });
 
     it('should have a dom prop', () => {
@@ -49,6 +54,11 @@ describe('SsrScope', () => {
       expect(instance.time).toBeInstanceOf(TimeScope);
     });
 
+    it('should have a fetch prop', () => {
+      expect(instance.fetch).toBeDefined();
+      expect(instance.fetch).toBeInstanceOf(FetchScope);
+    });
+
     it('should expose the body element on a body getter', () => {
       expect(instance.body.elem).toBe(instance.dom.dom.window.document.body);
     });
@@ -58,30 +68,42 @@ describe('SsrScope', () => {
     });
 
     it('should pass config.dom to the DomScope', () => {
-      instance = new SsrScope({ dom: { url: 'http://url.com' }, time: {} });
+      instance = new SsrScope({ dom: { url: 'http://url.com' }, fetch: {}, time: {} });
       expect(instance.dom.dom.window.location.href).toEqual('http://url.com/');
     });
 
+    it('should pass config.fetch to the FetchScope', () => {
+      instance = new SsrScope({ dom: {}, fetch: { digestFetch: true }, time: {} });
+      expect(instance.fetch.digestFetch).toBe(true);
+      instance = new SsrScope({ dom: {}, fetch: { digestFetch: false }, time: {} });
+      expect(instance.fetch.digestFetch).toBe(false);
+    });
+
     it('should pass config.time to the TimeScope', () => {
-      instance = new SsrScope({ dom: {}, time: { runExpiredTimers: true } });
-      expect(instance.time.runExpiredTimers).toBe(true);
-      instance = new SsrScope({ dom: {}, time: { runExpiredTimers: false } });
-      expect(instance.time.runExpiredTimers).toBe(false);
+      instance = new SsrScope({ dom: {}, fetch: {}, time: { digestExpiredTimers: true } });
+      expect(instance.time.digestExpiredTimers).toBe(true);
+      instance = new SsrScope({ dom: {}, fetch: {}, time: { digestExpiredTimers: false } });
+      expect(instance.time.digestExpiredTimers).toBe(false);
     });
 
     it('should have a url getter', () => {
       expect(instance.url).toBeUndefined();
-      instance = new SsrScope({ dom: { url: 'http://url.com' }, time: {} });
+      instance = new SsrScope({ dom: { url: 'http://url.com' }, fetch: {}, time: {} });
       expect(instance.url).toEqual('http://url.com/');
     });
 
     describe('digest', () => {
-      let fn;
+      let fn1;
+      let fn2;
       let timeDigestMock;
+      let fetchDigestMock;
       beforeEach(() => {
-        fn = () => {};
-        timeDigestMock = jest.fn().mockReturnValue([fn]);
+        fn1 = () => {};
+        fn2 = () => {};
+        timeDigestMock = jest.fn().mockReturnValue([fn1]);
+        fetchDigestMock = jest.fn().mockReturnValue([fn2]);
         instance.time.digest = timeDigestMock;
+        instance.fetch.digest = fetchDigestMock;
       });
 
       it('should be a function', () => {
@@ -91,12 +113,13 @@ describe('SsrScope', () => {
       it('should call time.digest', () => {
         instance.digest();
         expect(timeDigestMock).toHaveBeenCalledTimes(1);
+        expect(fetchDigestMock).toHaveBeenCalledTimes(1);
       });
 
       it('should return an array of concatenated handlers', () => {
         const result = instance.digest();
-        expect(result.length).toEqual(1);
-        expect(result).toMatchObject([fn]);
+        expect(result.length).toEqual(2);
+        expect(result).toMatchObject([fn1, fn2]);
       });
     });
 
@@ -110,6 +133,7 @@ describe('SsrScope', () => {
         expect(domEnableMock).toHaveBeenCalledTimes(1);
         expect(infraEnableMock).toHaveBeenCalledTimes(1);
         expect(timeEnableMock).toHaveBeenCalledTimes(1);
+        expect(fetchEnableMock).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -123,6 +147,7 @@ describe('SsrScope', () => {
         expect(domDisableMock).toHaveBeenCalledTimes(1);
         expect(infraDisableMock).toHaveBeenCalledTimes(1);
         expect(timeDisableMock).toHaveBeenCalledTimes(1);
+        expect(fetchDisableMock).toHaveBeenCalledTimes(1);
       });
     });
   });

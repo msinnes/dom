@@ -1,6 +1,7 @@
 import { JSDOM } from 'jsdom';
 
 import { Scope } from '../../base/Scope';
+import { FetchScope } from '../../fetch/FetchScope';
 import { TimeScope } from '../../time/TimeScope';
 
 import { DomScope } from '../DomScope';
@@ -17,10 +18,12 @@ describe('DomScope', () => {
   describe('instance', () => {
     let instance;
 
+    let mockFetchScope;
     let mockTimeScope;
     beforeEach(() => {
-      mockTimeScope = new TimeScope({ runExpiredTimers: true });
-      instance = new DomScope({}, mockTimeScope);
+      mockTimeScope = new TimeScope({ digestExpiredTimers: true });
+      mockFetchScope = new FetchScope({ digestFetch: true });
+      instance = new DomScope({}, mockTimeScope, mockFetchScope);
     });
 
     it('should have a jsdom instance', () => {
@@ -29,7 +32,7 @@ describe('DomScope', () => {
     });
 
     it('should set location if config.url is passed', () => {
-      instance = new DomScope({ url: 'http://url.com/path?id=1#hash' }, mockTimeScope);
+      instance = new DomScope({ url: 'http://url.com/path?id=1#hash' }, mockTimeScope, mockFetchScope);
       const location = instance.dom.window.location;
       expect(location.href).toEqual('http://url.com/path?id=1#hash');
       expect(location.origin).toEqual('http://url.com');
@@ -52,6 +55,14 @@ describe('DomScope', () => {
       expect(mockTimeScope.animationFrames.timers.length).toEqual(1);
       instance.dom.window.cancelAnimationFrame(id);
       expect(mockTimeScope.animationFrames.timers.length).toEqual(0);
+    });
+
+    it('should overwrite fetch on the window object', () => {
+      const mockConfig = {};
+      instance.dom.window.fetch('url', mockConfig);
+      expect(mockFetchScope.requests.requests.length).toEqual(1);
+      expect(mockFetchScope.requests.requests[0].url).toEqual('url');
+      expect(mockFetchScope.requests.requests[0].config).toBe(mockConfig);
     });
 
     describe('enable', () => {

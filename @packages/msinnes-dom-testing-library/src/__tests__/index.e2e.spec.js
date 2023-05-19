@@ -1,6 +1,9 @@
-import * as Dom from '@msinnes/dom';
-
+// TODO: this should not have to be anchored to the top.
 import { render } from '..';
+
+import * as Dom from '@msinnes/dom';
+import { connect, createStore, StoreProvider } from '@msinnes/dom-redux-light';
+
 
 describe('render.e2e', () => {
   it('should render undefined to the dom', () => {
@@ -341,7 +344,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
     });
 
@@ -361,7 +364,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
       screen.time.play();
       expect(screen.container.innerHTML).toEqual('default text');
@@ -385,7 +388,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
       screen.time.play(1);
       expect(screen.container.innerHTML).toEqual('default text');
@@ -421,7 +424,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
       screen.time.play(2);
       expect(screen.container.innerHTML).toEqual('default text');
@@ -449,7 +452,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
       screen.time.play(1);
       expect(screen.container.innerHTML).toEqual('default text');
@@ -485,7 +488,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
       screen.time.play(2);
       expect(screen.container.innerHTML).toEqual('default text');
@@ -605,7 +608,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
     });
 
@@ -619,7 +622,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
       screen.time.next();
       expect(screen.container.innerHTML).toEqual('async text');
@@ -645,7 +648,7 @@ describe('timers', () => {
           Dom.createElement('p', {}, [text2]),
         ]);
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
       screen.time.run();
       expect(screen.container.innerHTML).toEqual('<div><p>async text 1</p><p>async text 2</p></div>');
@@ -671,7 +674,7 @@ describe('timers', () => {
           Dom.createElement('p', {}, [text2]),
         ]);
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
       screen.time.run();
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
@@ -828,7 +831,7 @@ describe('timers', () => {
           Dom.createElement('p', {}, [text2]),
         ]);
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
       screen.time.tick();
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
@@ -873,7 +876,7 @@ describe('timers', () => {
           Dom.createElement('p', {}, [text2]),
         ]);
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
       screen.time.tick();
       screen.time.next();
@@ -918,5 +921,48 @@ describe('timers', () => {
       const screen = render(Dom.createElement(App));
       expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text</p></div>');
     });
+  });
+});
+
+describe('fetch', () => {
+  it('should process a fetch request', () => {
+    const config = {
+      fetch: (req, res) => {
+        if (req.url) res.text(req.config.body.name);
+      },
+    };
+
+    const getName = () => fetch('url', { body: { name: 'name' } });
+    const setNameAction = name => {
+        return ({
+          type: 'SET_NAME',
+          name,
+        });
+    };
+    const reducer = (action, state = '') => {
+      if (action.type = 'SET_NAME') return action.name;
+      return state;
+    };
+
+    const Name = ({ name, setName }) => {
+      Dom.useEffect(() => {
+        getName().then(data => data.text()).then(name => setName(name));
+      }, []);
+      return name && name.length ? name : 'no name';
+    };
+    const ConnectedName = connect(state => ({
+      name: state,
+    }), dispatch => ({
+      setName: name => dispatch(setNameAction(name)),
+    }))(Name);
+
+    const App = () => {
+      return Dom.createElement(ConnectedName);
+    };
+    const store = createStore(reducer);
+    const screen = render(Dom.createElement(StoreProvider, { store }, [
+      Dom.createElement(App),
+    ]), config);
+    expect(screen.container.innerHTML).toEqual('name');
   });
 });
