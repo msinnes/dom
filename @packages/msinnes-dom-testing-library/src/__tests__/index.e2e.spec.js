@@ -925,44 +925,74 @@ describe('timers', () => {
 });
 
 describe('fetch', () => {
+  const getName = () => fetch('url', { body: { name: 'name' } });
+  const setNameAction = name => {
+      return ({
+        type: 'SET_NAME',
+        name,
+      });
+  };
+
+  const reducer = (action, state = '') => {
+    if (action.type = 'SET_NAME') return action.name;
+    return state;
+  };
+
+  const Name = ({ name, setName }) => {
+    Dom.useEffect(() => {
+      getName().then(data => data.text()).then(name => setName(name));
+    }, []);
+    return name && name.length ? name : 'no name';
+  };
+  const ConnectedName = connect(state => ({
+    name: state,
+  }), dispatch => ({
+    setName: name => dispatch(setNameAction(name)),
+  }))(Name);
+
+  const App = () => {
+    return Dom.createElement(ConnectedName);
+  };
+
   it('should process a fetch request', () => {
     const config = {
       fetch: (req, res) => {
-        if (req.url) res.text(req.config.body.name);
+        res.text(req.config.body.name);
       },
-    };
-
-    const getName = () => fetch('url', { body: { name: 'name' } });
-    const setNameAction = name => {
-        return ({
-          type: 'SET_NAME',
-          name,
-        });
-    };
-    const reducer = (action, state = '') => {
-      if (action.type = 'SET_NAME') return action.name;
-      return state;
-    };
-
-    const Name = ({ name, setName }) => {
-      Dom.useEffect(() => {
-        getName().then(data => data.text()).then(name => setName(name));
-      }, []);
-      return name && name.length ? name : 'no name';
-    };
-    const ConnectedName = connect(state => ({
-      name: state,
-    }), dispatch => ({
-      setName: name => dispatch(setNameAction(name)),
-    }))(Name);
-
-    const App = () => {
-      return Dom.createElement(ConnectedName);
     };
     const store = createStore(reducer);
     const screen = render(Dom.createElement(StoreProvider, { store }, [
       Dom.createElement(App),
     ]), config);
     expect(screen.container.innerHTML).toEqual('name');
+  });
+
+  it('should not expose the ssr scope to the fetch request (fetch interceptors should operate in server mode)', () => {
+    const config = {
+      fetch: (req, res) => {
+        expect(global.window).toBeUndefined();
+        res.text(req.config.body.name);
+      },
+    };
+    const store = createStore(reducer);
+    const screen = render(Dom.createElement(StoreProvider, { store }, [
+      Dom.createElement(App),
+    ]), config);
+    expect(screen.container.innerHTML).toEqual('name');
+  });
+
+  it('should not digest fetch calls if configuration is overriden', () => {
+    const config = {
+      digestFetch: false,
+      fetch: (req, res) => {
+        expect(global.window).toBeUndefined();
+        res.text(req.config.body.name);
+      },
+    };
+    const store = createStore(reducer);
+    const screen = render(Dom.createElement(StoreProvider, { store }, [
+      Dom.createElement(App),
+    ]), config);
+    expect(screen.container.innerHTML).toEqual('no name');
   });
 });

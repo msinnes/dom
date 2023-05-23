@@ -6,6 +6,7 @@ const contentsRoute = require('./router/contents');
 const reduxRoute = require('./router/redux');
 const subroutedRoute = require('./router/subrouted');
 const timersRoute = require('./router/timers');
+// TODO: add a fetch page
 
 const app = express();
 

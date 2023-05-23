@@ -92,6 +92,22 @@ describe('SsrScope', () => {
       expect(instance.url).toEqual('http://url.com/');
     });
 
+    it('should override config.fetch.fetch if it is passed', () => {
+      const fetchMock = jest.fn();
+      instance = new SsrScope({ dom: {}, fetch: { fetch: fetchMock }, time: {} });
+      const enableMock = jest.spyOn(instance, 'enable').mockImplementation(() => {});
+      const disableMock = jest.spyOn(instance, 'disable').mockImplementation(() => {});
+      const doRequest = instance.fetch.doRequest;
+      expect(doRequest).toBeInstanceOf(Function);
+      const mockReq = {};
+      const mockRes = {};
+      doRequest(mockReq, mockRes);
+      expect(enableMock).toHaveBeenCalledTimes(1);
+      expect(disableMock).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledWith(mockReq, mockRes);
+    });
+
     describe('digest', () => {
       let fn1;
       let fn2;

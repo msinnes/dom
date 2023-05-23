@@ -24,9 +24,21 @@ class SsrScope extends DigestibleScope {
 
   constructor(config) {
     super();
+    // Wrap the fetch fn in disable scope/enable scope calls. This will allow the fetch request to process in server mode.
+    const fetchConfig = {
+      ...config.fetch,
+      fetch: (req, res) => {
+        if (!config.fetch.fetch) return;
+
+        this.disable();
+        config.fetch.fetch(req, res);
+        this.enable();
+      },
+    };
+
     this.infra = new InfraScope(new Infra());
     this.time = new TimeScope(config.time);
-    this.fetch = new FetchScope(config.fetch);
+    this.fetch = new FetchScope(fetchConfig);
 
     this.dom = new DomScope(config.dom, this.time, this.fetch);
     this.body = new DomRef(this.dom.dom.window.document.body);

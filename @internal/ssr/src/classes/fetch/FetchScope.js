@@ -71,8 +71,6 @@ class CompositeResponse {
         resolve(data);
       });
     };
-
-    // this.resolve = () => resolvePromise(data);
   }
 }
 

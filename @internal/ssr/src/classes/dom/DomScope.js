@@ -2,6 +2,7 @@ import { JSDOM } from 'jsdom';
 
 import { Scope } from '../base/Scope';
 
+// TODO: this will need to enable and disable all classes available on the window object, i.e. Request, Response, etc.
 class DomScope extends Scope {
   constructor(config, timeScope, fetchScope) {
     super();

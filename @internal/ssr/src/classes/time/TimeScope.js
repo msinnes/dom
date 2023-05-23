@@ -54,6 +54,7 @@ class TimeScope extends DigestibleScope {
   }
 
   getNextTimer() {
+    // TODO: pretty sure this pattern will cause parellel running timers to be skipped. Next will remove them from the execution queue.
     const nextTimers = [
       this.timeouts.getNext(),
       this.intervals.getNext(),

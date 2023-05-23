@@ -285,13 +285,7 @@ describe('e2e', () => {
     expect(html).toEqual('default text');
   });
 
-  it('should render a basic fetch with redux', () => {
-    const config = {
-      fetch: (req, res) => {
-        if (req.url) res.text(req.config.body.name);
-      },
-    };
-
+  describe('fetch', () => {
     const getName = () => fetch('url', { body: { name: 'name' } });
     const setNameAction = name => {
         return ({
@@ -299,6 +293,7 @@ describe('e2e', () => {
           name,
         });
     };
+
     const reducer = (action, state = '') => {
       if (action.type = 'SET_NAME') return action.name;
       return state;
@@ -319,10 +314,50 @@ describe('e2e', () => {
     const App = () => {
       return Dom.createElement(ConnectedName);
     };
-    const store = createStore(reducer);
-    const html = api.renderToString(Dom.createElement(StoreProvider, { store }, [
-      Dom.createElement(App),
-    ]), config);
-    expect(html).toEqual('name');
+
+    it('should render a basic fetch with redux', () => {
+      const config = {
+        fetch: (req, res) => {
+          if (req.url) res.text(req.config.body.name);
+        },
+      };
+
+      const store = createStore(reducer);
+      const html = api.renderToString(Dom.createElement(StoreProvider, { store }, [
+        Dom.createElement(App),
+      ]), config);
+      expect(html).toEqual('name');
+    });
+
+    it('should not expose the ssr scope to the fetch request (fetch interceptors should operate in server mode)', () => {
+      const config = {
+        fetch: (req, res) => {
+          expect(global.window).toBeUndefined();
+          res.text(req.config.body.name);
+        },
+      };
+
+      const store = createStore(reducer);
+      const html = api.renderToString(Dom.createElement(StoreProvider, { store }, [
+        Dom.createElement(App),
+      ]), config);
+      expect(html).toEqual('name');
+    });
+
+    it('should not digest fetch calls if configuration is overriden', () => {
+      const config = {
+        digestFetch: false,
+        fetch: (req, res) => {
+          expect(global.window).toBeUndefined();
+          res.text(req.config.body.name);
+        },
+      };
+
+      const store = createStore(reducer);
+      const html = api.renderToString(Dom.createElement(StoreProvider, { store }, [
+        Dom.createElement(App),
+      ]), config);
+      expect(html).toEqual('no name');
+    });
   });
 });
