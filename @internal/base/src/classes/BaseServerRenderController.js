@@ -7,13 +7,15 @@ const BaseServerRenderController = abstract(class extends BaseRenderController {
     super(render, ssrScope.body, ssrScope.services);
 
     this.scope = ssrScope;
+
+    this.processHandlerBound = this.processHandler.bind(this);
   }
 
   digest(trace = 0) {
     if (trace >= 50) throw new Error('ImplementationError: Maximum call depth exceeded for Asynchronous Processing.');
     const results = this.scope.digest();
     if (results.length) {
-      results.forEach(this.processHandler.bind(this));
+      results.forEach(this.processHandlerBound);
       this.digest(trace + 1);
     }
   }

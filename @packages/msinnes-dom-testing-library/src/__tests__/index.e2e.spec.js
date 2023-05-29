@@ -995,4 +995,38 @@ describe('fetch', () => {
     ]), config);
     expect(screen.container.innerHTML).toEqual('no name');
   });
+
+  it('should execute a single fetch handler with screen.fetch.next', () => {
+    const config = {
+      digestFetch: false,
+      fetch: (req, res) => {
+        expect(global.window).toBeUndefined();
+        res.text(req.config.body.name);
+      },
+    };
+    const store = createStore(reducer);
+    const screen = render(Dom.createElement(StoreProvider, { store }, [
+      Dom.createElement(App),
+    ]), config);
+    expect(screen.container.innerHTML).toEqual('no name');
+    screen.fetch.next();
+    expect(screen.container.innerHTML).toEqual('name');
+  });
+
+  it('should execute a single fetch handler with screen.fetch.run', () => {
+    const config = {
+      digestFetch: false,
+      fetch: (req, res) => {
+        expect(global.window).toBeUndefined();
+        res.text(req.config.body.name);
+      },
+    };
+    const store = createStore(reducer);
+    const screen = render(Dom.createElement(StoreProvider, { store }, [
+      Dom.createElement(App),
+    ]), config);
+    expect(screen.container.innerHTML).toEqual('no name');
+    screen.fetch.run();
+    expect(screen.container.innerHTML).toEqual('name');
+  });
 });
