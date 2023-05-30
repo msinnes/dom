@@ -81,6 +81,23 @@ class Screen {
         }
       },
     };
+
+    this.fetch = {
+      next: () => {
+        controller.scope.enable();
+        const fetchHandler = controller.scope.fetch.getNext();
+        if (fetchHandler) controller.processHandler(fetchHandler);
+        controller.scope.disable();
+      },
+      run: () => {
+        controller.scope.enable();
+        const fetchHandlers = controller.scope.fetch.getAll();
+        fetchHandlers.forEach(fetchHandler => {
+          controller.processHandler(fetchHandler);
+        });
+        controller.scope.disable();
+      },
+    };
   }
 }
 

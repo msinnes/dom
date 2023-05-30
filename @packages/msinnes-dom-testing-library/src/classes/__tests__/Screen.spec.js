@@ -265,17 +265,14 @@ describe('Screen', () => {
     });
 
     describe('time', () => {
-      let runMock;
       let tickMock;
       let getNextTimerMock;
       let getExpiredTimersMock;
       beforeEach(() => {
-        runMock = jest.fn();
         tickMock = jest.fn();
         getNextTimerMock = jest.fn();
         getExpiredTimersMock = jest.fn();
         ssrScope.time = {
-          run: runMock,
           tick: tickMock,
           getNextTimer: getNextTimerMock,
           getExpiredTimers: getExpiredTimersMock,
@@ -395,6 +392,79 @@ describe('Screen', () => {
           expect(tickMock).toHaveBeenCalledTimes(0);
           instance.time.tick();
           expect(tickMock).toHaveBeenCalledTimes(1);
+        });
+      });
+    });
+
+    describe('fetch', () => {
+      let tickMock;
+      let getNextMock;
+      let getAllMock;
+      beforeEach(() => {
+        tickMock = jest.fn();
+        getNextMock = jest.fn();
+        getAllMock = jest.fn();
+        ssrScope.fetch = {
+          tick: tickMock,
+          getNext: getNextMock,
+          getAll: getAllMock,
+        };
+      });
+
+      it('should be an object on the screen', () => {
+        expect(instance.fetch).toBeDefined();
+        expect(instance.fetch).toBeInstanceOf(Object);
+      });
+
+      describe('next', () => {
+        it('should be a function', () => {
+          expect(instance.fetch.next).toBeInstanceOf(Function);
+        });
+
+        it('should enable and disable the scope', () => {
+          instance.fetch.next();
+          expect(ssrScope.enable).toHaveBeenCalledTimes(1);
+          expect(ssrScope.disable).toHaveBeenCalledTimes(1);
+        });
+
+        it('should call scope.time.getNext and pass it to controller.processHandler', () => {
+          const fetchHandler = {};
+          getNextMock.mockReturnValue(fetchHandler);
+          instance.fetch.next();
+          expect(getNextMock).toHaveBeenCalledTimes(1);
+          expect(renderController.processHandler).toHaveBeenCalledTimes(1);
+          expect(renderController.processHandler).toHaveBeenCalledWith(fetchHandler);
+        });
+
+        it('should call scope.time.getNextTimer and not do anything if there is no next timer', () => {
+          getNextMock.mockReturnValue();
+          instance.fetch.next();
+          expect(getNextMock).toHaveBeenCalledTimes(1);
+          expect(renderController.processHandler).toHaveBeenCalledTimes(0);
+        });
+      });
+
+      describe('run', () => {
+        it('should be a function', () => {
+          expect(instance.fetch.run).toBeInstanceOf(Function);
+        });
+
+        it('should enable and disable the scope', () => {
+          getAllMock.mockReturnValue([]);
+          instance.fetch.run();
+          expect(ssrScope.enable).toHaveBeenCalledTimes(1);
+          expect(ssrScope.disable).toHaveBeenCalledTimes(1);
+        });
+
+        it('should call scope.fetch.getAll and pass each one to controller.processHandler', () => {
+          const fetchHandler1 = {};
+          const fetchHandler2 = {};
+          getAllMock.mockReturnValue([fetchHandler1, fetchHandler2]);
+          instance.fetch.run();
+          expect(getAllMock).toHaveBeenCalledTimes(1);
+          expect(renderController.processHandler).toHaveBeenCalledTimes(2);
+          expect(renderController.processHandler).toHaveBeenCalledWith(fetchHandler1);
+          expect(renderController.processHandler).toHaveBeenCalledWith(fetchHandler2);
         });
       });
     });

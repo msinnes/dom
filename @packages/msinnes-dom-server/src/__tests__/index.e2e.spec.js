@@ -1,6 +1,8 @@
-import * as Dom from '@msinnes/dom';
-
+// TODO: this should not have to be anchored to the top.
 import * as api from '..';
+
+import * as Dom from '@msinnes/dom';
+import { connect, createStore, StoreProvider } from '@msinnes/dom-redux-light';
 
 describe('e2e', () => {
   it('should render undefined to the dom', () => {
@@ -174,7 +176,7 @@ describe('e2e', () => {
       }, []);
       return text;
     };
-    const html = api.renderToString(Dom.createElement(App), { runExpiredTimers: false });
+    const html = api.renderToString(Dom.createElement(App), { digestExpiredTimers: false });
     expect(html).toEqual('default text');
   });
 
@@ -232,7 +234,7 @@ describe('e2e', () => {
     expect(html).toEqual('async text 3');
   });
 
-  it('should not execute an interval if runExpiredTimers is configured as false', () => {
+  it('should not execute an interval if digestExpiredTimers is configured as false', () => {
     const App = () => {
       const [text, setText] = Dom.useState('default text');
       Dom.useEffect(() => {
@@ -242,7 +244,7 @@ describe('e2e', () => {
       }, []);
       return text;
     };
-    const html = api.renderToString(Dom.createElement(App), { runExpiredTimers: false });
+    const html = api.renderToString(Dom.createElement(App), { digestExpiredTimers: false });
     expect(html).toEqual('default text');
   });
 
@@ -281,5 +283,81 @@ describe('e2e', () => {
     };
     const html = api.renderToString(Dom.createElement(App));
     expect(html).toEqual('default text');
+  });
+
+  describe('fetch', () => {
+    const getName = () => fetch('url', { body: { name: 'name' } });
+    const setNameAction = name => {
+        return ({
+          type: 'SET_NAME',
+          name,
+        });
+    };
+
+    const reducer = (action, state = '') => {
+      if (action.type = 'SET_NAME') return action.name;
+      return state;
+    };
+
+    const Name = ({ name, setName }) => {
+      Dom.useEffect(() => {
+        getName().then(data => data.text()).then(name => setName(name));
+      }, []);
+      return name && name.length ? name : 'no name';
+    };
+    const ConnectedName = connect(state => ({
+      name: state,
+    }), dispatch => ({
+      setName: name => dispatch(setNameAction(name)),
+    }))(Name);
+
+    const App = () => {
+      return Dom.createElement(ConnectedName);
+    };
+
+    it('should render a basic fetch with redux', () => {
+      const config = {
+        fetch: (req, res) => {
+          if (req.url) res.text(req.config.body.name);
+        },
+      };
+
+      const store = createStore(reducer);
+      const html = api.renderToString(Dom.createElement(StoreProvider, { store }, [
+        Dom.createElement(App),
+      ]), config);
+      expect(html).toEqual('name');
+    });
+
+    it('should not expose the ssr scope to the fetch request (fetch interceptors should operate in server mode)', () => {
+      const config = {
+        fetch: (req, res) => {
+          expect(global.window).toBeUndefined();
+          res.text(req.config.body.name);
+        },
+      };
+
+      const store = createStore(reducer);
+      const html = api.renderToString(Dom.createElement(StoreProvider, { store }, [
+        Dom.createElement(App),
+      ]), config);
+      expect(html).toEqual('name');
+    });
+
+    it('should not digest fetch calls if configuration is overriden', () => {
+      const config = {
+        digestFetch: false,
+        fetch: (req, res) => {
+          expect(global.window).toBeUndefined();
+          res.text(req.config.body.name);
+        },
+      };
+
+      const store = createStore(reducer);
+      const html = api.renderToString(Dom.createElement(StoreProvider, { store }, [
+        Dom.createElement(App),
+      ]), config);
+      expect(html).toEqual('no name');
+    });
   });
 });

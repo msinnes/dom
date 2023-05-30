@@ -39,6 +39,7 @@
     "@internal/utils": "^0.0.4-alpha.0",
     "@msinnes/babel-plugin-dom-jsx": "^0.0.5-alpha.0",
     "@msinnes/dom": "^0.0.5-alpha.0",
+    "@msinnes/dom-redux-light": "^0.0.5-alpha.0",
     "@rollup/plugin-node-resolve": "^14.1.0",
     "@shared/eslint-config": "^0.0.4-alpha.0",
     "@shared/json": "^0.0.4-alpha.0",

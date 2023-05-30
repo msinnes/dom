@@ -123,7 +123,7 @@ describe('App', () => {
 
 A configuration can be passed to the render function as a second argument. There is limited functionality, but it will expand as more features are added.
 
-#### `runExpiredTimers -- Boolean`
+#### `digestExpiredTimers -- Boolean`
 
 Tells the rendering engine whether to run any timers that have expired. If a `setTimeout` is called without a second parameter or the second parameter is 0, the timer will execute inline with the render. This simulates clearing the call-queue with a render. Even if timers are nested, the simulated queue will run recursively until the queue is empty.
 
@@ -142,13 +142,61 @@ const App = () => {
 };
 
 const screen1 = render(<App />); // Value defaults to true
-const screen2 = render(<App />, { runExpiredTimers: false });
+const screen2 = render(<App />, { digestExpiredTimers: false });
 
 console.log(screen1.container.innerHTML); // <-- 'async text'
 console.log(screen2.container.innerHTML); // <-- 'default text'
 ```
 
 In this case `screen1` will render the text produced asynchronously, but `screen2` will render the default text. This allows for more control over the timers throughout the rendering process.
+
+#### `digestFetch -- Boolean`
+
+Tells the rendering engine whether to fulfill any promises for fetch requests. This simulates a fetch request that is immediately resolved via the `fetch` configuration property.
+
+```JavaScript
+import * as DOM from '@msinnes/dom';
+import { render } from '@msinnes/dom-testing-library';
+
+const App = () => {
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    if (!text) fetch('url').then(data => data.text()).then(setText);
+  }, []);
+  return text;
+};
+
+const screen1 = render(<App /> { fetch: (req, res) => res.text('async text') }); // Value defaults to true
+const screen2 = render(<App />, { digestFetch: false, fetch: (req, res) => res.text('async text') });
+
+console.log(screen1.container.innerHTML); // <-- 'async text'
+console.log(screen2.container.innerHTML); // <-- 'default text'
+```
+
+In this case `screen1` will render the text produced asynchronously, but `screen2` will render the default text. This allows for more control over the timers throughout the rendering process.
+
+#### `fetch -- Boolean`
+
+Provides a mechanism for handling fetch requests. Fetch requests will be passed to the provided fetch handler, and data passed to the response will be provided to the application.
+
+```JavaScript
+import * as DOM from '@msinnes/dom';
+import { render } from '@msinnes/dom-testing-library';
+
+const App = () => {
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    if (!text) fetch('url').then(data => data.text()).then(setText);
+  }, []);
+  return text;
+};
+
+const screen = render(<App /> { fetch: (req, res) => res.text('async text') }); // Value defaults to true
+
+console.log(screen.container.innerHTML); // <-- 'async text'
+```
+
+In this case `screen` will render the text produced asynchronously.
 
 #### `url -- String`
 
@@ -178,6 +226,18 @@ Instances of the `Screen` class render atomically. It is entirely possible to re
 
 The root visual element of rendered screen. Correspondes to the document.body element, not the ref associated with the element.
 
+### `Screen.fetch`
+
+The time interface for executing asyncronous timers. Depending on configuration, timers can run automatically, can be batch processed, or they can be executed one by one.
+
+#### `Screen.fetch.next - () => void`
+
+Processes the next fetch handler. If no handlers are queued, then nothing will happen.
+
+#### `Screen.fetch.run - () => void`
+
+Will process all fetch handlers, running them first-in-first-out. If no handlers are queued, then nothing will happen.
+
 ### `Screen.time`
 
 The time interface for executing asyncronous timers. Depending on configuration, timers can run automatically, can be batch processed, or they can be executed one by one.
@@ -188,11 +248,15 @@ Processes the next expired timer associated with the screen instance. If no time
 
 #### `Screen.time.play - (ticks: ?number) => void`
 
-Will tick all timers and digest the scope. If the screen is not configured to run expired timers (`runExpiredTimers = false`) then none of the timers will be executed. This allows the user to advance the clock and run any timers that expired in that time.
+Will tick all timers and digest the scope. If the screen is not configured to run expired timers (`digestExpiredTimers = false`) then none of the timers will be executed. This allows the user to advance the clock and run any timers that expired in that time.
 
-#### `Screen.time.runExpiredTimers - () => void`
+#### `Screen.time.run - () => void`
 
 Will run all timers that have expired, running them in expiration order. If no timers have expired, then no timers will execute.
+
+#### `Screen.time.tick - () => void`
+
+Will tick all timers by 1. If the screen is not configured to run expired timers (`digestExpiredTimers = false`) then none of the timers will be executed. This allows the user to tick the clock and run any timers that expired in that time.
 
 ### `Screen.(getBy|getAllBy|queryBy)* (Queries)`
 
