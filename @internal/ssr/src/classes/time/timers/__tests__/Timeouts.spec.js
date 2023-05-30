@@ -1,6 +1,17 @@
+import { Timer } from '../../base/Timer';
 import { Timers } from '../../base/Timers';
 
-import { Timeouts } from '../Timeouts';
+import { Timeout, Timeouts } from '../Timeouts';
+
+describe('Timeout', () => {
+  it('should be a class', () => {
+    expect(Timeout).toBeAClass();
+  });
+
+  it('should extend Timers', () => {
+    expect(Timeout).toExtend(Timer);
+  });
+});
 
 describe('Timeouts', () => {
   it('should be a class', () => {
@@ -15,6 +26,18 @@ describe('Timeouts', () => {
     let instance;
     beforeEach(() => {
       instance = new Timeouts();
+    });
+
+    describe('create', () => {
+      it('shold return an Interval instance', () => {
+        const fn = () => {};
+        const timer = instance.create(fn, 1, 'arg1');
+        expect(timer).toBeInstanceOf(Timeout);
+        expect(timer.fn).toBe(fn);
+        expect(timer.wait).toEqual(1);
+        expect(timer.args).toBeInstanceOf(Array);
+        expect(timer.args[0]).toEqual('arg1');
+      });
     });
 
     describe('getExpired', () => {

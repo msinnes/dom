@@ -36,16 +36,9 @@ class Intervals extends Timers {
     return results;
   }
 
-  getNext() {
-    let next;
-    this.each(timer => {
-      if ((!next && timer.expired && !timer.ran) || (next && timer.isBefore(next) && !timer.ran)) {
-        next = timer;
-      }
-    });
-    if (next) {
-      next.elapsed -= (next.wait || 1);
-    }
+  next() {
+    const next = super.next();
+    if (next && next.ran) return;
     return next;
   }
 }

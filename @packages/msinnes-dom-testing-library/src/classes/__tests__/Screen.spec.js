@@ -266,16 +266,16 @@ describe('Screen', () => {
 
     describe('time', () => {
       let tickMock;
-      let getNextTimerMock;
-      let getExpiredTimersMock;
+      let getNextMock;
+      let getAllMock;
       beforeEach(() => {
         tickMock = jest.fn();
-        getNextTimerMock = jest.fn();
-        getExpiredTimersMock = jest.fn();
+        getNextMock = jest.fn();
+        getAllMock = jest.fn();
         ssrScope.time = {
           tick: tickMock,
-          getNextTimer: getNextTimerMock,
-          getExpiredTimers: getExpiredTimersMock,
+          getNext: getNextMock,
+          getAll: getAllMock,
         };
       });
 
@@ -295,19 +295,19 @@ describe('Screen', () => {
           expect(ssrScope.disable).toHaveBeenCalledTimes(1);
         });
 
-        it('should call scope.time.getNextTimer and pass it to controller.processHandler', () => {
+        it('should call scope.time.getNext and pass it to controller.processHandler', () => {
           const timer = {};
-          getNextTimerMock.mockReturnValue(timer);
+          getNextMock.mockReturnValue(timer);
           instance.time.next();
-          expect(getNextTimerMock).toHaveBeenCalledTimes(1);
+          expect(getNextMock).toHaveBeenCalledTimes(1);
           expect(renderController.processHandler).toHaveBeenCalledTimes(1);
           expect(renderController.processHandler).toHaveBeenCalledWith(timer);
         });
 
-        it('should call scope.time.getNextTimer and not do anything if there is no next timer', () => {
-          getNextTimerMock.mockReturnValue();
+        it('should call scope.time.getNext and not do anything if there is no next timer', () => {
+          getNextMock.mockReturnValue();
           instance.time.next();
-          expect(getNextTimerMock).toHaveBeenCalledTimes(1);
+          expect(getNextMock).toHaveBeenCalledTimes(1);
           expect(renderController.processHandler).toHaveBeenCalledTimes(0);
         });
       });
@@ -352,18 +352,18 @@ describe('Screen', () => {
         });
 
         it('should enable and disable the scope', () => {
-          getExpiredTimersMock.mockReturnValue([]);
+          getAllMock.mockReturnValue([]);
           instance.time.run();
           expect(ssrScope.enable).toHaveBeenCalledTimes(1);
           expect(ssrScope.disable).toHaveBeenCalledTimes(1);
         });
 
-        it('should call scope.time.getExpiredTimers and pass each one to controller.processHandler', () => {
+        it('should call scope.time.getAll and pass each one to controller.processHandler', () => {
           const timer1 = {};
           const timer2 = {};
-          getExpiredTimersMock.mockReturnValue([timer1, timer2]);
+          getAllMock.mockReturnValue([timer1, timer2]);
           instance.time.run();
-          expect(getExpiredTimersMock).toHaveBeenCalledTimes(1);
+          expect(getAllMock).toHaveBeenCalledTimes(1);
           expect(renderController.processHandler).toHaveBeenCalledTimes(2);
           expect(renderController.processHandler).toHaveBeenCalledWith(timer1);
           expect(renderController.processHandler).toHaveBeenCalledWith(timer2);
@@ -436,7 +436,7 @@ describe('Screen', () => {
           expect(renderController.processHandler).toHaveBeenCalledWith(fetchHandler);
         });
 
-        it('should call scope.time.getNextTimer and not do anything if there is no next timer', () => {
+        it('should call scope.time.getNext and not do anything if there is no next timer', () => {
           getNextMock.mockReturnValue();
           instance.fetch.next();
           expect(getNextMock).toHaveBeenCalledTimes(1);

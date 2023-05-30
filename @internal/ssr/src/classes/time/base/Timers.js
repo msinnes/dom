@@ -9,7 +9,6 @@ const Timers = abstract(class {
 
   constructor() {
     abstractMethod(this, 'getExpired');
-    abstractMethod(this, 'getNext');
   }
 
   clear(id) {
@@ -38,10 +37,22 @@ const Timers = abstract(class {
     }
   }
 
+  next() {
+    let next;
+    this.each((timer) => {
+      if ((!next && timer.expired) || (next && timer.isBefore(next))) {
+        next = timer;
+      }
+    });
+    return next;
+  }
+
   set(...args) {
     const id = this.nextId++;
     this.ids.push(id);
-    this.timers.push(this.create(...args));
+    const newTimer = this.create(...args);
+    newTimer.id = id;
+    this.timers.push(newTimer);
     return id;
   }
 
