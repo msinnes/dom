@@ -47,7 +47,7 @@ class Screen {
     this.time = {
       next: () => {
         controller.scope.enable();
-        const timer = controller.scope.time.getNextTimer();
+        const timer = controller.scope.time.getNext();
         if (timer) controller.processHandler(timer);
         controller.scope.disable();
       },
@@ -65,7 +65,7 @@ class Screen {
       },
       run: () => {
         controller.scope.enable();
-        const timers = controller.scope.time.getExpiredTimers();
+        const timers = controller.scope.time.getAll();
         timers.forEach(timer => {
           controller.processHandler(timer);
         });

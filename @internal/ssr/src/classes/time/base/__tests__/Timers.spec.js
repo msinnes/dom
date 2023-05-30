@@ -4,7 +4,6 @@ import { Timers } from '../Timers';
 
 class TestableTimers extends Timers {
   getExpired() {}
-  getNext() {}
 }
 
 describe('Timers', () => {
@@ -17,17 +16,8 @@ describe('Timers', () => {
   });
 
   it('should have an abstract method getExpired', () => {
-    class NoGetExpiredTimers extends Timers {
-      getNext() {}
-    }
+    class NoGetExpiredTimers extends Timers {}
     expect(NoGetExpiredTimers).toHaveAbstractMethod('getExpired');
-  });
-
-  it('should have an abstract method getNext', () => {
-    class NoGetNextTimers extends Timers {
-      getExpired() {}
-    }
-    expect(NoGetNextTimers).toHaveAbstractMethod('getNext');
   });
 
   describe('instance', () => {
@@ -117,6 +107,46 @@ describe('Timers', () => {
       });
     });
 
+    describe('next', () => {
+      let mockFn1;
+      let mockFn2;
+      beforeEach(() => {
+        mockFn1 = jest.fn();
+        mockFn2 = jest.fn();
+        instance.set(mockFn1, 1);
+        instance.set(mockFn2);
+      });
+
+      it('should be a function', () => {
+        expect(instance.next).toBeInstanceOf(Function);
+      });
+
+      it('should return the next expired timer', () => {
+        const next = instance.next();
+        next.fn();
+        expect(mockFn2).toHaveBeenCalledTimes(1);
+        expect(instance.timers.length).toEqual(2);
+      });
+
+      it('should return undefined if there are no timeouts', () => {
+        instance = new TestableTimers();
+        expect(instance.next()).toBeUndefined();
+      });
+
+      it('should return undefined if there are all expired timeouts are exhausted', () => {
+        let next = instance.next();
+        next.fn();
+        expect(mockFn2).toHaveBeenCalledTimes(1);
+        expect(instance.timers.length).toEqual(2);
+        instance.clear(next.id);
+        next = instance.next();
+        expect(next).toBeUndefined();
+        expect(instance.timers.length).toEqual(1);
+        instance.timers[0].fn();
+        expect(mockFn1).toHaveBeenCalledTimes(1);
+      });
+    });
+
     describe('set', () => {
       it('should be a function', () => {
         expect(instance.set).toBeInstanceOf(Function);
@@ -140,6 +170,15 @@ describe('Timers', () => {
         expect(fn).toHaveBeenCalledTimes(1);
         expect(createSpy).toHaveBeenCalledTimes(1);
         expect(createSpy).toHaveBeenCalledWith(fn, 100);
+      });
+
+      it('should append an id to the created timer', () => {
+        const fn = jest.fn();
+        instance.set(fn, 100);
+        expect(instance.timers.length).toEqual(1);
+        expect(instance.timers[0].fn).toBe(fn);
+        expect(instance.timers[0].wait).toEqual(100);
+        expect(instance.timers[0].id).toEqual(1);
       });
     });
 
