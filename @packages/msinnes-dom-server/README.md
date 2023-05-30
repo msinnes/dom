@@ -134,6 +134,54 @@ console.log(screen2.container.innerHTML); // <-- 'default text'
 
 In this case `screen1` will render the text produced asynchronously, but `screen2` will render the default text. This allows for more control over the timers throughout the rendering process.
 
+#### `digestFetch -- Boolean`
+
+Tells the rendering engine whether to fulfill any promises for fetch requests. This simulates a fetch request that is immediately resolved via the `fetch` configuration property.
+
+```JavaScript
+import * as DOM from '@msinnes/dom';
+import { render } from '@msinnes/dom-testing-library';
+
+const App = () => {
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    if (!text) fetch('url').then(data => data.text()).then(setText);
+  }, []);
+  return text;
+};
+
+const screen1 = render(<App /> { fetch: (req, res) => res.text('async text') }); // Value defaults to true
+const screen2 = render(<App />, { digestFetch: false, fetch: (req, res) => res.text('async text') });
+
+console.log(screen1.container.innerHTML); // <-- 'async text'
+console.log(screen2.container.innerHTML); // <-- 'default text'
+```
+
+In this case `screen1` will render the text produced asynchronously, but `screen2` will render the default text. This allows for more control over the timers throughout the rendering process.
+
+#### `fetch -- Boolean`
+
+Provides a mechanism for handling fetch requests. Fetch requests will be passed to the provided fetch handler, and data passed to the response will be provided to the application.
+
+```JavaScript
+import * as DOM from '@msinnes/dom';
+import { render } from '@msinnes/dom-testing-library';
+
+const App = () => {
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    if (!text) fetch('url').then(data => data.text()).then(setText);
+  }, []);
+  return text;
+};
+
+const screen = render(<App /> { fetch: (req, res) => res.text('async text') }); // Value defaults to true
+
+console.log(screen.container.innerHTML); // <-- 'async text'
+```
+
+In this case `screen` will render the text produced asynchronously.
+
 #### `url -- String`
 
 The location to pass to `JSDOM` during page load. If no url is passed, the location will be the default location. This feature is required in order to render routed application on a server, or in a testing environment.
