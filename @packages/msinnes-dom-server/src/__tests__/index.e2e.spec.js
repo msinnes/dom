@@ -319,6 +319,7 @@ describe('e2e', () => {
       const config = {
         fetch: (req, res) => {
           if (req.url) res.text(req.config.body.name);
+          res.close();
         },
       };
 
@@ -334,6 +335,7 @@ describe('e2e', () => {
         fetch: (req, res) => {
           expect(global.window).toBeUndefined();
           res.text(req.config.body.name);
+          res.close();
         },
       };
 

@@ -2,7 +2,7 @@ import { isDefined } from '@internal/is';
 import { DigestibleScope } from '../base/DigestibleScope';
 import { SyncPromise } from '../base/SyncPromise';
 
-import { Requests } from './Request';
+import { Requests } from './request/Requests';
 
 class FetchScope extends DigestibleScope {
   digestFetch = true;

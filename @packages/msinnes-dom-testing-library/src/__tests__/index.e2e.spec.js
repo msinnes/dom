@@ -1009,6 +1009,7 @@ describe('fetch', () => {
     const config = {
       fetch: (req, res) => {
         res.text(req.config.body.name);
+        res.close();
       },
     };
     const store = createStore(reducer);
@@ -1023,6 +1024,7 @@ describe('fetch', () => {
       fetch: (req, res) => {
         expect(global.window).toBeUndefined();
         res.text(req.config.body.name);
+        res.close();
       },
     };
     const store = createStore(reducer);
@@ -1053,6 +1055,7 @@ describe('fetch', () => {
       fetch: (req, res) => {
         expect(global.window).toBeUndefined();
         res.text(req.config.body.name);
+        res.close();
       },
     };
     const store = createStore(reducer);
@@ -1070,6 +1073,7 @@ describe('fetch', () => {
       fetch: (req, res) => {
         expect(global.window).toBeUndefined();
         res.text(req.config.body.name);
+        res.close();
       },
     };
     const store = createStore(reducer);
@@ -1079,5 +1083,26 @@ describe('fetch', () => {
     expect(screen.container.innerHTML).toEqual('no name');
     screen.fetch.run();
     expect(screen.container.innerHTML).toEqual('name');
+  });
+
+  it.skip('should execute a fetch handler, and resolve it in an asynchronous handler', done => {
+    const config = {
+      digestFetch: false,
+      fetch: (req, res) => {
+        res.text(req.config.body.name);
+        setTimeout(() => {
+          res.close();
+          expect(screen.container.innerHTML).toEqual('name');
+          done();
+        });
+      },
+    };
+    const store = createStore(reducer);
+    const screen = render(Dom.createElement(StoreProvider, { store }, [
+      Dom.createElement(App),
+    ]), config);
+    expect(screen.container.innerHTML).toEqual('no name');
+    screen.fetch.run();
+    expect(screen.container.innerHTML).toEqual('no name');
   });
 });

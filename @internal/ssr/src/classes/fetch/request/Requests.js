@@ -1,20 +1,4 @@
-import { CompositeResponse } from './Response';
-
-class Request {
-  constructor(url, config = {}, resolve, doRequest) {
-    this.url = url;
-    this.config = config;
-    this.resolve = resolve;
-    this.doRequest = doRequest;
-  }
-
-  exec() {
-    const req = { url: this.url, config: this.config };
-    const res = new CompositeResponse();
-    this.doRequest(req, res.fetch);
-    this.resolve(res.response);
-  }
-}
+import { Request } from './Request';
 
 class Requests {
   requests = [];
@@ -41,4 +25,4 @@ class Requests {
   }
 }
 
-export { Request, Requests };
+export { Requests };

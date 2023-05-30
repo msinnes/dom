@@ -1,8 +1,10 @@
 import { DigestibleScope } from '../../base/DigestibleScope';
 import { SyncPromise } from '../../base/SyncPromise';
 
-import { FetchResponse, Response } from '../Response';
-import { Request, Requests } from '../Request';
+import { FetchResponse } from '../response/FetchResponse';
+import { Response } from '../response/Response';
+import { Request } from '../request/Request';
+import { Requests } from '../request/Requests';
 
 import { FetchScope } from '../FetchScope';
 
@@ -20,7 +22,7 @@ describe('Request', () => {
     beforeEach(() => {
       mockConfig = {};
       mockResolve = jest.fn();
-      mockDoRequest = jest.fn();
+      mockDoRequest = jest.fn().mockImplementation((req, res) => res.close());
       instance = new Request('url', mockConfig, mockResolve, mockDoRequest);
     });
 
