@@ -33,6 +33,7 @@ describe('BaseServerRenderController', () => {
         enable: jest.fn(),
         disable: jest.fn(),
         services: servicesRef,
+        hook: jest.fn(),
       };
       instance = new TestableRenderController(renderRef, ssrScopeRef);
     });

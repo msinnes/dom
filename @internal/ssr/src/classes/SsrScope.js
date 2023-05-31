@@ -1,7 +1,7 @@
 import { DomRef } from '@internal/dom';
 import { Infra } from '@internal/infra';
 
-import { DigestibleScope } from './base/DigestibleScope';
+import { HookableScope } from './base/HookableScope';
 
 import { DomScope } from './dom/DomScope';
 import { FetchScope } from './fetch/FetchScope';
@@ -11,7 +11,7 @@ import { TimeScope } from './time/TimeScope';
 // this is found in the jsdom configuration docs.
 const DEFAULT_JSDOM_URL = 'about:blank';
 
-class SsrScope extends DigestibleScope {
+class SsrScope extends HookableScope {
   get services() {
     return this.infra.services;
   }
@@ -42,6 +42,10 @@ class SsrScope extends DigestibleScope {
 
     this.dom = new DomScope(config.dom, this.time, this.fetch);
     this.body = new DomRef(this.dom.dom.window.document.body);
+
+    this.fetch.hook(() => {
+      this.trigger();
+    });
   }
 
   digest() {

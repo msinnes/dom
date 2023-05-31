@@ -7,6 +7,7 @@ const BaseServerRenderController = abstract(class extends BaseRenderController {
     super(render, ssrScope.body, ssrScope.services);
 
     this.scope = ssrScope;
+    this.scope.hook(() => this.render());
 
     this.processHandlerBound = this.processHandler.bind(this);
   }

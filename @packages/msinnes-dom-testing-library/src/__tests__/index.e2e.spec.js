@@ -1085,7 +1085,7 @@ describe('fetch', () => {
     expect(screen.container.innerHTML).toEqual('name');
   });
 
-  it.skip('should execute a fetch handler, and resolve it in an asynchronous handler', done => {
+  it('should execute a fetch handler, and resolve it in an asynchronous handler', done => {
     const config = {
       digestFetch: false,
       fetch: (req, res) => {

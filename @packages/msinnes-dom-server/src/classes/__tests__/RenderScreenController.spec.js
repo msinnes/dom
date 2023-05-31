@@ -29,6 +29,7 @@ describe('RenderScreenController', () => {
       anchorRef = {};
       ssrScopeMock = {
         body: new DomRef(anchorRef),
+        hook: jest.fn(),
       };
       instance = new RenderScreenController(renderRef, ssrScopeMock);
     });

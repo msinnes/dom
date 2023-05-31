@@ -1,10 +1,10 @@
 import { isDefined } from '@internal/is';
-import { DigestibleScope } from '../base/DigestibleScope';
+import { HookableScope } from '../base/HookableScope';
 import { SyncPromise } from '../base/SyncPromise';
 
 import { Requests } from './request/Requests';
 
-class FetchScope extends DigestibleScope {
+class FetchScope extends HookableScope {
   digestFetch = true;
   requests = new Requests();
 
@@ -26,7 +26,11 @@ class FetchScope extends DigestibleScope {
 
   createRequest(url, config) {
     return new SyncPromise(resolve => {
-      this.requests.create(url, config, resolve, this.doRequest);
+      const resolveCb = data => {
+        resolve(data);
+        this.trigger();
+      };
+      this.requests.create(url, config, resolveCb, this.doRequest);
     });
   }
 
