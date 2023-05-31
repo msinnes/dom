@@ -10,11 +10,15 @@ const getBootstrappedController = (render, userConfig) => {
   return controller;
 };
 
+// TODO: this should run and resolve only fetch request that close synchronousely
+// It should also log a warning if there are any open handles.
 const renderToScreen = (render, userConfig) => {
   const controller = getBootstrappedController(render, userConfig);
   return controller.screen;
 };
 
+// TODO: this should run and resolve only fetch request that close synchronousely
+// It should also log a warning if there are any open handles.
 const renderToString = (render, userConfig) => {
   const controller = getBootstrappedController(render, userConfig);
   return controller.domString;
