@@ -39,8 +39,12 @@ describe('FetchScope', () => {
     });
 
     it('should default doRequest to a noop', () => {
+      const req = {};
+      const closeMock = jest.fn();
+      const res = { close: closeMock };
       expect(instance.doRequest).toBeInstanceOf(Function);
-      expect(instance.doRequest()).toBeUndefined();
+      expect(instance.doRequest(req, res)).toBeUndefined();
+      expect(closeMock).toHaveBeenCalled();
     });
 
     it('should set digestFetch if a value is passed', () => {
@@ -56,12 +60,16 @@ describe('FetchScope', () => {
       expect(instance.doRequest).toBe(mockFn);
     });
 
+    it('should have an openRequests prop', () => {
+      expect(instance.openRequests).toEqual(0);
+    });
+
     describe('createRequest', () => {
       it('should be a function', () => {
         expect(instance.createRequest).toBeInstanceOf(Function);
       });
 
-      it('should set global.fetch to a bound requests.requests.create', () => {
+      it('should trigger the scope when the promise resolves', () => {
         const triggerSpy = jest.spyOn(instance, 'trigger');
         const mockConfig = {};
         const mockFn = jest.fn();
@@ -74,9 +82,10 @@ describe('FetchScope', () => {
         expect(mockFn.mock.calls[0][3]).toBe(instance.doRequest);
 
         const resolveFn = mockFn.mock.calls[0][2];
-
+        expect(instance.openRequests).toEqual(1);
         const mockData = {};
         resolveFn(mockData);
+        expect(instance.openRequests).toEqual(0);
         expect(triggerSpy).toHaveBeenCalledTimes(1);
       });
 
@@ -90,6 +99,27 @@ describe('FetchScope', () => {
         instance.requests.requests[0].resolve(mockData);
         expect(mockFn).toHaveBeenCalledTimes(1);
         expect(mockFn).toHaveBeenCalledWith(mockData);
+      });
+
+      it('should ignore the promise if the scope is closed', () => {
+        const triggerSpy = jest.spyOn(instance, 'trigger');
+        const mockConfig = {};
+        const mockFn = jest.fn();
+        instance.requests.create = (url, config, resolve, doRequest) => mockFn(url, config, resolve, doRequest);
+        instance.createRequest('url', mockConfig);
+        expect(mockFn).toHaveBeenCalledTimes(1);
+        expect(mockFn.mock.calls[0][0]).toEqual('url');
+        expect(mockFn.mock.calls[0][1]).toEqual(mockConfig);
+        expect(mockFn.mock.calls[0][2]).toBeInstanceOf(Function);
+        expect(mockFn.mock.calls[0][3]).toBe(instance.doRequest);
+
+        const resolveFn = mockFn.mock.calls[0][2];
+        expect(instance.openRequests).toEqual(1);
+        const mockData = {};
+        instance.close();
+        resolveFn(mockData);
+        expect(instance.openRequests).toEqual(1);
+        expect(triggerSpy).toHaveBeenCalledTimes(0);
       });
     });
 

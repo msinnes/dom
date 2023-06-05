@@ -117,6 +117,15 @@ describe('SsrScope', () => {
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
+    it('should have an open handles prop', () => {
+      instance.fetch.openRequests++;
+      expect(instance.openHandles).toEqual(1);
+      instance.fetch.openRequests++;
+      expect(instance.openHandles).toEqual(2);
+      instance.fetch.openRequests--;
+      expect(instance.openHandles).toEqual(1);
+    });
+
     describe('digest', () => {
       let fn1;
       let fn2;

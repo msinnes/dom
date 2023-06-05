@@ -352,6 +352,7 @@ describe('e2e', () => {
         fetch: (req, res) => {
           expect(global.window).toBeUndefined();
           res.text(req.config.body.name);
+          res.close();
         },
       };
 
@@ -360,6 +361,28 @@ describe('e2e', () => {
         Dom.createElement(App),
       ]), config);
       expect(html).toEqual('no name');
+    });
+
+    it('should render a string asynchronously', async () => {
+      const html = await api.renderToStringAsync(undefined);
+      expect(html).toEqual('');
+    });
+
+    it('should render a screen asynchronousely', async () => {
+      const MiniAsyncApp = () => {
+        const [name, setName] = Dom.useState();
+        if (!name) fetch('name').then(data => data.text()).then(setName);
+        return name;
+      };
+      const screen = await api.renderToScreenAsync(Dom.createElement(MiniAsyncApp), {
+        fetch: (req, res) => {
+          setTimeout(() => {
+            res.text('async name');
+            res.close();
+          });
+        },
+      });
+      expect(screen.html).toEqual('async name');
     });
   });
 });

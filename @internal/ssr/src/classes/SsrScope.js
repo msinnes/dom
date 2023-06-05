@@ -12,6 +12,10 @@ import { TimeScope } from './time/TimeScope';
 const DEFAULT_JSDOM_URL = 'about:blank';
 
 class SsrScope extends HookableScope {
+  get openHandles() {
+    return this.fetch.openRequests;
+  }
+
   get services() {
     return this.infra.services;
   }
@@ -36,13 +40,17 @@ class SsrScope extends HookableScope {
       },
     };
 
-    this.infra = new InfraScope(new Infra());
-    this.time = new TimeScope(config.time);
-    this.fetch = new FetchScope(fetchConfig);
+    // Scopes for replicating a client side rendering environment
+    this.append('infra', new InfraScope(new Infra()));
+    this.append('time', new TimeScope(config.time));
+    this.append('fetch', new FetchScope(fetchConfig));
 
-    this.dom = new DomScope(config.dom, this.time, this.fetch);
+    // Top-level DOM scope, also maps other scopes to the document object model where necessary.
+    this.append('dom', new DomScope(config.dom, this.time, this.fetch));
+
+    // Setup for ease of use. This body ref will get used for rendering.
     this.body = new DomRef(this.dom.dom.window.document.body);
-
+    //Hook into fetch to trigger a rerender.
     this.fetch.hook(() => {
       this.trigger();
     });

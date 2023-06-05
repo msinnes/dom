@@ -29,6 +29,7 @@ describe('BaseServerRenderController', () => {
       };
       ssrScopeRef = {
         body: new DomRef(bodyRef),
+        close: jest.fn(),
         digest: jest.fn(),
         enable: jest.fn(),
         disable: jest.fn(),
@@ -49,6 +50,33 @@ describe('BaseServerRenderController', () => {
     it('should have a renderer prop with the correct render and anchor', () => {
       expect(instance.renderer.root.root).toBe(renderRef);
       expect(instance.renderer.root.elem.elem).toBe(bodyRef);
+    });
+
+    it('should have a hooks prop', () => {
+      expect(instance.hooks).toBeInstanceOf(Array);
+    });
+
+    it('should be hooked into the scope', () => {
+      const instanceHook = ssrScopeRef.hook.mock.calls[0][0];
+
+      const renderMock = jest.spyOn(instance, 'render').mockImplementation(() => {});
+      const triggerMock = jest.spyOn(instance, 'trigger').mockImplementation(() => {});
+
+      instanceHook();
+
+      expect(renderMock).toHaveBeenCalledTimes(1);
+      expect(triggerMock).toHaveBeenCalledTimes(1);
+    });
+
+    describe('close', () => {
+      it('should be a function', () => {
+        expect(instance.close).toBeInstanceOf(Function);
+      });
+
+      it('should call ssrScope.close', () => {
+        instance.close();
+        expect(ssrScopeRef.close).toHaveBeenCalledTimes(1);
+      });
     });
 
     describe('digest', () => {
@@ -120,6 +148,19 @@ describe('BaseServerRenderController', () => {
         expect(rootRenderMock).toHaveBeenCalledTimes(50);
         expect(renderFrameMock).toHaveBeenCalledTimes(50);
         expect(digestEffectsMock).toHaveBeenCalledTimes(50);
+      });
+    });
+
+    describe('hook', () => {
+      it('should be a function', () => {
+        expect(instance.hook).toBeInstanceOf(Function);
+      });
+
+      it('should add a function to the array of hooks', () => {
+        const mockFn = jest.fn();
+        instance.hook(mockFn);
+        expect(instance.hooks.length).toEqual(1);
+        expect(instance.hooks[0]).toBe(mockFn);
       });
     });
 
@@ -228,6 +269,20 @@ describe('BaseServerRenderController', () => {
         expect(digestMock).toHaveBeenCalledTimes(1);
         expect(digestMock).toHaveBeenCalledWith();
         expect(ssrScopeRef.disable).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('trigger', () => {
+      it('should be a function', () => {
+        expect(instance.trigger).toBeInstanceOf(Function);
+      });
+
+      it('should fire all hooks', () => {
+        const mockFn = jest.fn();
+        instance.hook(mockFn);
+        instance.hook(mockFn);
+        instance.trigger();
+        expect(mockFn).toHaveBeenCalledTimes(2);
       });
     });
   });

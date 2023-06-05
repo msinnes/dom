@@ -18,6 +18,7 @@ router.use((req, res) => {
   ), {
     fetch: (req, res) => {
       res.text('name');
+      res.close();
     },
   });
   const page = renderPage('fetch', html, store.getState());

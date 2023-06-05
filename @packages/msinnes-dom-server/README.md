@@ -1,8 +1,8 @@
 # `@msinnes/dom-server`
 
-A server-side rendering library for the `@msinnes/dom` stack. This is a simple library with a single function. The function, `renderToString` takes a render and gives back a rendered string of `html`.
+A server-side rendering library for the `@msinnes/dom` stack. The library renders to a string or screen object via either `renderToString` or `renderToScreen`.
 
-The server-side rendering engine is the same engine used to render in `@msinnes/dom` and `@msinnes/dom-testing-library`. Rendering on the server is synchronous, and any async behavior in your application will be ignore at the current time.
+The server-side rendering engine is the same engine used to render in `@msinnes/dom` and `@msinnes/dom-testing-library`. Rendering on the server side is psuedo synchronous. Immediate timers, timers with no wait time, will execute, but they will do so in an synchronous manner.
 
 ## Usage
 
@@ -150,8 +150,14 @@ const App = () => {
   return text;
 };
 
-const screen1 = render(<App /> { fetch: (req, res) => res.text('async text') }); // Value defaults to true
-const screen2 = render(<App />, { digestFetch: false, fetch: (req, res) => res.text('async text') });
+const screen1 = render(<App /> { fetch: (req, res) => {
+  res.text('async text');
+  res.close();
+}}); // Value defaults to true
+const screen2 = render(<App />, { digestFetch: false, fetch: (req, res) => {
+  res.text('async text');
+  res.close();
+}});
 
 console.log(screen1.container.innerHTML); // <-- 'async text'
 console.log(screen2.container.innerHTML); // <-- 'default text'
@@ -165,7 +171,7 @@ Provides a mechanism for handling fetch requests. Fetch requests will be passed 
 
 ```JavaScript
 import * as DOM from '@msinnes/dom';
-import { render } from '@msinnes/dom-testing-library';
+import { renderToString } from '@msinnes/dom-server';
 
 const App = () => {
   const [text, setText] = DOM.useState('default text');
@@ -175,12 +181,15 @@ const App = () => {
   return text;
 };
 
-const screen = render(<App /> { fetch: (req, res) => res.text('async text') }); // Value defaults to true
+const html = renderToString(<App /> { fetch: (req, res) => {
+  res.text('async text');
+  res.close();
+}}); // Value defaults to true
 
-console.log(screen.container.innerHTML); // <-- 'async text'
+console.log(html); // <-- 'async text'
 ```
 
-In this case `screen` will render the text produced asynchronously.
+In this case `screen` will render the text produced asynchronously. `renderToString` will only simulate async behavior in a synchronous manner. If the call to `res.close` was encased in a `setTimeout`, the response will be ignored, and a warning will be logged to the console.
 
 #### `url -- String`
 
