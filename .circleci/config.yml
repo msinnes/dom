@@ -52,7 +52,7 @@ jobs:
           fingerprints:
             - "33:cd:89:d5:2f:9c:02:c6:ca:b5:18:1a:ab:2d:e6:9c"
       - run:
-          command: yarn version prepatch --yes
+          command: yarn package:version prepatch --yes
           name: Version Packages
   publish_packages:
     executor: node/default
