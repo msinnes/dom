@@ -20,7 +20,7 @@ describe('RenderController', () => {
 
     beforeEach(() => {
       renderRef = {};
-      ssrScope = new SsrScope({ dom: {}, time: {} });
+      ssrScope = new SsrScope({ dom: {}, fetch: {}, time: {} });
       instance = new RenderController(renderRef, ssrScope);
     });
 

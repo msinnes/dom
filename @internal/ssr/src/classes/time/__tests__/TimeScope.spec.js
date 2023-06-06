@@ -41,15 +41,15 @@ describe('TimeScope', () => {
       expect(instance.animationFrames).toBeInstanceOf(AnimationFrames);
     });
 
-    it('should have a runExpiredTimers prop defaulted to true', () => {
-      expect(instance.runExpiredTimers).toBe(true);
+    it('should have a digestExpiredTimers prop defaulted to true', () => {
+      expect(instance.digestExpiredTimers).toBe(true);
     });
 
-    it('should set runExpiredTimers if a value is passed', () => {
-      instance = new TimeScope({ runExpiredTimers: true });
-      expect(instance.runExpiredTimers).toBe(true);
-      instance = new TimeScope({ runExpiredTimers: false });
-      expect(instance.runExpiredTimers).toBe(false);
+    it('should set digestExpiredTimers if a value is passed', () => {
+      instance = new TimeScope({ digestExpiredTimers: true });
+      expect(instance.digestExpiredTimers).toBe(true);
+      instance = new TimeScope({ digestExpiredTimers: false });
+      expect(instance.digestExpiredTimers).toBe(false);
     });
 
     describe('digest', () => {
@@ -57,18 +57,18 @@ describe('TimeScope', () => {
         expect(instance.digest).toBeInstanceOf(Function);
       });
 
-      it('should make a call to instance.getExpiredTimers if runExpiredTimers is true', () => {
+      it('should make a call to instance.getAll if digestExpiredTimers is true', () => {
         const fn = () => {};
-        const getExpiredTimersMock = jest.fn().mockReturnValue([fn]);
-        instance.getExpiredTimers = getExpiredTimersMock;
+        const getAllMock = jest.fn().mockReturnValue([fn]);
+        instance.getAll = getAllMock;
         let results = instance.digest();
-        expect(getExpiredTimersMock).toHaveBeenCalledTimes(1);
+        expect(getAllMock).toHaveBeenCalledTimes(1);
         expect(results.length).toEqual(1);
         expect(results[0]).toBe(fn);
-        instance = new TimeScope({ runExpiredTimers: false });
-        instance.run = getExpiredTimersMock;
+        instance = new TimeScope({ digestExpiredTimers: false });
+        instance.run = getAllMock;
         results = instance.digest();
-        expect(getExpiredTimersMock).toHaveBeenCalledTimes(1);
+        expect(getAllMock).toHaveBeenCalledTimes(1);
         expect(results.length).toEqual(0);
       });
     });
@@ -187,21 +187,21 @@ describe('TimeScope', () => {
       });
     });
 
-    describe('getExpiredTimers', () => {
+    describe('getAll', () => {
       it('should be a function', () => {
-        expect(instance.getExpiredTimers).toBeInstanceOf(Function);
+        expect(instance.getAll).toBeInstanceOf(Function);
       });
 
       it('should return an array of expired timers from timeouts', () => {
         const mockFn = jest.fn();
         instance.timeouts.getExpired = jest.fn().mockReturnValue([{ fn: mockFn, remaining: 0 }]);
-        expect(instance.getExpiredTimers()[0].fn).toBe(mockFn);
+        expect(instance.getAll()[0].fn).toBe(mockFn);
       });
 
       it('should return an array of expired timers from intervals', () => {
         const mockFn = jest.fn();
         instance.intervals.getExpired = jest.fn().mockReturnValue([{ fn: mockFn, remaining: 0 }]);
-        expect(instance.getExpiredTimers()[0].fn).toBe(mockFn);
+        expect(instance.getAll()[0].fn).toBe(mockFn);
       });
 
       it('should order timers based on their remaining value', () => {
@@ -220,7 +220,7 @@ describe('TimeScope', () => {
         const animationFrame3 = { fn: () => {}, remaining: -700 };
         const animationFrame4 = { fn: () => {}, remaining: -900 };
         instance.animationFrames.getExpired = jest.fn().mockReturnValue([animationFrame1, animationFrame2, animationFrame3, animationFrame4]);
-        const results = instance.getExpiredTimers();
+        const results = instance.getAll();
         expect(results[0]).toBe(timeout3);
         expect(results[1]).toBe(animationFrame4);
         expect(results[2]).toBe(animationFrame3);
@@ -236,50 +236,70 @@ describe('TimeScope', () => {
       });
     });
 
-    describe('getNextTimer', () => {
+    describe('getNext', () => {
       it('should be a function', () => {
-        expect(instance.getNextTimer).toBeInstanceOf(Function);
+        expect(instance.getNext).toBeInstanceOf(Function);
       });
 
       it('should return undefined if there is no next timer', () => {
-        instance.animationFrames.getNext = jest.fn().mockReturnValue();
-        instance.intervals.getNext = jest.fn().mockReturnValue();
-        instance.timeouts.getNext = jest.fn().mockReturnValue();
-        expect(instance.getNextTimer()).toBeUndefined();
+        instance.animationFrames.next = jest.fn().mockReturnValue();
+        instance.intervals.next = jest.fn().mockReturnValue();
+        instance.timeouts.next = jest.fn().mockReturnValue();
+        expect(instance.getNext()).toBeUndefined();
       });
 
       it('should return the next timer from timeouts if there is only a timeout', () => {
         const mockFn = jest.fn();
-        instance.animationFrames.getNext = jest.fn().mockReturnValue();
-        instance.intervals.getNext = jest.fn().mockReturnValue();
-        instance.timeouts.getNext = jest.fn().mockReturnValue({ fn: mockFn });
-        expect(instance.getNextTimer().fn).toBe(mockFn);
+        instance.animationFrames.next = jest.fn().mockReturnValue();
+        instance.intervals.next = jest.fn().mockReturnValue();
+        instance.timeouts.next = jest.fn().mockReturnValue({ fn: mockFn });
+        expect(instance.getNext().fn).toBe(mockFn);
       });
 
       it('should return the next timer from intervals if there is only an interval', () => {
         const mockFn = jest.fn();
-        instance.animationFrames.getNext = jest.fn().mockReturnValue();
-        instance.intervals.getNext = jest.fn().mockReturnValue({ fn: mockFn });
-        instance.timeouts.getNext = jest.fn().mockReturnValue();
-        expect(instance.getNextTimer().fn).toBe(mockFn);
+        instance.animationFrames.next = jest.fn().mockReturnValue();
+        instance.intervals.next = jest.fn().mockReturnValue({ fn: mockFn });
+        instance.timeouts.next = jest.fn().mockReturnValue();
+        expect(instance.getNext().fn).toBe(mockFn);
       });
 
       it('should return the next timer from animationFrames if there is only an animationFrame', () => {
         const mockFn = jest.fn();
-        instance.animationFrames.getNext = jest.fn().mockReturnValue({ fn: mockFn });
-        instance.intervals.getNext = jest.fn().mockReturnValue();
-        instance.timeouts.getNext = jest.fn().mockReturnValue();
-        expect(instance.getNextTimer().fn).toBe(mockFn);
+        instance.animationFrames.next = jest.fn().mockReturnValue({ fn: mockFn });
+        instance.intervals.next = jest.fn().mockReturnValue();
+        instance.timeouts.next = jest.fn().mockReturnValue();
+        expect(instance.getNext().fn).toBe(mockFn);
       });
 
       it('should return the timer with the lowest remaining value', () => {
         const mockFn1 = jest.fn();
         const mockFn2 = jest.fn();
         const mockFn3 = jest.fn();
-        instance.animationFrames.getNext = jest.fn().mockReturnValue({ fn: mockFn1, remaining: -1, isBefore: timer => -1 < timer.remaining });
-        instance.intervals.getNext = jest.fn().mockReturnValue({ fn: mockFn2, remaining: -2, isBefore: timer => -2 < timer.remaining });
-        instance.timeouts.getNext = jest.fn().mockReturnValue({ fn: mockFn3, remaining: 0, isBefore: timer => 0 < timer.remaining });
-        expect(instance.getNextTimer().fn).toBe(mockFn2);
+        instance.animationFrames.next = jest.fn().mockReturnValue({ fn: mockFn1, remaining: -1, isBefore: timer => -1 < timer.remaining });
+        instance.intervals.next = jest.fn().mockReturnValue({ fn: mockFn2, remaining: -2, isBefore: timer => -2 < timer.remaining });
+        instance.timeouts.next = jest.fn().mockReturnValue({ fn: mockFn3, remaining: 0, isBefore: timer => 0 < timer.remaining });
+        expect(instance.getNext().fn).toBe(mockFn2);
+      });
+
+      describe('e2e', () => {
+        it('should not clear the a timer if it is not executed', () => {
+          const mockFn1 = jest.fn();
+          const mockFn2 = jest.fn();
+          const mockFn3 = jest.fn();
+          instance.timeouts.set(mockFn1);
+          instance.intervals.set(mockFn2);
+          instance.animationFrames.set(mockFn3);
+
+          for(let i = 0; i < 16; i++) {
+            instance.tick();
+          }
+
+          const next = instance.getNext();
+          expect(next.fn).toBe(mockFn1);
+          expect(instance.intervals.timers.length).toEqual(1);
+          expect(instance.animationFrames.timers.length).toEqual(1);
+        });
       });
     });
 

@@ -1,6 +1,9 @@
-import * as Dom from '@msinnes/dom';
-
+// TODO: this should not have to be anchored to the top.
 import { render } from '..';
+
+import * as Dom from '@msinnes/dom';
+import { connect, createStore, StoreProvider } from '@msinnes/dom-redux-light';
+
 
 describe('render.e2e', () => {
   it('should render undefined to the dom', () => {
@@ -341,7 +344,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
     });
 
@@ -361,7 +364,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
       screen.time.play();
       expect(screen.container.innerHTML).toEqual('default text');
@@ -385,7 +388,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
       screen.time.play(1);
       expect(screen.container.innerHTML).toEqual('default text');
@@ -421,7 +424,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
       screen.time.play(2);
       expect(screen.container.innerHTML).toEqual('default text');
@@ -449,7 +452,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
       screen.time.play(1);
       expect(screen.container.innerHTML).toEqual('default text');
@@ -485,7 +488,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
       screen.time.play(2);
       expect(screen.container.innerHTML).toEqual('default text');
@@ -605,7 +608,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
     });
 
@@ -619,7 +622,7 @@ describe('timers', () => {
         }, []);
         return text;
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('default text');
       screen.time.next();
       expect(screen.container.innerHTML).toEqual('async text');
@@ -645,7 +648,7 @@ describe('timers', () => {
           Dom.createElement('p', {}, [text2]),
         ]);
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
       screen.time.run();
       expect(screen.container.innerHTML).toEqual('<div><p>async text 1</p><p>async text 2</p></div>');
@@ -671,7 +674,7 @@ describe('timers', () => {
           Dom.createElement('p', {}, [text2]),
         ]);
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
       screen.time.run();
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
@@ -828,7 +831,7 @@ describe('timers', () => {
           Dom.createElement('p', {}, [text2]),
         ]);
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
       screen.time.tick();
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
@@ -845,8 +848,10 @@ describe('timers', () => {
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 3</p></div>');
       screen.time.tick();
       screen.time.next();
-      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 3</p></div>');
-      screen.time.tick();
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 4</p></div>');
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 4</p></div>');
+      // Queue is exhausted. Sanity check for empty call.
       screen.time.next();
       expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 4</p></div>');
     });
@@ -873,7 +878,7 @@ describe('timers', () => {
           Dom.createElement('p', {}, [text2]),
         ]);
       };
-      const screen = render(Dom.createElement(App), { runExpiredTimers: false });
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
       screen.time.tick();
       screen.time.next();
@@ -889,8 +894,7 @@ describe('timers', () => {
       expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 3</p></div>');
       screen.time.tick();
       screen.time.next();
-      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 3</p></div>');
-      screen.time.tick();
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>async text 4</p></div>');
       screen.time.next();
       expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text 4</p></div>');
     });
@@ -918,5 +922,187 @@ describe('timers', () => {
       const screen = render(Dom.createElement(App));
       expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text</p></div>');
     });
+
+    it('should increment through a series of timers correctly', () => {
+      const App = () => {
+        const [text1, setText1] = Dom.useState('default text');
+        const [text2, setText2] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setTimeout(() => {
+              setText1('async text');
+            });
+          });
+        }, []);
+
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setTimeout(() => {
+              setText2('async text');
+            }, 1);
+          });
+        }, []);
+        return Dom.createElement('div', {}, [
+          Dom.createElement('p', {}, [text1]),
+          Dom.createElement('p', {}, [text2]),
+        ]);
+      };
+      const screen = render(Dom.createElement(App), { digestExpiredTimers: false });
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>default text</p><p>default text</p></div>');
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>default text</p></div>');
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>default text</p></div>');
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>default text</p></div>');
+      screen.time.tick();
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text</p></div>');
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text</p></div>');
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text</p></div>');
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text</p></div>');
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text</p></div>');
+      // Queue is exhausted, will make sure that no error happens when queue has run out.
+      screen.time.next();
+      expect(screen.container.innerHTML).toEqual('<div><p>async text</p><p>async text</p></div>');
+    });
+  });
+});
+
+describe('fetch', () => {
+  const getName = () => fetch('url', { body: { name: 'name' } });
+  const setNameAction = name => {
+      return ({
+        type: 'SET_NAME',
+        name,
+      });
+  };
+
+  const reducer = (action, state = '') => {
+    if (action.type = 'SET_NAME') return action.name;
+    return state;
+  };
+
+  const Name = ({ name, setName }) => {
+    Dom.useEffect(() => {
+      getName().then(data => data.text()).then(name => setName(name));
+    }, []);
+    return name && name.length ? name : 'no name';
+  };
+  const ConnectedName = connect(state => ({
+    name: state,
+  }), dispatch => ({
+    setName: name => dispatch(setNameAction(name)),
+  }))(Name);
+
+  const App = () => {
+    return Dom.createElement(ConnectedName);
+  };
+
+  it('should process a fetch request', () => {
+    const config = {
+      fetch: (req, res) => {
+        res.text(req.config.body.name);
+        res.close();
+      },
+    };
+    const store = createStore(reducer);
+    const screen = render(Dom.createElement(StoreProvider, { store }, [
+      Dom.createElement(App),
+    ]), config);
+    expect(screen.container.innerHTML).toEqual('name');
+  });
+
+  it('should not expose the ssr scope to the fetch request (fetch interceptors should operate in server mode)', () => {
+    const config = {
+      fetch: (req, res) => {
+        expect(global.window).toBeUndefined();
+        res.text(req.config.body.name);
+        res.close();
+      },
+    };
+    const store = createStore(reducer);
+    const screen = render(Dom.createElement(StoreProvider, { store }, [
+      Dom.createElement(App),
+    ]), config);
+    expect(screen.container.innerHTML).toEqual('name');
+  });
+
+  it('should not digest fetch calls if configuration is overriden', () => {
+    const config = {
+      digestFetch: false,
+      fetch: (req, res) => {
+        expect(global.window).toBeUndefined();
+        res.text(req.config.body.name);
+      },
+    };
+    const store = createStore(reducer);
+    const screen = render(Dom.createElement(StoreProvider, { store }, [
+      Dom.createElement(App),
+    ]), config);
+    expect(screen.container.innerHTML).toEqual('no name');
+  });
+
+  it('should execute a single fetch handler with screen.fetch.next', () => {
+    const config = {
+      digestFetch: false,
+      fetch: (req, res) => {
+        expect(global.window).toBeUndefined();
+        res.text(req.config.body.name);
+        res.close();
+      },
+    };
+    const store = createStore(reducer);
+    const screen = render(Dom.createElement(StoreProvider, { store }, [
+      Dom.createElement(App),
+    ]), config);
+    expect(screen.container.innerHTML).toEqual('no name');
+    screen.fetch.next();
+    expect(screen.container.innerHTML).toEqual('name');
+  });
+
+  it('should execute a single fetch handler with screen.fetch.run', () => {
+    const config = {
+      digestFetch: false,
+      fetch: (req, res) => {
+        expect(global.window).toBeUndefined();
+        res.text(req.config.body.name);
+        res.close();
+      },
+    };
+    const store = createStore(reducer);
+    const screen = render(Dom.createElement(StoreProvider, { store }, [
+      Dom.createElement(App),
+    ]), config);
+    expect(screen.container.innerHTML).toEqual('no name');
+    screen.fetch.run();
+    expect(screen.container.innerHTML).toEqual('name');
+  });
+
+  it('should execute a fetch handler, and resolve it in an asynchronous handler', done => {
+    const config = {
+      digestFetch: false,
+      fetch: (req, res) => {
+        res.text(req.config.body.name);
+        setTimeout(() => {
+          res.close();
+          expect(screen.container.innerHTML).toEqual('name');
+          done();
+        });
+      },
+    };
+    const store = createStore(reducer);
+    const screen = render(Dom.createElement(StoreProvider, { store }, [
+      Dom.createElement(App),
+    ]), config);
+    expect(screen.container.innerHTML).toEqual('no name');
+    screen.fetch.run();
+    expect(screen.container.innerHTML).toEqual('no name');
   });
 });

@@ -137,56 +137,13 @@ describe('Intervals', () => {
       });
     });
 
-    describe('getNext', () => {
-      let mockFn1;
-      let mockFn2;
-      beforeEach(() => {
-        mockFn1 = jest.fn();
-        mockFn2 = jest.fn();
-        instance.set(mockFn1, 1);
-        instance.set(mockFn2, 2);
-      });
-
-      it('should be a function', () => {
-        expect(instance.getNext).toBeInstanceOf(Function);
-      });
-
-      it('should the next expired timer', () => {
-        let next = instance.getNext();
-        expect(next).toBeUndefined();
-        instance.tick();
-        next = instance.getNext();
-        next.fn();
-        expect(mockFn1).toHaveBeenCalledTimes(1);
-        instance.tick();
-        next = instance.getNext();
-        next.fn();
-        expect(mockFn1).toHaveBeenCalledTimes(2);
-        next = instance.getNext();
-        next.fn();
-        expect(mockFn2).toHaveBeenCalledTimes(1);
-        instance.tick();
-        next = instance.getNext();
-        next.fn();
-        expect(mockFn1).toHaveBeenCalledTimes(3);
-        next = instance.getNext();
-        expect(next).toBeUndefined();
-      });
-
-      it('should not get the next timer if it has already run this tick', () => {
-        instance.timers[0].lastRun = 0;
-        instance.timers[0].wait = 0;
-        const next = instance.getNext();
-        expect(next).toBeUndefined();
-      });
-
-      it('should not replace the next timer if the timer with lower remaining value has already ran this tick', () => {
-        instance.timers[0].wait = 0;
-        instance.timers[1].wait = -1;
-        instance.timers[1].lastRun = 0;
-        const next = instance.getNext();
-        next.fn();
-        expect(mockFn1).toHaveBeenCalledTimes(1);
+    describe('next', () => {
+      it('should return undefined if an interval has ran', () => {
+        instance.set(() => {});
+        const timer = instance.timers[0];
+        expect(instance.next()).toBe(timer);
+        timer.lastRun = 0;
+        expect(instance.next()).toBeUndefined();
       });
     });
   });

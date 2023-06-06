@@ -1,6 +1,13 @@
+import { Timer } from '../base/Timer';
 import { Timers } from '../base/Timers';
 
+class Timeout extends Timer {}
+
 class Timeouts extends Timers {
+  create(fn, wait, ...args) {
+    return new Timeout(fn, wait, args);
+  }
+
   getExpired() {
     const remove = [];
     const results = [];
@@ -30,4 +37,4 @@ class Timeouts extends Timers {
   }
 }
 
-export { Timeouts };
+export { Timeout, Timeouts };

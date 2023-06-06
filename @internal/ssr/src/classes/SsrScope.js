@@ -1,17 +1,21 @@
 import { DomRef } from '@internal/dom';
 import { Infra } from '@internal/infra';
 
-import { DigestibleScope } from './base/DigestibleScope';
+import { HookableScope } from './base/HookableScope';
 
 import { DomScope } from './dom/DomScope';
+import { FetchScope } from './fetch/FetchScope';
 import { InfraScope } from './dom/InfraScope';
-
 import { TimeScope } from './time/TimeScope';
 
 // this is found in the jsdom configuration docs.
 const DEFAULT_JSDOM_URL = 'about:blank';
 
-class SsrScope extends DigestibleScope {
+class SsrScope extends HookableScope {
+  get openHandles() {
+    return this.fetch.openRequests;
+  }
+
   get services() {
     return this.infra.services;
   }
@@ -24,27 +28,51 @@ class SsrScope extends DigestibleScope {
 
   constructor(config) {
     super();
-    this.infra = new InfraScope(new Infra());
-    this.time = new TimeScope(config.time);
+    // Wrap the fetch fn in disable scope/enable scope calls. This will allow the fetch request to process in server mode.
+    const fetchConfig = {
+      ...config.fetch,
+      fetch: (req, res) => {
+        if (!config.fetch.fetch) return;
 
-    this.dom = new DomScope(config.dom, this.time);
+        this.disable();
+        config.fetch.fetch(req, res);
+        this.enable();
+      },
+    };
+
+    // Scopes for replicating a client side rendering environment
+    this.append('infra', new InfraScope(new Infra()));
+    this.append('time', new TimeScope(config.time));
+    this.append('fetch', new FetchScope(fetchConfig));
+
+    // Top-level DOM scope, also maps other scopes to the document object model where necessary.
+    this.append('dom', new DomScope(config.dom, this.time, this.fetch));
+
+    // Setup for ease of use. This body ref will get used for rendering.
     this.body = new DomRef(this.dom.dom.window.document.body);
+    //Hook into fetch to trigger a rerender.
+    this.fetch.hook(() => {
+      this.trigger();
+    });
   }
 
   digest() {
     return [
       ...this.time.digest(),
+      ...this.fetch.digest(),
     ];
   }
 
   enable() {
     this.dom.enable();
+    this.fetch.enable();
     this.infra.enable();
     this.time.enable();
   }
 
   disable() {
     this.dom.disable();
+    this.fetch.disable();
     this.infra.disable();
     this.time.disable();
   }

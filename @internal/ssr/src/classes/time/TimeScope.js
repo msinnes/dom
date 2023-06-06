@@ -2,9 +2,9 @@ import { isDefined } from '@internal/is';
 
 import { DigestibleScope } from '../base/DigestibleScope';
 
-import { AnimationFrames } from './timers/AnimationFrames';
-import { Intervals } from './timers/Intervals';
-import { Timeouts } from './timers/Timeouts';
+import { AnimationFrame, AnimationFrames } from './timers/AnimationFrames';
+import { Interval, Intervals } from './timers/Intervals';
+import { Timeout, Timeouts } from './timers/Timeouts';
 
 const setTimeoutOriginal = global.setTimeout;
 const clearTimeoutOriginal = global.clearTimeout;
@@ -12,18 +12,18 @@ const setIntervalOriginal = global.setInterval;
 const clearIntervalOriginal = global.clearInterval;
 
 class TimeScope extends DigestibleScope {
-  runExpiredTimers = true;
+  digestExpiredTimers = true;
   animationFrames = new AnimationFrames();
   intervals = new Intervals();
   timeouts = new Timeouts();
 
   constructor(config) {
     super();
-    if (isDefined(config.runExpiredTimers)) this.runExpiredTimers = config.runExpiredTimers;
+    if (isDefined(config.digestExpiredTimers)) this.digestExpiredTimers = config.digestExpiredTimers;
   }
 
   digest() {
-    if (this.runExpiredTimers) return this.getExpiredTimers();
+    if (this.digestExpiredTimers) return this.getAll();
     return [];
   }
 
@@ -45,7 +45,7 @@ class TimeScope extends DigestibleScope {
     global.cancelAnimationFrame = this.animationFrames.clear.bind(this.animationFrames);
   }
 
-  getExpiredTimers() {
+  getAll() {
     return [
       ...this.timeouts.getExpired(),
       ...this.intervals.getExpired(),
@@ -53,11 +53,11 @@ class TimeScope extends DigestibleScope {
     ].sort((a, b) => a.remaining - b.remaining);
   }
 
-  getNextTimer() {
+  getNext() {
     const nextTimers = [
-      this.timeouts.getNext(),
-      this.intervals.getNext(),
-      this.animationFrames.getNext(),
+      this.timeouts.next(),
+      this.intervals.next(),
+      this.animationFrames.next(),
     ];
 
     let next;
@@ -66,6 +66,10 @@ class TimeScope extends DigestibleScope {
       if (next && timer) next = timer.isBefore(next) ? timer : next;
       else if (timer) next = timer;
     });
+
+    if (next instanceof Timeout) this.timeouts.clear(next.id);
+    if (next instanceof AnimationFrame) this.animationFrames.clear(next.id);
+    if (next instanceof Interval) next.elapsed -= (next.wait || 1);
     return next;
   }
 

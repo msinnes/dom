@@ -123,7 +123,7 @@ describe('App', () => {
 
 A configuration can be passed to the render function as a second argument. There is limited functionality, but it will expand as more features are added.
 
-#### `runExpiredTimers -- Boolean`
+#### `digestExpiredTimers -- Boolean`
 
 Tells the rendering engine whether to run any timers that have expired. If a `setTimeout` is called without a second parameter or the second parameter is 0, the timer will execute inline with the render. This simulates clearing the call-queue with a render. Even if timers are nested, the simulated queue will run recursively until the queue is empty.
 
@@ -142,13 +142,64 @@ const App = () => {
 };
 
 const screen1 = render(<App />); // Value defaults to true
-const screen2 = render(<App />, { runExpiredTimers: false });
+const screen2 = render(<App />, { digestExpiredTimers: false });
 
 console.log(screen1.container.innerHTML); // <-- 'async text'
 console.log(screen2.container.innerHTML); // <-- 'default text'
 ```
 
 In this case `screen1` will render the text produced asynchronously, but `screen2` will render the default text. This allows for more control over the timers throughout the rendering process.
+
+#### `digestFetch -- Boolean`
+
+Tells the rendering engine whether to fulfill any promises for fetch requests. This simulates a fetch request that is immediately resolved via the `fetch` configuration property.
+
+```JavaScript
+import * as DOM from '@msinnes/dom';
+import { render } from '@msinnes/dom-testing-library';
+
+const App = () => {
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    if (!text) fetch('url').then(data => data.text()).then(setText);
+  }, []);
+  return text;
+};
+
+const screen1 = render(<App /> { fetch: (req, res) => res.text('async text') }); // Value defaults to true
+const screen2 = render(<App />, { digestFetch: false, fetch: (req, res) => res.text('async text') });
+
+console.log(screen1.container.innerHTML); // <-- 'async text'
+console.log(screen2.container.innerHTML); // <-- 'default text'
+```
+
+In this case `screen1` will render the text produced asynchronously, but `screen2` will render the default text. This allows for more control over the timers throughout the rendering process.
+
+#### `fetch -- Boolean`
+
+Provides a mechanism for handling fetch requests. Fetch requests will be passed to the provided fetch handler, and data passed to the response will be provided to the application.
+
+```JavaScript
+import * as DOM from '@msinnes/dom';
+import { render } from '@msinnes/dom-testing-library';
+
+const App = () => {
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    if (!text) fetch('url').then(data => data.text()).then(setText);
+  }, []);
+  return text;
+};
+
+const screen = render(<App /> { fetch: (req, res) => {
+  res.text('async text');
+  res.close();
+}});
+
+console.log(screen.container.innerHTML); // <-- 'async text'
+```
+
+In this case `screen` will render the text produced asynchronously. Calling `res.close` will resolve the fetch request and re-render the page.
 
 #### `url -- String`
 
@@ -178,6 +229,18 @@ Instances of the `Screen` class render atomically. It is entirely possible to re
 
 The root visual element of rendered screen. Correspondes to the document.body element, not the ref associated with the element.
 
+### `Screen.fetch`
+
+The time interface for executing asyncronous timers. Depending on configuration, timers can run automatically, can be batch processed, or they can be executed one by one.
+
+#### `Screen.fetch.next - () => void`
+
+Processes the next fetch handler. If no handlers are queued, then nothing will happen.
+
+#### `Screen.fetch.run - () => void`
+
+Will process all fetch handlers, running them first-in-first-out. If no handlers are queued, then nothing will happen.
+
 ### `Screen.time`
 
 The time interface for executing asyncronous timers. Depending on configuration, timers can run automatically, can be batch processed, or they can be executed one by one.
@@ -188,11 +251,15 @@ Processes the next expired timer associated with the screen instance. If no time
 
 #### `Screen.time.play - (ticks: ?number) => void`
 
-Will tick all timers and digest the scope. If the screen is not configured to run expired timers (`runExpiredTimers = false`) then none of the timers will be executed. This allows the user to advance the clock and run any timers that expired in that time.
+Will tick all timers and digest the scope. If the screen is not configured to run expired timers (`digestExpiredTimers = false`) then none of the timers will be executed. This allows the user to advance the clock and run any timers that expired in that time.
 
-#### `Screen.time.runExpiredTimers - () => void`
+#### `Screen.time.run - () => void`
 
 Will run all timers that have expired, running them in expiration order. If no timers have expired, then no timers will execute.
+
+#### `Screen.time.tick - () => void`
+
+Will tick all timers by 1. If the screen is not configured to run expired timers (`digestExpiredTimers = false`) then none of the timers will be executed. This allows the user to tick the clock and run any timers that expired in that time.
 
 ### `Screen.(getBy|getAllBy|queryBy)* (Queries)`
 
@@ -340,3 +407,67 @@ test('this could be a test written in any JavaScript testing library', () => {
 ```
 
 This example shows how to control timers manually. The last example shows that long running intervals do not accumulate. The library is designed to support this type of accumulation, but it will require a few changes to get that working correctly. The main issue comes because we have to limit timer execution to `once per tick.` Let's say we try and process an immediate interval, immediate code execution resolves to an exceeded call stack by definition. Because of this behavior an interval with 0 wait time will process the same as an interval with a wait time of 1.
+
+## Fetch
+
+Like timers, fetch is best processed automatically (keeping `digestFetch` set to true). In this case, the response will resolve when `close` is called on the response passed to the `fetch` handler. Fetch handlers execute in 'Server Mode`, which means all of the server's rendering oeprations have been suspended. In 'Render Mode', async timer's are intercepted. During fetch processing, these timers will not get intercepted. Certain consideration must be taken when tests close a response asynchronousely.
+
+```JavaScript
+import { render } from '@msinnes/dom-testing-library';
+import * as DOM from '@msinnes/dom';
+
+const App = () => {
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    if (!text) fetch('url').then(data => data.text()).then(setText);
+  }, []);
+  return text;
+};
+
+const screen = render(<App /> {
+  fetch: (req, res) => {
+    res.text('async text');
+    setTimeout(() => {
+      console.log(screen.container.innerHTML); // <-- 'default text'
+      res.close();
+      console.log(screen.container.innerHTML); // <-- 'async text'
+    });
+  },
+});
+
+console.log(screen.container.innerHTML); // <-- 'default text'
+```
+
+In this case, the `close` call comes inside of a `setTimeout`. Since the timer executes after the call stack is executed, the screen will not update until the response is closed. In most test cases, the response can be resolved synchronously. This behavior exists to support resolving fetch calls in-line during the live rendering process in `@msinnes/dom-server`.
+
+---
+### - Manual Approach `Screen.fetch.(next|run)`
+
+If there is any reason to manually control, the default operation can be overridden by setting `config.digestFetch` to false. This will prevent fetch operations from executing during the digest cycle. The fetch requests can be processed like so.
+
+```JavaScript
+import { render } from '@msinnes/dom-testing-library';
+import * as DOM from '@msinnes/dom';
+
+const App = () => {
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    if (!text) fetch('url').then(data => data.text()).then(setText);
+  }, []);
+  return text;
+};
+
+const screen = render(<App /> {
+  digestFetch: false,
+  fetch: (req, res) => {
+    res.text('async text');
+    res.close();
+  },
+});
+
+console.log(screen.container.innerHTML); // <-- 'default text'
+screen.fetch.next();
+console.log(screen.container.innerHTML); // <-- 'async text'
+```
+
+In this case, executing `screen.fetch.next` will cause the screen to render the async text.

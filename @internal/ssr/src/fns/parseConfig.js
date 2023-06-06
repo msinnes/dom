@@ -1,9 +1,11 @@
-import { isDefined } from '@internal/is';
+import { isDefined, isFunction } from '@internal/is';
 
-const parseConfig = ({ url, runExpiredTimers } = {}) => {
-  const config = { dom: {}, time: {} };
+const parseConfig = ({ url, digestExpiredTimers, digestFetch, fetch } = {}) => {
+  const config = { dom: {}, time: {}, fetch: {} };
   if (isDefined(url)) config.dom.url = url;
-  if (isDefined(runExpiredTimers)) config.time.runExpiredTimers = runExpiredTimers;
+  if (isDefined(digestExpiredTimers)) config.time.digestExpiredTimers = digestExpiredTimers;
+  if (isDefined(digestFetch)) config.fetch.digestFetch = digestFetch;
+  if (isDefined(fetch) && isFunction(fetch)) config.fetch.fetch = fetch;
   return config;
 };
 
