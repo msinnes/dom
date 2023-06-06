@@ -78,6 +78,24 @@ type JSXRender = JSX | string | JSXRender[] | undefined | null | *;
 function renderToString(JSXRender): string;
 ```
 
+## - `renderToStringAsync`
+
+`renderToStringAsync` is a function that takes in a JSX render and outputs a string via a promise. The input render can be anything renderable to the DOM with `@msinnes/dom`. Using a NodeJS server API, like ExpressJS, this library can provide prerendered HTML to a web browser.
+
+```TypeScript
+interface JSX = {
+  signature: string | DomRef,
+  props: object,
+  children: JSXRender[],
+}
+/**
+ * Any JSXRender that falls under `*` typing will be processed as a string by calling `toString`.
+ */
+type JSXRender = JSX | string | JSXRender[] | undefined | null | *;
+
+function renderToStringAsync(JSXRender): Promise<string>;
+```
+
 
 ## - `renderToScreen`
 
@@ -101,6 +119,30 @@ interface Screen = {
 type JSXRender = JSX | string | JSXRender[] | undefined | null | *;
 
 function renderToScreen(JSXRender): Screen;
+```
+
+## - `renderToScreenAsync`
+
+`renderToScreenAsync` is a function that takes in a JSX render and outputs a screen object via a promise, which can then be used to respond to the server request. The input render can be anything renderable to the DOM with `@msinnes/dom`. Using a NodeJS server API, like ExpressJS, this library can provide prerendered HTML to a web browser.
+
+```TypeScript
+interface JSX = {
+  signature: string | DomRef,
+  props: object,
+  children: JSXRender[],
+}
+
+interface Screen = {
+  html: string;
+  url: string;
+}
+
+/**
+ * Any JSXRender that falls under `*` typing will be processed as a string by calling `toString`.
+ */
+type JSXRender = JSX | string | JSXRender[] | undefined | null | *;
+
+function renderToScreenAsync(JSXRender): Promise<Screen>;
 ```
 
 ### - `config`
