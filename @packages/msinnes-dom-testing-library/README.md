@@ -191,12 +191,15 @@ const App = () => {
   return text;
 };
 
-const screen = render(<App /> { fetch: (req, res) => res.text('async text') }); // Value defaults to true
+const screen = render(<App /> { fetch: (req, res) => {
+  res.text('async text');
+  res.close();
+}});
 
 console.log(screen.container.innerHTML); // <-- 'async text'
 ```
 
-In this case `screen` will render the text produced asynchronously.
+In this case `screen` will render the text produced asynchronously. Calling `res.close` will resolve the fetch request and re-render the page.
 
 #### `url -- String`
 
@@ -404,3 +407,67 @@ test('this could be a test written in any JavaScript testing library', () => {
 ```
 
 This example shows how to control timers manually. The last example shows that long running intervals do not accumulate. The library is designed to support this type of accumulation, but it will require a few changes to get that working correctly. The main issue comes because we have to limit timer execution to `once per tick.` Let's say we try and process an immediate interval, immediate code execution resolves to an exceeded call stack by definition. Because of this behavior an interval with 0 wait time will process the same as an interval with a wait time of 1.
+
+## Fetch
+
+Like timers, fetch is best processed automatically (keeping `digestFetch` set to true). In this case, the response will resolve when `close` is called on the response passed to the `fetch` handler. Fetch handlers execute in 'Server Mode`, which means all of the server's rendering oeprations have been suspended. In 'Render Mode', async timer's are intercepted. During fetch processing, these timers will not get intercepted. Certain consideration must be taken when tests close a response asynchronousely.
+
+```JavaScript
+import { render } from '@msinnes/dom-testing-library';
+import * as DOM from '@msinnes/dom';
+
+const App = () => {
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    if (!text) fetch('url').then(data => data.text()).then(setText);
+  }, []);
+  return text;
+};
+
+const screen = render(<App /> {
+  fetch: (req, res) => {
+    res.text('async text');
+    setTimeout(() => {
+      console.log(screen.container.innerHTML); // <-- 'default text'
+      res.close();
+      console.log(screen.container.innerHTML); // <-- 'async text'
+    });
+  },
+});
+
+console.log(screen.container.innerHTML); // <-- 'default text'
+```
+
+In this case, the `close` call comes inside of a `setTimeout`. Since the timer executes after the call stack is executed, the screen will not update until the response is closed. In most test cases, the response can be resolved synchronously. This behavior exists to support resolving fetch calls in-line during the live rendering process in `@msinnes/dom-server`.
+
+---
+### - Manual Approach `Screen.fetch.(next|run)`
+
+If there is any reason to manually control, the default operation can be overridden by setting `config.digestFetch` to false. This will prevent fetch operations from executing during the digest cycle. The fetch requests can be processed like so.
+
+```JavaScript
+import { render } from '@msinnes/dom-testing-library';
+import * as DOM from '@msinnes/dom';
+
+const App = () => {
+  const [text, setText] = DOM.useState('default text');
+  DOM.useEffect(() => {
+    if (!text) fetch('url').then(data => data.text()).then(setText);
+  }, []);
+  return text;
+};
+
+const screen = render(<App /> {
+  digestFetch: false,
+  fetch: (req, res) => {
+    res.text('async text');
+    res.close();
+  },
+});
+
+console.log(screen.container.innerHTML); // <-- 'default text'
+screen.fetch.next();
+console.log(screen.container.innerHTML); // <-- 'async text'
+```
+
+In this case, executing `screen.fetch.next` will cause the screen to render the async text.

@@ -34,6 +34,7 @@
     "@babel/preset-env": "^7.19.3",
     "@internal/base": "^0.0.4-alpha.0",
     "@internal/dom": "^0.0.4-alpha.0",
+    "@internal/is": "^0.0.4-alpha.0",
     "@internal/ssr": "^0.0.5-alpha.0",
     "@internal/utils": "^0.0.4-alpha.0",
     "@msinnes/dom": "^0.0.5-alpha.0",

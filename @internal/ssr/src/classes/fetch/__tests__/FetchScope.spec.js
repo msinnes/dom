@@ -1,137 +1,9 @@
-import { DigestibleScope } from '../../base/DigestibleScope';
+import { HookableScope } from '../../base/HookableScope';
 import { SyncPromise } from '../../base/SyncPromise';
 
-import { FetchResponse, Response } from '../Response';
-import { Request, Requests } from '../Request';
+import { Requests } from '../request/Requests';
 
 import { FetchScope } from '../FetchScope';
-
-describe('Request', () => {
-  it('should be a class', () => {
-    expect(Request).toBeAClass();
-  });
-
-  describe('instance', () => {
-    let instance;
-
-    let mockConfig;
-    let mockResolve;
-    let mockDoRequest;
-    beforeEach(() => {
-      mockConfig = {};
-      mockResolve = jest.fn();
-      mockDoRequest = jest.fn();
-      instance = new Request('url', mockConfig, mockResolve, mockDoRequest);
-    });
-
-    it('should set the url prop', () => {
-      expect(instance.url).toEqual('url');
-    });
-
-    it('should set the config prop and default to an empty object', () => {
-      expect(instance.config).toBe(mockConfig);
-      instance = new Request('url');
-      expect(instance.config).toBeInstanceOf(Object);
-    });
-
-    it('should set the resolve prop', () => {
-      expect(instance.resolve).toBe(mockResolve);
-    });
-
-    it('should set the doRequest prop', () => {
-      expect(instance.doRequest).toBe(mockDoRequest);
-    });
-
-    describe('exec', () => {
-      it('should be a function', () => {
-        expect(instance.exec).toBeInstanceOf(Function);
-      });
-
-      it('should call doRequest with a request and response', () => {
-        instance.exec();
-        expect(mockDoRequest).toHaveBeenCalledTimes(1);
-        expect(mockDoRequest.mock.calls[0][0]).toMatchObject({ url: 'url', config: mockConfig });
-        expect(mockDoRequest.mock.calls[0][1]).toBeInstanceOf(FetchResponse);
-      });
-
-      it('should resolve the request', () => {
-        instance.exec();
-        expect(mockResolve).toHaveBeenCalledTimes(1);
-        expect(mockResolve.mock.calls[0][0]).toBeInstanceOf(Response);
-      });
-    });
-  });
-});
-
-describe('Requests', () => {
-  it('should be a class', () => {
-    expect(Requests).toBeAClass();
-  });
-
-  describe('instance', () => {
-    let instance;
-
-    beforeEach(() => {
-      instance = new Requests();
-    });
-
-    it('should have an array of requests', () => {
-      expect(instance.requests).toBeInstanceOf(Array);
-    });
-
-    describe('create', () => {
-      it('should be a function', () => {
-        expect(instance.create).toBeInstanceOf(Function);
-      });
-
-      it('should create a request and add it to the list of requests', () => {
-        const mockConfig = {};
-        const mockResolve = jest.fn();
-        const mockDoRequest = jest.fn();
-        instance.create('url', mockConfig, mockResolve, mockDoRequest);
-        expect(instance.requests.length).toEqual(1);
-        const req = instance.requests[0];
-        expect(req).toBeInstanceOf(Request);
-        expect(req.url).toEqual('url');
-        expect(req.config).toBe(mockConfig);
-        expect(req.resolve).toBe(mockResolve);
-        expect(req.doRequest).toBe(mockDoRequest);
-      });
-    });
-
-    describe('getAll', () => {
-      it('should be a function', () => {
-        expect(instance.getAll).toBeInstanceOf(Function);
-      });
-
-      it('should empty the list of requests and return all items that were in the list', () => {
-        instance.create('a');
-        instance.create('b');
-        instance.create('c');
-        expect(instance.getAll()).toMatchObject([{ url: 'a' }, { url: 'b' }, { url: 'c' }]);
-        expect(instance.requests.length).toEqual(0);
-      });
-    });
-
-    describe('getNext', () => {
-      it('should be a function', () => {
-        expect(instance.getNext).toBeInstanceOf(Function);
-      });
-
-      it('should return the first request in the list and remove that item from the list of requests', () => {
-        instance.create('a');
-        instance.create('b');
-        instance.create('c');
-        expect(instance.getNext()).toMatchObject({ url: 'a' });
-        expect(instance.requests.length).toEqual(2);
-        expect(instance.getNext()).toMatchObject({ url: 'b' });
-        expect(instance.requests.length).toEqual(1);
-        expect(instance.getNext()).toMatchObject({ url: 'c' });
-        expect(instance.requests.length).toEqual(0);
-      });
-    });
-  });
-});
 
 describe('FetchScope', () => {
   it('should be a class', () => {
@@ -139,8 +11,8 @@ describe('FetchScope', () => {
   });
 
 
-  it('should extends DigestibleScope', () => {
-    expect(FetchScope).toExtend(DigestibleScope);
+  it('should extends HookableScope', () => {
+    expect(FetchScope).toExtend(HookableScope);
   });
 
   describe('instance', () => {
@@ -167,8 +39,12 @@ describe('FetchScope', () => {
     });
 
     it('should default doRequest to a noop', () => {
+      const req = {};
+      const closeMock = jest.fn();
+      const res = { close: closeMock };
       expect(instance.doRequest).toBeInstanceOf(Function);
-      expect(instance.doRequest()).toBeUndefined();
+      expect(instance.doRequest(req, res)).toBeUndefined();
+      expect(closeMock).toHaveBeenCalled();
     });
 
     it('should set digestFetch if a value is passed', () => {
@@ -184,12 +60,17 @@ describe('FetchScope', () => {
       expect(instance.doRequest).toBe(mockFn);
     });
 
+    it('should have an openRequests prop', () => {
+      expect(instance.openRequests).toEqual(0);
+    });
+
     describe('createRequest', () => {
       it('should be a function', () => {
         expect(instance.createRequest).toBeInstanceOf(Function);
       });
 
-      it('should set global.fetch to a bound requests.requests.create', () => {
+      it('should trigger the scope when the promise resolves', () => {
+        const triggerSpy = jest.spyOn(instance, 'trigger');
         const mockConfig = {};
         const mockFn = jest.fn();
         instance.requests.create = (url, config, resolve, doRequest) => mockFn(url, config, resolve, doRequest);
@@ -199,6 +80,13 @@ describe('FetchScope', () => {
         expect(mockFn.mock.calls[0][1]).toEqual(mockConfig);
         expect(mockFn.mock.calls[0][2]).toBeInstanceOf(Function);
         expect(mockFn.mock.calls[0][3]).toBe(instance.doRequest);
+
+        const resolveFn = mockFn.mock.calls[0][2];
+        expect(instance.openRequests).toEqual(1);
+        const mockData = {};
+        resolveFn(mockData);
+        expect(instance.openRequests).toEqual(0);
+        expect(triggerSpy).toHaveBeenCalledTimes(1);
       });
 
       it('fetch should return a promise', () => {
@@ -211,6 +99,27 @@ describe('FetchScope', () => {
         instance.requests.requests[0].resolve(mockData);
         expect(mockFn).toHaveBeenCalledTimes(1);
         expect(mockFn).toHaveBeenCalledWith(mockData);
+      });
+
+      it('should ignore the promise if the scope is closed', () => {
+        const triggerSpy = jest.spyOn(instance, 'trigger');
+        const mockConfig = {};
+        const mockFn = jest.fn();
+        instance.requests.create = (url, config, resolve, doRequest) => mockFn(url, config, resolve, doRequest);
+        instance.createRequest('url', mockConfig);
+        expect(mockFn).toHaveBeenCalledTimes(1);
+        expect(mockFn.mock.calls[0][0]).toEqual('url');
+        expect(mockFn.mock.calls[0][1]).toEqual(mockConfig);
+        expect(mockFn.mock.calls[0][2]).toBeInstanceOf(Function);
+        expect(mockFn.mock.calls[0][3]).toBe(instance.doRequest);
+
+        const resolveFn = mockFn.mock.calls[0][2];
+        expect(instance.openRequests).toEqual(1);
+        const mockData = {};
+        instance.close();
+        resolveFn(mockData);
+        expect(instance.openRequests).toEqual(1);
+        expect(triggerSpy).toHaveBeenCalledTimes(0);
       });
     });
 

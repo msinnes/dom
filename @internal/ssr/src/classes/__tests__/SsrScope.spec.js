@@ -1,4 +1,4 @@
-import { DigestibleScope } from '../base/DigestibleScope';
+import { HookableScope } from '../base/HookableScope';
 import { DomScope } from '../dom/DomScope';
 import { FetchScope } from '../fetch/FetchScope';
 import { InfraScope } from '../dom/InfraScope';
@@ -11,8 +11,8 @@ describe('SsrScope', () => {
     expect(SsrScope).toBeAClass();
   });
 
-  it('should extends DigestibleScope', () => {
-    expect(SsrScope).toExtend(DigestibleScope);
+  it('should extends HookableScope', () => {
+    expect(SsrScope).toExtend(HookableScope);
   });
 
   describe('instance', () => {
@@ -106,6 +106,24 @@ describe('SsrScope', () => {
       expect(disableMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith(mockReq, mockRes);
+    });
+
+    it('should be hooked into the fetch schop', () => {
+      const mockFn = jest.fn();
+      instance.hook(() => {
+        mockFn();
+      });
+      instance.fetch.trigger();
+      expect(mockFn).toHaveBeenCalledTimes(1);
+    });
+
+    it('should have an open handles prop', () => {
+      instance.fetch.openRequests++;
+      expect(instance.openHandles).toEqual(1);
+      instance.fetch.openRequests++;
+      expect(instance.openHandles).toEqual(2);
+      instance.fetch.openRequests--;
+      expect(instance.openHandles).toEqual(1);
     });
 
     describe('digest', () => {

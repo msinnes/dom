@@ -1,7 +1,7 @@
 import { DomRef } from '@internal/dom';
 import { Infra } from '@internal/infra';
 
-import { DigestibleScope } from './base/DigestibleScope';
+import { HookableScope } from './base/HookableScope';
 
 import { DomScope } from './dom/DomScope';
 import { FetchScope } from './fetch/FetchScope';
@@ -11,7 +11,11 @@ import { TimeScope } from './time/TimeScope';
 // this is found in the jsdom configuration docs.
 const DEFAULT_JSDOM_URL = 'about:blank';
 
-class SsrScope extends DigestibleScope {
+class SsrScope extends HookableScope {
+  get openHandles() {
+    return this.fetch.openRequests;
+  }
+
   get services() {
     return this.infra.services;
   }
@@ -36,12 +40,20 @@ class SsrScope extends DigestibleScope {
       },
     };
 
-    this.infra = new InfraScope(new Infra());
-    this.time = new TimeScope(config.time);
-    this.fetch = new FetchScope(fetchConfig);
+    // Scopes for replicating a client side rendering environment
+    this.append('infra', new InfraScope(new Infra()));
+    this.append('time', new TimeScope(config.time));
+    this.append('fetch', new FetchScope(fetchConfig));
 
-    this.dom = new DomScope(config.dom, this.time, this.fetch);
+    // Top-level DOM scope, also maps other scopes to the document object model where necessary.
+    this.append('dom', new DomScope(config.dom, this.time, this.fetch));
+
+    // Setup for ease of use. This body ref will get used for rendering.
     this.body = new DomRef(this.dom.dom.window.document.body);
+    //Hook into fetch to trigger a rerender.
+    this.fetch.hook(() => {
+      this.trigger();
+    });
   }
 
   digest() {

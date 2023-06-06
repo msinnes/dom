@@ -1,11 +1,12 @@
 import { isDefined } from '@internal/is';
-import { DigestibleScope } from '../base/DigestibleScope';
+import { HookableScope } from '../base/HookableScope';
 import { SyncPromise } from '../base/SyncPromise';
 
-import { Requests } from './Request';
+import { Requests } from './request/Requests';
 
-class FetchScope extends DigestibleScope {
+class FetchScope extends HookableScope {
   digestFetch = true;
+  openRequests = 0;
   requests = new Requests();
 
   get getAll() {
@@ -21,12 +22,19 @@ class FetchScope extends DigestibleScope {
     if (isDefined(config.digestFetch)) this.digestFetch = config.digestFetch;
 
     if (isDefined(config.fetch)) this.doRequest = config.fetch;
-    else this.doRequest = () => undefined;
+    else this.doRequest = (req, res) => res.close();
   }
 
   createRequest(url, config) {
     return new SyncPromise(resolve => {
-      this.requests.create(url, config, resolve, this.doRequest);
+      this.openRequests++;
+      const resolveCb = data => {
+        if (this.closed) return;
+        resolve(data);
+        this.openRequests--;
+        this.trigger();
+      };
+      this.requests.create(url, config, resolveCb, this.doRequest);
     });
   }
 
