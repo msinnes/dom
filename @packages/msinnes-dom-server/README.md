@@ -235,10 +235,26 @@ In this case `screen` will render the text produced asynchronously. `renderToStr
 
 #### `url -- String`
 
-The location to pass to `JSDOM` during page load. If no url is passed, the location will be the default location. This feature is required in order to render routed application on a server, or in a testing environment.
+The location to pass to `JSDOM` during page load. If no url is passed, the location will be the default location. This feature is required in order to render routed application on a server, or in a testing environment. If no url is passed to the renderConfig, then the default `location.href = 'about:blank` will be used. If `@msinnes/dom-router` senses there is no route, it will return a default in-op message.
 
 ```JavaScript
-// TODO: add an example after some work has been done on the ssr routing api. I need to make sure that the screen will render routing even if there is no url passed to the page.
+import * as DOM from '@msinnes/dom';
+import { Router, Switch, Case } from '@msinnes/dom-router';
+import { render } from '@msinnes/dom-testing-library';
+
+const AppRender = (
+  <Router>
+    <Switch>
+      <Case path="/" render="Home" />
+    </Switch>
+  </Router>
+);
+
+const screen1 = render(<AppRender />, { url: 'https://url.com/' });
+const screen2 = render(<AppRender />);
+
+console.log(screen1.container.innerHTML) // <-- Home
+console.log(screen2.container.innerHTML) // <-- Routing inoperable without a valid URL.
 ```
 
 # Usage
