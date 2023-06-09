@@ -118,6 +118,17 @@ describe('Router', () => {
         expect(render.children[0]).toBe(childRef);
         delete global.window;
       });
+
+      it('should return an inop string if there is no url to process', () => {
+        global.window = {
+          location: {
+            href: 'about:blank',
+          },
+        };
+        const instance = new Router({ children: childRef });
+        const render = instance.render();
+        expect(render).toEqual('Routing inoperable without a valid URL.');
+      });
     });
   });
 });
