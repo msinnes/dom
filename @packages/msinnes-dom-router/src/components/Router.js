@@ -36,6 +36,7 @@ class Router extends DOM.Component {
   }
 
   render() {
+    if (window.location.href === 'about:blank') return 'Routing inoperable without a valid URL.';
     return DOM.createElement(RouterContext.Provider, { value: {
       navigate: this.navigate,
       baseRoute: this.baseRoute,

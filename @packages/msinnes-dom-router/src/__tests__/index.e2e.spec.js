@@ -5,6 +5,48 @@ import '@msinnes/dom-testing-library-jest';
 import * as api from '..';
 
 describe('e2e', () => {
+  it('should not throw an error if no url is passed', () => {
+    const Home = () => DOM.createElement('div', {}, ['Home']);
+    const About = () => DOM.createElement('div', {}, ['About']);
+    const Params = () => {
+      const { id } = api.useParams();
+      return DOM.createElement('div', {}, [`Param: ${id}`]);
+    };
+
+    const Nav = ({ children }) => {
+      return DOM.createElement('ul', {}, [children]);
+    };
+
+    const NavItem = ({ children, ...rest }) => DOM.createElement('li', {}, [
+      DOM.createElement(api.Link, {...rest}, [children]),
+    ]);
+
+    const Header = () => DOM.createElement(Nav, {}, [
+      DOM.createElement(NavItem, { to: '/' }, ['Home']),
+      DOM.createElement(NavItem, { to: '/about' }, ['About']),
+      DOM.createElement(NavItem, { to: '/param/1' }, ['Params']),
+      DOM.createElement(NavItem, { to: '/anything' }, ['Anything']),
+    ]);
+
+    const Content = () => DOM.createElement(api.Switch, {}, [
+      DOM.createElement(api.Case, { path: '/', render: DOM.createElement(Home), exact: true }),
+      DOM.createElement(api.Case, { path: '/about', render: DOM.createElement(About) }),
+      DOM.createElement(api.Case, { path: '/param/:id', render: DOM.createElement(Params) }),
+      DOM.createElement(api.Redirect, { path: '*', to: '/about' }),
+    ]);
+
+    const App = () => DOM.createElement(api.Router, {}, [
+      DOM.createElement(Header),
+      DOM.createElement(Content),
+    ]);
+
+    let screen;
+    expect(() => {
+      screen = render(DOM.createElement(App));
+    }).not.toThrow();
+    expect(screen.container.innerHTML).toEqual('Routing inoperable without a valid URL.');
+  });
+
   describe('basic app', () => {
     const Home = () => DOM.createElement('div', {}, ['Home']);
     const About = () => DOM.createElement('div', {}, ['About']);

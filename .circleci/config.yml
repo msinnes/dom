@@ -67,6 +67,17 @@ jobs:
       - run:
           command: git checkout master
           name: Checkout Master Branch
+      - node/install-packages:
+          pkg-manager: yarn
+      - run:
+          command: yarn clean-bootstrap
+          name: Build Packages
+      - run:
+          name: Set NPM Registry
+          command: npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+      - run:
+          name: Publish to NPM
+          command: yarn package publish
 workflows:
   test_modules:
     jobs:

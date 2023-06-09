@@ -384,5 +384,41 @@ describe('e2e', () => {
       });
       expect(screen.html).toEqual('async name');
     });
+
+    it('should resolve a string promise if fetch is not being digested', async () => {
+      const MiniAsyncApp = () => {
+        const [name, setName] = Dom.useState('default text');
+        if (!name) fetch('name').then(data => data.text()).then(setName);
+        return name;
+      };
+      const html = await api.renderToStringAsync(Dom.createElement(MiniAsyncApp), {
+        digestFetch: false,
+        fetch: (req, res) => {
+          setTimeout(() => {
+            res.text('async name');
+            res.close();
+          });
+        },
+      });
+      expect(html).toEqual('default text');
+    });
+
+    it('should resolve a screen promise if fetch is not being digested', async () => {
+      const MiniAsyncApp = () => {
+        const [name, setName] = Dom.useState('default text');
+        if (!name) fetch('name').then(data => data.text()).then(setName);
+        return name;
+      };
+      const screen = await api.renderToScreenAsync(Dom.createElement(MiniAsyncApp), {
+        digestFetch: false,
+        fetch: (req, res) => {
+          setTimeout(() => {
+            res.text('async name');
+            res.close();
+          });
+        },
+      });
+      expect(screen.html).toEqual('default text');
+    });
   });
 });
