@@ -46,6 +46,11 @@
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"
   integrity sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==
 
+"@msinnes/dom-redux-light@^0.0.6-alpha.0":
+  version "0.0.6-alpha.0"
+  resolved "https://registry.yarnpkg.com/@msinnes/dom-redux-light/-/dom-redux-light-0.0.6-alpha.0.tgz#be703d6996117d27d8e359bcfac11666f1038bbb"
+  integrity sha512-7yIHiPuuJqRlA7ljNhfBXnqKeF0/bJH/lLhsLtz6xIzVALBUclSzPBQQd/xdrIydsCFXuhmELq94yKi2d3PkTg==
+
 "@nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.3":
   version "2.1.8-no-fsevents.3"
   resolved "https://registry.yarnpkg.com/@nicolo-ribaudo/chokidar-2/-/chokidar-2-2.1.8-no-fsevents.3.tgz#323d72dd25103d0c4fbdce89dadf574a787b1f9b"
