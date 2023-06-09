@@ -230,6 +230,31 @@ describe('renderToStringAsync', () => {
       done();
     });
   });
+
+  it('should not reject the promise if the renderer is not resolving fetch', done => {
+    let timeoutId;
+    const Text = () => {
+      const [text, setText] = DOM.useState('default text');
+      DOM.useEffect(() => {
+        if (text === 'default text') fetch('url').then(data => data.text()).then(setText);
+      }, []);
+      return text;
+    };
+
+    renderToStringAsync(DOM.createElement(Text), {
+      digestFetch: false,
+      fetch: (req, res) => {
+        timeoutId = setTimeout(() => {
+          res.text('async text');
+          res.close();
+        }, 2500);
+      }
+    }).then(html => {
+      expect(html).toEqual('default text');
+      clearTimeout(timeoutId);
+      done();
+    });
+  });
 });
 
 describe('renderToScreenAsync', () => {
@@ -281,6 +306,31 @@ describe('renderToScreenAsync', () => {
       }
     }).then(() => {}, err => {
       expect(err).toEqual('Timeout Exceeded to resolve promise.');
+      clearTimeout(timeoutId);
+      done();
+    });
+  });
+
+  it('should not reject the promise if the renderer is not resolving fetch', done => {
+    let timeoutId;
+    const Text = () => {
+      const [text, setText] = DOM.useState('default text');
+      DOM.useEffect(() => {
+        if (text === 'default text') fetch('url').then(data => data.text()).then(setText);
+      }, []);
+      return text;
+    };
+
+    renderToScreenAsync(DOM.createElement(Text), {
+      digestFetch: false,
+      fetch: (req, res) => {
+        timeoutId = setTimeout(() => {
+          res.text('async text');
+          res.close();
+        }, 2500);
+      }
+    }).then(screen => {
+      expect(screen.html).toEqual('default text');
       clearTimeout(timeoutId);
       done();
     });

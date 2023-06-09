@@ -3,6 +3,8 @@ import { SsrScope, parseConfig } from '@internal/ssr';
 
 import { RenderScreenController } from '../classes/RenderScreenController';
 
+const isDoingFetch = config => isDefined(config.fetch.digestFetch) ? config.fetch.digestFetch : true;
+
 const getBootStrappedController = (render, userConfig) => {
   const config = parseConfig(userConfig);
   const ssrScope = new SsrScope(config);
@@ -14,13 +16,12 @@ const getBootStrappedController = (render, userConfig) => {
 const getSyncController = (render, userConfig) => {
   const [controller, config] = getBootStrappedController(render, userConfig);
   controller.close();
-  const doingFetch = isDefined(config.fetch.digestFetch) ? config.fetch.digestFetch : true;
-  if (controller.scope.openHandles > 0 && doingFetch) console.warn('Open Handles Detected -- Open handles are ignored after a render is closed');
+  if (controller.scope.openHandles > 0 && isDoingFetch(config)) console.warn('Open Handles Detected -- Open handles are ignored after a render is closed');
   return controller;
 };
 
 const getRenderPromise = (render, userConfig) => {
-  const [controller] = getBootStrappedController(render, userConfig);
+  const [controller, config] = getBootStrappedController(render, userConfig);
 
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
@@ -28,7 +29,7 @@ const getRenderPromise = (render, userConfig) => {
     }, 2000);
 
     const after = () => {
-      if (controller.scope.openHandles > 0) return;
+      if (controller.scope.openHandles > 0 && isDoingFetch(config)) return;
 
       resolve(controller);
       clearTimeout(timeoutId);
