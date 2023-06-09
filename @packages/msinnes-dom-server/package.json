@@ -1,6 +1,6 @@
 {
   "name": "@msinnes/dom-server",
-  "version": "0.0.6-alpha.0",
+  "version": "0.0.7-alpha.0",
   "description": "Server rendering library for @msinnes/dom applications.",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "https://github.com/msinnes/dom/@packages/msinnes-dom-server/#readme",
