@@ -1,5 +1,6 @@
 import * as DOM from '@msinnes/dom';
-import { BaseRoute } from '../../classes/BaseRoute';
+import { BaseRoute } from '@internal/routes';
+
 import { RouterContext } from '../../RouterContext';
 
 import { Router } from '../Router';

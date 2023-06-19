@@ -1,73 +1,4 @@
-import { BaseRoute, constants, utils } from '../BaseRoute';
-
-describe('BaseRoute', () => {
-  it('should be a class', () => {
-    expect(BaseRoute).toBeAClass();
-  });
-
-  describe('instance', () => {
-    let instance;
-    beforeEach(() => {
-      instance = new BaseRoute('/path/');
-    });
-
-    it('should have a regex props from createRouteRegex', () => {
-      expect(instance.regex).toEqual(new RegExp('^\/path[\/]?'));
-    });
-
-    it('should expose the path on a path prop', () => {
-      expect(instance.path).toEqual('/path/');
-    });
-
-    describe('getParams', () => {
-      it('should be a function', () => {
-        expect(instance.getParams).toBeInstanceOf(Function);
-      });
-
-      it('should return an empty object if the regex finds 0 matches', () => {
-        instance = new BaseRoute('/path', false, () => 'render');
-        const params = instance.getParams('/param1/1/param2/2');
-        expect(params).toBeDefined();
-        expect(params).toBeInstanceOf(Object);
-        expect(Object.keys(params).length).toEqual(0);
-      });
-
-      it('should return an empty object if no param is found', () => {
-        instance = new BaseRoute('/param1/1/param2/2', false, () => 'render');
-        const params = instance.getParams('/param1/1/param2/2');
-        expect(params).toBeDefined();
-        expect(params).toBeInstanceOf(Object);
-        expect(Object.keys(params).length).toEqual(0);
-      });
-
-      it('should resolve params if they are found', () => {
-        instance = new BaseRoute('/param1/:param1/param2/:param2');
-        const params = instance.getParams('/param1/1/param2/2');
-        expect(params).toBeDefined();
-        expect(params).toBeInstanceOf(Object);
-        expect(params).toMatchObject({
-          param1: '1',
-          param2: '2',
-        });
-      });
-    });
-
-    describe('test', () => {
-      it('should be a function', () => {
-        expect(instance.test).toBeInstanceOf(Function);
-      });
-
-      it('should execute the regex.test method', () => {
-        const testMock = jest.fn(() => true);
-        instance.regex.test = testMock;
-        const tested = instance.test('string');
-        expect(testMock).toHaveBeenCalledTimes(1);
-        expect(testMock).toHaveBeenCalledWith('string');
-        expect(tested).toBe(true);
-      });
-    });
-  });
-});
+import { constants, utils } from '../regexp';
 
 describe('constants', () => {
   const {
@@ -75,7 +6,6 @@ describe('constants', () => {
     ESCAPED_SLASH,
     CARAT,
     DS,
-    PIPE,
     // constant regular expressions
     ANY_REGEX,
     STARTS_WITH_SLASH,
@@ -85,7 +15,6 @@ describe('constants', () => {
     expect(ESCAPED_SLASH).toEqual('\/');
     expect(CARAT).toEqual('^');
     expect(DS).toEqual('$');
-    expect(PIPE).toEqual('|');
   });
 
   it('should expose an any regex', () => {
@@ -110,12 +39,10 @@ describe('utils', () => {
     createStartsWith,
     createEndsWith,
     createExact,
-    createOr,
     normalize,
     createInexact,
     // util-fns
     createRouteRegex,
-    createBaseRouteRegex,
     getParams,
   } = utils;
   describe('createStartsWith', () => {
@@ -148,17 +75,6 @@ describe('utils', () => {
     it('should return an exact string', () => {
       const string = createExact('string');
       expect(string).toEqual('^string$');
-    });
-  });
-
-  describe('createOr', () => {
-    it('should be a function', () => {
-      expect(createOr).toBeInstanceOf(Function);
-    });
-
-    it('should return an exact string', () => {
-      const string = createOr('string', 'another string');
-      expect(string).toEqual('string|another string');
     });
   });
 
@@ -244,42 +160,6 @@ describe('utils', () => {
       expect(regex.test('/exact/')).toBe(false);
       expect(regex.test('/exact/anything')).toBe(false);
       expect(regex.test('/exact anything')).toBe(false);
-    });
-  });
-
-  describe('createBaseRouteRegex', () => {
-    it('should be a function', () => {
-      expect(createBaseRouteRegex).toBeInstanceOf(Function);
-    });
-
-    it('should generate a wildcard regex', () => {
-      const regex = createBaseRouteRegex('*');
-      expect(regex.test('anything')).toBe(true);
-    });
-
-    it('should append a \'/\' character perform a startWith query', () => {
-      let regex = createBaseRouteRegex('/route');
-      expect(regex.test('/route')).toBe(true);
-      expect(regex.test('/route/')).toBe(true);
-      expect(regex.test('/route/anything')).toBe(true);
-
-      regex = createBaseRouteRegex('/route/');
-      expect(regex.test('/route')).toBe(true);
-      expect(regex.test('/route/')).toBe(true);
-      expect(regex.test('/route/anything')).toBe(true);
-    });
-
-    it('should prepend a \'/\' character if one is not passed', () => {
-      let regex = createBaseRouteRegex('route');
-      expect('/route');
-      expect(regex.test('/route')).toBe(true);
-      expect(regex.test('/route/')).toBe(true);
-      expect(regex.test('/route/anything')).toBe(true);
-
-      regex = createBaseRouteRegex('route/');
-      expect(regex.test('/route')).toBe(true);
-      expect(regex.test('/route/')).toBe(true);
-      expect(regex.test('/route/anything')).toBe(true);
     });
   });
 

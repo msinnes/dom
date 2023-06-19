@@ -1,14 +1,12 @@
 const ESCAPED_SLASH = '\/';
 const CARAT = '^';
 const DS = '$';
-const PIPE = '|';
 
 const ANY_REGEX = /.*/;
 
 const createStartsWith = path => CARAT + path;
 const createExact = path => CARAT + path + DS;
 const createEndsWith = path => path + DS;
-const createOr = (left, right) => left + PIPE + right;
 
 const STARTS_WITH_SLASH = new RegExp(createStartsWith(ESCAPED_SLASH));
 const ENDS_WITH_SLASH = new RegExp(createEndsWith(ESCAPED_SLASH));
@@ -28,8 +26,6 @@ const createRouteRegex = (path, exact = false) => {
   return new RegExp(regexString);
 };
 
-const createBaseRouteRegex = path => createRouteRegex(path);
-
 const getParams = (regex, path, loc) => {
   const foundKeys = path.match(regex);
   const foundValues = loc.match(regex);
@@ -46,7 +42,6 @@ const constants = {
   ESCAPED_SLASH,
   CARAT,
   DS,
-  PIPE,
   // constant regular expressions
   ANY_REGEX,
   STARTS_WITH_SLASH,
@@ -58,28 +53,11 @@ const utils = {
   createStartsWith,
   createEndsWith,
   createExact,
-  createOr,
   normalize,
   createInexact,
   // util-fns
   createRouteRegex,
-  createBaseRouteRegex,
   getParams,
 };
 
-class BaseRoute {
-  constructor(path, exact){
-    this.regex = createRouteRegex(path, exact);
-    this.path = path;
-  }
-
-  getParams(pathname) {
-    return getParams(this.regex, this.path, pathname);
-  }
-
-  test(pathname) {
-    return this.regex.test(pathname);
-  }
-}
-
-export { BaseRoute, constants, utils };
+export { constants, utils };

@@ -1,0 +1,30 @@
+{
+  "name": "@internal/routes",
+  "version": "0.0.0",
+  "description": "route lib",
+  "keywords": [
+    "route"
+  ],
+  "author": "msinnes <michael.sinnes@gmail.com>",
+  "homepage": "",
+  "main": "src/index.js",
+  "private": true,
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "scripts": {
+    "lint": "eslint src/",
+    "lint-fix": "eslint src/ --fix",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@internal/is": "^0.0.6-alpha.0",
+    "@internal/oop": "^0.0.4-alpha.0"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/preset-env": "^7.20.2",
+    "@shared/eslint-config": "^0.0.4-alpha.0",
+    "eslint": "^8.33.0"
+  }
+}

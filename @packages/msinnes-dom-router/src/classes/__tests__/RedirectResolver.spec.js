@@ -1,4 +1,4 @@
-import { BaseRoute } from '../BaseRoute';
+import { BaseRoute } from '@internal/routes';
 
 import { RedirectResolver } from '../RedirectResolver';
 

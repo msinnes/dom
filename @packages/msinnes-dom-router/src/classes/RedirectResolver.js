@@ -1,4 +1,4 @@
-import { BaseRoute } from './BaseRoute';
+import { BaseRoute } from '@internal/routes';
 
 class RedirectResolver extends BaseRoute {
   constructor(path, exact, to) {
