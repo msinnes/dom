@@ -1,6 +1,6 @@
 {
   "name": "@internal/routes",
-  "version": "0.0.0",
+  "version": "0.0.9-alpha.0",
   "description": "route lib",
   "keywords": [
     "route"
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@internal/is": "^0.0.6-alpha.0",
-    "@internal/oop": "^0.0.4-alpha.0"
+    "@internal/oop": "^0.0.9-alpha.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",

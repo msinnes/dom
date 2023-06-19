@@ -1,6 +1,6 @@
 {
   "name": "@internal/render",
-  "version": "0.0.6-alpha.0",
+  "version": "0.0.9-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -15,9 +15,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@internal/dom": "^0.0.6-alpha.0",
+    "@internal/dom": "^0.0.9-alpha.0",
     "@internal/is": "^0.0.6-alpha.0",
-    "@internal/oop": "^0.0.4-alpha.0"
+    "@internal/oop": "^0.0.9-alpha.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
