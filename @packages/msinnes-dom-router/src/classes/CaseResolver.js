@@ -1,7 +1,8 @@
 import * as DOM from '@msinnes/dom';
+import { BaseRoute } from '@internal/routes';
+
 import { RouterContext } from '../RouterContext';
 
-import { BaseRoute } from './BaseRoute';
 
 class CaseResolver extends BaseRoute {
   constructor(path, exact, render) {

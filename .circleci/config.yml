@@ -74,7 +74,7 @@ jobs:
           name: Build Packages
       - run:
           name: Set NPM Registry
-          command: npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+          command: yarn config set 'npmRegistries["//registry.npmjs.org"].npmAuthToken' "$NPM_TOKEN"
       - run:
           name: Publish to NPM
           command: yarn package:publish --yes

@@ -1,5 +1,6 @@
+import { BaseRoute } from '@internal/routes';
+
 import { RouterContext } from '../../RouterContext';
-import { BaseRoute } from '../BaseRoute';
 
 import { CaseResolver } from '../CaseResolver';
 
