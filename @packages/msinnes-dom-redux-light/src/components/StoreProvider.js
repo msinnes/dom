@@ -1,8 +1,8 @@
 import * as Dom from '@msinnes/dom';
 
-import { storeContext } from '../storeContext';
+import { StoreContext } from '../StoreContext';
 
-const Provider = storeContext.Provider;
+const Provider = StoreContext.Provider;
 
 class StoreProvider extends Dom.Component {
   constructor(props) {

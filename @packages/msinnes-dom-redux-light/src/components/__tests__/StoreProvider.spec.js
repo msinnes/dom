@@ -1,6 +1,6 @@
 import { Component } from '@msinnes/dom';
 
-import { storeContext } from '../../storeContext';
+import { StoreContext } from '../../StoreContext';
 
 import { StoreProvider } from '../StoreProvider';
 
@@ -65,7 +65,7 @@ describe('StoreProvider', () => {
 
       it('should return a provider wrapping props.children', () => {
         const render = instance.render();
-        expect(render.signature).toBe(storeContext.Provider);
+        expect(render.signature).toBe(StoreContext.Provider);
         expect(render.children[0]).toBe(childRef);
       });
     });

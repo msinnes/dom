@@ -1,6 +1,6 @@
 import * as Dom from '@msinnes/dom';
 
-import { storeContext } from '../storeContext';
+import { StoreContext } from '../StoreContext';
 
 const defaultMergeProps = (stateProps, dispatchProps, ownProps) => {
   return { ...ownProps, ...stateProps, ...dispatchProps };
@@ -9,7 +9,7 @@ const defaultMergeProps = (stateProps, dispatchProps, ownProps) => {
 const connect = (mapStateToProps, mapDispatchToProps, mergeProps = defaultMergeProps) => component => props => {
   const { children, ...ownProps } = props;
 
-  const appStore = Dom.useContext(storeContext);
+  const appStore = Dom.useContext(StoreContext);
 
   if (!appStore) throw new Error('ImplementationError: connected components require a configured store in the component tree.');
 
