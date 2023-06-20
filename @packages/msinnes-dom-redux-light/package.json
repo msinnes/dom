@@ -1,6 +1,6 @@
 {
   "name": "@msinnes/dom-redux-light",
-  "version": "0.0.12-alpha.0",
+  "version": "0.0.13-alpha.0",
   "description": "A redux implementation for use in @msinnes/dom applications.",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "https://github.com/msinnes/dom/@packages/msinnes-dom-redux-light/#readme",
