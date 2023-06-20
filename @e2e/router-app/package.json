@@ -1,6 +1,6 @@
 {
   "name": "@e2e/router-app",
-  "version": "0.0.11-alpha.0",
+  "version": "0.0.12-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@msinnes/dom": "^0.0.9-alpha.0",
-    "@msinnes/dom-router": "^0.0.11-alpha.0",
+    "@msinnes/dom-router": "^0.0.12-alpha.0",
     "classnames": "^2.3.2"
   }
 }
