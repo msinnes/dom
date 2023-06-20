@@ -3,6 +3,7 @@ import * as DOM from '@msinnes/dom';
 import {
   useStore,
   useDispatch,
+  useSelector,
 } from '../hooks';
 
 import { StoreContext } from '../StoreContext';
@@ -46,6 +47,29 @@ describe('hooks', () => {
       DOM.useContext = useContextMock;
       useContextMock.mockReturnValue(store);
       expect(useDispatch()).toBe(store.dispatch);
+      expect(useContextMock).toHaveBeenCalledTimes(1);
+      expect(useContextMock).toHaveBeenCalledWith(StoreContext);
+      DOM.useContext = useContext;
+    });
+  });
+
+  describe('useSelector', () => {
+    let useContextMock;
+    beforeEach(() => {
+      useContextMock = jest.fn();
+    });
+
+    it('should be a function', () => {
+      expect(useSelector).toBeInstanceOf(Function);
+    });
+
+    it('should return the response of DOM.useContext', () => {
+      const mockState = {};
+      const store = { dispatch: () => {}, getState: () => mockState };
+      const useContext = DOM.useContext;
+      DOM.useContext = useContextMock;
+      useContextMock.mockReturnValue(store);
+      expect(useSelector(state => state)).toBe(store.getState());
       expect(useContextMock).toHaveBeenCalledTimes(1);
       expect(useContextMock).toHaveBeenCalledWith(StoreContext);
       DOM.useContext = useContext;

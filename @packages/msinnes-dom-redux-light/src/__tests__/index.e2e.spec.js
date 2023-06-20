@@ -259,7 +259,53 @@ describe('e2e', () => {
       screen = render(storeRender);
     });
 
-    it('should render the default cound', () => {
+    it('should render the default count', () => {
+      expect(screen.container.innerHTML).toEqual('<div><div>count: 0</div><div><button>Click</button></div></div>');
+    });
+
+    it('should increment the count', () => {
+      screen.getByRole('button').click();
+      expect(screen.container.innerHTML).toEqual('<div><div>count: 1</div><div><button>Click</button></div></div>');
+    });
+  });
+
+  describe('useDispatch and useSelector test app', () => {
+    const incrementAction = () => ({
+      type: 'INCREMENT',
+    });
+
+    const incrementReducer = (action, state = 0) => {
+      if (action.type === 'INCREMENT') return state + 1;
+      return state;
+    };
+
+    const UseHooksComponent = () => {
+      const dispatch = api.useDispatch();
+      const state = api.useSelector(state => state);
+
+      const onButtonClick = () => {
+        dispatch(incrementAction());
+      };
+
+      return DOM.createElement('div', {}, [
+        DOM.createElement('div', {}, [
+          `count: ${state}`,
+        ]),
+        DOM.createElement('div', {}, [
+          DOM.createElement('button', { onclick: onButtonClick }, ['Click']),
+        ]),
+      ]);
+    };
+
+    const store = api.createStore(incrementReducer);
+    const storeRender = DOM.createElement(api.StoreProvider, { store }, [DOM.createElement(UseHooksComponent)]);
+
+    let screen;
+    beforeEach(() => {
+      screen = render(storeRender);
+    });
+
+    it('should render the default count', () => {
       expect(screen.container.innerHTML).toEqual('<div><div>count: 0</div><div><button>Click</button></div></div>');
     });
 
