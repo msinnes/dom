@@ -5,7 +5,7 @@
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "https://github.com/msinnes/dom/@packages/msinnes-dom-testing-library/#readme",
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "files": [
     "dist/*"
   ],
