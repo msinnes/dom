@@ -67,12 +67,6 @@ jobs:
       - run:
           command: git checkout master
           name: Checkout Master Branch
-      - run:
-          command: git config user.email "michael.sinnes@gmail.com"
-          name: Add Git Email
-      - run:
-          command: git config user.name "msinnes - CI"
-          name: Add Git Name
       - node/install-packages:
           pkg-manager: yarn
       - run:
