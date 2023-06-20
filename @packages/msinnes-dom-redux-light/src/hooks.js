@@ -4,4 +4,6 @@ import { StoreContext } from './StoreContext';
 
 const useStore = () => DOM.useContext(StoreContext);
 
-export { useStore };
+const useDispatch = () => useStore().dispatch;
+
+export { useStore, useDispatch };
