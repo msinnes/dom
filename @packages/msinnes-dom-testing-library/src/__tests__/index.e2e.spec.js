@@ -2,7 +2,6 @@
 import { render } from '..';
 
 import * as Dom from '@msinnes/dom';
-import { connect, createStore, StoreProvider } from '@msinnes/dom-redux-light';
 
 
 describe('render.e2e', () => {
@@ -977,32 +976,17 @@ describe('timers', () => {
 
 describe('fetch', () => {
   const getName = () => fetch('url', { body: { name: 'name' } });
-  const setNameAction = name => {
-      return ({
-        type: 'SET_NAME',
-        name,
-      });
-  };
 
-  const reducer = (action, state = '') => {
-    if (action.type = 'SET_NAME') return action.name;
-    return state;
-  };
-
-  const Name = ({ name, setName }) => {
+  const Name = () => {
+    const [name, setName] = Dom.useState();
     Dom.useEffect(() => {
-      getName().then(data => data.text()).then(name => setName(name));
+      if (!name) getName().then(data => data.text()).then(name => setName(name));
     }, []);
     return name && name.length ? name : 'no name';
   };
-  const ConnectedName = connect(state => ({
-    name: state,
-  }), dispatch => ({
-    setName: name => dispatch(setNameAction(name)),
-  }))(Name);
 
   const App = () => {
-    return Dom.createElement(ConnectedName);
+    return Dom.createElement(Name);
   };
 
   it('should process a fetch request', () => {
@@ -1012,10 +996,7 @@ describe('fetch', () => {
         res.close();
       },
     };
-    const store = createStore(reducer);
-    const screen = render(Dom.createElement(StoreProvider, { store }, [
-      Dom.createElement(App),
-    ]), config);
+    const screen = render(Dom.createElement(App), config);
     expect(screen.container.innerHTML).toEqual('name');
   });
 
@@ -1027,10 +1008,7 @@ describe('fetch', () => {
         res.close();
       },
     };
-    const store = createStore(reducer);
-    const screen = render(Dom.createElement(StoreProvider, { store }, [
-      Dom.createElement(App),
-    ]), config);
+    const screen = render(Dom.createElement(App), config);
     expect(screen.container.innerHTML).toEqual('name');
   });
 
@@ -1042,10 +1020,7 @@ describe('fetch', () => {
         res.text(req.config.body.name);
       },
     };
-    const store = createStore(reducer);
-    const screen = render(Dom.createElement(StoreProvider, { store }, [
-      Dom.createElement(App),
-    ]), config);
+    const screen = render(Dom.createElement(App), config);
     expect(screen.container.innerHTML).toEqual('no name');
   });
 
@@ -1058,10 +1033,7 @@ describe('fetch', () => {
         res.close();
       },
     };
-    const store = createStore(reducer);
-    const screen = render(Dom.createElement(StoreProvider, { store }, [
-      Dom.createElement(App),
-    ]), config);
+    const screen = render(Dom.createElement(App), config);
     expect(screen.container.innerHTML).toEqual('no name');
     screen.fetch.next();
     expect(screen.container.innerHTML).toEqual('name');
@@ -1076,10 +1048,7 @@ describe('fetch', () => {
         res.close();
       },
     };
-    const store = createStore(reducer);
-    const screen = render(Dom.createElement(StoreProvider, { store }, [
-      Dom.createElement(App),
-    ]), config);
+    const screen = render(Dom.createElement(App), config);
     expect(screen.container.innerHTML).toEqual('no name');
     screen.fetch.run();
     expect(screen.container.innerHTML).toEqual('name');
@@ -1097,10 +1066,7 @@ describe('fetch', () => {
         });
       },
     };
-    const store = createStore(reducer);
-    const screen = render(Dom.createElement(StoreProvider, { store }, [
-      Dom.createElement(App),
-    ]), config);
+    const screen = render(Dom.createElement(App), config);
     expect(screen.container.innerHTML).toEqual('no name');
     screen.fetch.run();
     expect(screen.container.innerHTML).toEqual('no name');

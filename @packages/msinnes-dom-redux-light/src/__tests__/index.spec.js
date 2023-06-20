@@ -4,7 +4,7 @@ import { StoreProvider } from '../components/StoreProvider';
 import { connect } from '../components/connect';
 import { createStore } from '../fns/createStore';
 import { combineReducers } from '../fns/combineReducers';
-import { useStore } from '../hooks';
+import { useStore, useDispatch } from '../hooks';
 
 describe('api', () => {
   it('should expose the correct items', () => {
@@ -16,5 +16,6 @@ describe('api', () => {
 
   it('should expose hooks', () => {
     expect(api.useStore).toBe(useStore);
+    expect(api.useDispatch).toBe(useDispatch);
   });
 });
