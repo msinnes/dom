@@ -1,6 +1,6 @@
 {
   "name": "@msinnes/dom-server",
-  "version": "0.0.10-alpha.0",
+  "version": "0.0.11-alpha.0",
   "description": "Server rendering library for @msinnes/dom applications.",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "https://github.com/msinnes/dom/@packages/msinnes-dom-server/#readme",
@@ -38,7 +38,7 @@
     "@internal/ssr": "^0.0.9-alpha.0",
     "@internal/utils": "^0.0.4-alpha.0",
     "@msinnes/dom": "^0.0.9-alpha.0",
-    "@msinnes/dom-redux-light": "^0.0.10-alpha.0",
+    "@msinnes/dom-redux-light": "^0.0.11-alpha.0",
     "@rollup/plugin-node-resolve": "^14.1.0",
     "@shared/eslint-config": "^0.0.4-alpha.0",
     "@shared/json": "^0.0.4-alpha.0",
