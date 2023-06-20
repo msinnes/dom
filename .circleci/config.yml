@@ -80,6 +80,9 @@ jobs:
           name: Build Packages
       - run:
           name: Set NPM Registry
+          command: yarn config set registry https://registry.npmjs.org
+      - run:
+          name: Set NPM Registry Token
           command: yarn config set 'npmRegistries["//registry.npmjs.org"].npmAuthToken' "$NPM_TOKEN"
       - run:
           name: Publish to NPM
