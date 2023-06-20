@@ -6,4 +6,6 @@ const useStore = () => DOM.useContext(StoreContext);
 
 const useDispatch = () => useStore().dispatch;
 
-export { useStore, useDispatch };
+const useSelector = fn => fn(useStore().getState());
+
+export { useStore, useDispatch, useSelector };
