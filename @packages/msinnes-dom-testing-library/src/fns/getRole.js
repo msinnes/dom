@@ -1,5 +1,9 @@
 import { isFunction } from '@internal/is';
 
+/**
+ * Mappings based on documentation at https://w3.org/TR/html-aria/
+ */
+
 const linkLike = elem => !!elem.href ? 'link' : 'generic';
 
 const isDescendantOf = (elem, cb) => {
