@@ -42,29 +42,42 @@ const parentWithGridOrTreegridRole = elem => isDescendantOf(elem, parent => pare
 const TagToRoleMap = {
   // a
   a: linkLike,
+  abbr: undefined,
+  address: 'group',
   area: linkLike,
   article: 'article',
   aside: 'complementary',
+  audio: undefined,
   // b
   b: 'generic',
+  base: undefined,
   bdi: 'generic',
   bdo: 'generic',
   blockquote: 'blockquote',
   body: 'generic',
+  br: undefined,
   button: 'button',
   // c
+  canvas: undefined,
   caption: 'caption',
+  cite: undefined,
   code: 'code',
+  col: undefined,
+  colgroup: undefined,
   // d
   data: 'generic',
   datalist: 'listbox',
+  dd: undefined,
   del: 'deletion',
   details: 'group',
   dfn: 'term',
   dialog: 'dialog',
   div: 'generic',
+  dl: undefined,
+  dt: undefined,
   // e
   em: 'emphasis',
+  embed: undefined,
   // f
   fieldset: 'group',
   figure: 'figure',

@@ -20,11 +20,20 @@ describe('getRole', () => {
   });
 });
 
+// checked in 0.0.12-alpha.0
 describe('TagToRoleMap', () => {
   it('should support <a>', () => {
     expect(TagToRoleMap.a).toBeInstanceOf(Function);
     expect(TagToRoleMap.a({ href: 'href' })).toEqual('link');
     expect(TagToRoleMap.a({})).toEqual('generic');
+  });
+
+  it('should support <abbr>', () => {
+    expect(TagToRoleMap.abbr).toBeUndefined();
+  });
+
+  it('should support <address>', () => {
+    expect(TagToRoleMap.address).toEqual('group');
   });
 
   it('should support <area>', () => {
@@ -41,8 +50,16 @@ describe('TagToRoleMap', () => {
     expect(TagToRoleMap.aside).toEqual('complementary');
   });
 
+  it('should support <audio>', () => {
+    expect(TagToRoleMap.audio).toBeUndefined();
+  });
+
   it('should support <b>', () => {
     expect(TagToRoleMap.b).toEqual('generic');
+  });
+
+  it('should support <base>', () => {
+    expect(TagToRoleMap.audio).toBeUndefined();
   });
 
   it('should support <bdi>', () => {
@@ -61,16 +78,36 @@ describe('TagToRoleMap', () => {
     expect(TagToRoleMap.body).toEqual('generic');
   });
 
+  it('should suppport <br>', () => {
+    expect(TagToRoleMap.br).toBeUndefined();
+  });
+
   it('should support <button>', () => {
     expect(TagToRoleMap.button).toEqual('button');
+  });
+
+  it('should suppport <canvas>', () => {
+    expect(TagToRoleMap.canvas).toBeUndefined();
   });
 
   it('should support <caption>', () => {
     expect(TagToRoleMap.caption).toEqual('caption');
   });
 
+  it('should suppport <cite>', () => {
+    expect(TagToRoleMap.cite).toBeUndefined();
+  });
+
   it('should support <code>', () => {
     expect(TagToRoleMap.code).toEqual('code');
+  });
+
+  it('should suppport <col>', () => {
+    expect(TagToRoleMap.col).toBeUndefined();
+  });
+
+  it('should suppport <colgroup>', () => {
+    expect(TagToRoleMap.colgroup).toBeUndefined();
   });
 
   it('should support <data>', () => {
@@ -79,6 +116,10 @@ describe('TagToRoleMap', () => {
 
   it('should support <datalist>', () => {
     expect(TagToRoleMap.datalist).toEqual('listbox');
+  });
+
+  it('should suppport <dd>', () => {
+    expect(TagToRoleMap.dd).toBeUndefined();
   });
 
   it('should support <del>', () => {
@@ -101,10 +142,23 @@ describe('TagToRoleMap', () => {
     expect(TagToRoleMap.div).toEqual('generic');
   });
 
+  it('should suppport <dl>', () => {
+    expect(TagToRoleMap.dl).toBeUndefined();
+  });
+
+  it('should suppport <dt>', () => {
+    expect(TagToRoleMap.dt).toBeUndefined();
+  });
+
   it('should support <em>', () => {
     expect(TagToRoleMap.em).toEqual('emphasis');
   });
 
+  it('should suppport <embed>', () => {
+    expect(TagToRoleMap.embed).toBeUndefined();
+  });
+
+  // checked in 0.0.12-alpha.0
   it('should support <fieldset>', () => {
     expect(TagToRoleMap.fieldset).toEqual('group');
   });
