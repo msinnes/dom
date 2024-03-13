@@ -18,7 +18,7 @@ describe('getRole', () => {
 
   it('should lookup the lowercase of an element tag and return the execution of a function if the entry is a function', () => {
     const mockElem = createElement('header');
-    expect(getRole(mockElem)).toEqual('generic');
+    expect(getRole(mockElem)).toEqual('contentinfo');
   });
 
   it('should return whatever was found on tag to role map if it is not a function', () => {
@@ -253,99 +253,64 @@ describe('TagToRoleMap', () => {
     expect(TagToRoleMap.figure).toEqual('figure');
   });
 
-  // TODO: do this after running through the string and undefined values
   describe('should support <footer>', () => {
     it('should be a function', () => {
       expect(TagToRoleMap.footer).toBeInstanceOf(Function);
     });
 
-    it('should return contentinfo if parent is an article, aside, main, nav or section element', () => {
-      let elem = {
-        parent: {
-          tagName: 'div',
-          parent: {
-            tagName: 'article',
-          },
-        },
-      };
-      expect(TagToRoleMap.footer(elem)).toEqual('contentinfo');
-      elem = {
-        parent: {
-          tagName: 'aside',
-        },
-      };
-      expect(TagToRoleMap.footer(elem)).toEqual('contentinfo');
-      elem = {
-        parent: {
-          tagName: 'main',
-        },
-      };
-      expect(TagToRoleMap.footer(elem)).toEqual('contentinfo');
-      elem = {
-        parent: {
-          tagName: 'nav',
-        },
-      };
-      expect(TagToRoleMap.footer(elem)).toEqual('contentinfo');
-      elem = {
-        parent: {
-          tagName: 'div',
-          parent: {
-            tagName: 'section',
-          },
-        },
-      };
-      expect(TagToRoleMap.footer(elem)).toEqual('contentinfo');
+    it('should return generic if elem is a child of article, aside, main, nav or section element', () => {
+      let elem = createElement('footer');
+      let parent = createElement('article');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.footer(elem)).toEqual('generic');
+      elem = createElement('footer');
+      parent = createElement('aside');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.footer(elem)).toEqual('generic');
+      elem = createElement('footer');
+      parent = createElement('main');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.footer(elem)).toEqual('generic');
+      elem = createElement('footer');
+      parent = createElement('nav');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.footer(elem)).toEqual('generic');
+      elem = createElement('footer');
+      parent = createElement('section');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.footer(elem)).toEqual('generic');
     });
 
-    it('should return contentinfo if parent has an article, complementary, main, navigation, or region role', () => {
-      let elem = {
-        parent: {
-          role: 'generic',
-          tagName: 'div',
-          parent: {
-            role: 'article',
-            tagName: 'div',
-          },
-        },
-      };
-      expect(TagToRoleMap.footer(elem)).toEqual('contentinfo');
-      elem = {
-        parent: {
-          tagName: 'div',
-          role: 'complementary',
-        },
-      };
-      expect(TagToRoleMap.footer(elem)).toEqual('contentinfo');
-      elem = {
-        parent: {
-          tagName: 'div',
-          role: 'main',
-        },
-      };
-      expect(TagToRoleMap.footer(elem)).toEqual('contentinfo');
-      elem = {
-        parent: {
-          tagName: 'div',
-          role: 'navigation',
-        },
-      };
-      expect(TagToRoleMap.footer(elem)).toEqual('contentinfo');
-      elem = {
-        parent: {
-          role: 'generic',
-          tagName: 'div',
-          parent: {
-            role: 'region',
-            tagName: 'div',
-          },
-        },
-      };
-      expect(TagToRoleMap.footer(elem)).toEqual('contentinfo');
+    it('should return generic if elem is a child of an elment with article, complementary, main, navigation, or region role', () => {
+      let elem = createElement('footer');
+      let parent = createElement('div');
+      parent.role = 'article';
+      parent.appendChild(elem);
+      expect(TagToRoleMap.footer(elem)).toEqual('generic');
+      elem = createElement('footer');
+      parent = createElement('div');
+      parent.role = 'complementary';
+      parent.appendChild(elem);
+      expect(TagToRoleMap.footer(elem)).toEqual('generic');
+      elem = createElement('footer');
+      parent = createElement('div');
+      parent.role = 'main';
+      parent.appendChild(elem);
+      expect(TagToRoleMap.footer(elem)).toEqual('generic');
+      elem = createElement('footer');
+      parent = createElement('div');
+      parent.role = 'navigation';
+      parent.appendChild(elem);
+      expect(TagToRoleMap.footer(elem)).toEqual('generic');
+      elem = createElement('footer');
+      parent = createElement('div');
+      parent.role = 'region';
+      parent.appendChild(elem);
+      expect(TagToRoleMap.footer(elem)).toEqual('generic');
     });
 
-    it('should return generic by default', () => {
-      expect(TagToRoleMap.footer({})).toEqual('generic');
+    it('should return contentinfo by default', () => {
+      expect(TagToRoleMap.footer(createElement('footer'))).toEqual('contentinfo');
     });
   });
 
@@ -381,99 +346,64 @@ describe('TagToRoleMap', () => {
     expect(TagToRoleMap.head).toBeUndefined();
   });
 
-  // TODO: do this after running through the string and undefined values
   describe('should support <header>', () => {
     it('should be a function', () => {
       expect(TagToRoleMap.header).toBeInstanceOf(Function);
     });
 
-    it('should return banner if parent is an article, aside, main, nav or section element', () => {
-      let elem = {
-        parent: {
-          tagName: 'div',
-          parent: {
-            tagName: 'article',
-          },
-        },
-      };
-      expect(TagToRoleMap.header(elem)).toEqual('banner');
-      elem = {
-        parent: {
-          tagName: 'aside',
-        },
-      };
-      expect(TagToRoleMap.header(elem)).toEqual('banner');
-      elem = {
-        parent: {
-          tagName: 'main',
-        },
-      };
-      expect(TagToRoleMap.header(elem)).toEqual('banner');
-      elem = {
-        parent: {
-          tagName: 'nav',
-        },
-      };
-      expect(TagToRoleMap.header(elem)).toEqual('banner');
-      elem = {
-        parent: {
-          tagName: 'div',
-          parent: {
-            tagName: 'section',
-          },
-        },
-      };
-      expect(TagToRoleMap.header(elem)).toEqual('banner');
+    it('should return generic if elem is a child of article, aside, main, nav or section element', () => {
+      let elem = createElement('header');
+      let parent = createElement('article');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.header(elem)).toEqual('generic');
+      elem = createElement('header');
+      parent = createElement('aside');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.header(elem)).toEqual('generic');
+      elem = createElement('header');
+      parent = createElement('main');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.header(elem)).toEqual('generic');
+      elem = createElement('header');
+      parent = createElement('nav');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.header(elem)).toEqual('generic');
+      elem = createElement('header');
+      parent = createElement('section');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.header(elem)).toEqual('generic');
     });
 
-    it('should return banner if parent has an article, complementary, main, navigation, or region role', () => {
-      let elem = {
-        parent: {
-          role: 'generic',
-          tagName: 'div',
-          parent: {
-            role: 'article',
-            tagName: 'div',
-          },
-        },
-      };
-      expect(TagToRoleMap.header(elem)).toEqual('banner');
-      elem = {
-        parent: {
-          tagName: 'div',
-          role: 'complementary',
-        },
-      };
-      expect(TagToRoleMap.header(elem)).toEqual('banner');
-      elem = {
-        parent: {
-          tagName: 'div',
-          role: 'main',
-        },
-      };
-      expect(TagToRoleMap.header(elem)).toEqual('banner');
-      elem = {
-        parent: {
-          tagName: 'div',
-          role: 'navigation',
-        },
-      };
-      expect(TagToRoleMap.header(elem)).toEqual('banner');
-      elem = {
-        parent: {
-          role: 'generic',
-          tagName: 'div',
-          parent: {
-            role: 'region',
-            tagName: 'div',
-          },
-        },
-      };
-      expect(TagToRoleMap.header(elem)).toEqual('banner');
+    it('should return generic if elem is a child of an elment with article, complementary, main, navigation, or region role', () => {
+      let elem = createElement('header');
+      let parent = createElement('div');
+      parent.role = 'article';
+      parent.appendChild(elem);
+      expect(TagToRoleMap.header(elem)).toEqual('generic');
+      elem = createElement('header');
+      parent = createElement('div');
+      parent.role = 'complementary';
+      parent.appendChild(elem);
+      expect(TagToRoleMap.header(elem)).toEqual('generic');
+      elem = createElement('header');
+      parent = createElement('div');
+      parent.role = 'main';
+      parent.appendChild(elem);
+      expect(TagToRoleMap.header(elem)).toEqual('generic');
+      elem = createElement('header');
+      parent = createElement('div');
+      parent.role = 'navigation';
+      parent.appendChild(elem);
+      expect(TagToRoleMap.header(elem)).toEqual('generic');
+      elem = createElement('header');
+      parent = createElement('div');
+      parent.role = 'region';
+      parent.appendChild(elem);
+      expect(TagToRoleMap.header(elem)).toEqual('generic');
     });
 
-    it('should return generic by default', () => {
-      expect(TagToRoleMap.header({})).toEqual('generic');
+    it('should return contentinfo by default', () => {
+      expect(TagToRoleMap.header(createElement('header'))).toEqual('contentinfo');
     });
   });
 
@@ -775,38 +705,42 @@ describe('TagToRoleMap', () => {
     expect(TagToRoleMap.optgroup).toEqual('group');
   });
 
-  // Should return if parent role is list, or if parent role is listbox
-  // ol, ul, menu, datalist, select
-  // TODO: do this after running through the string and undefined values
   describe('should support <option>', () => {
     it('should be a function', () => {
       expect(TagToRoleMap.option).toBeInstanceOf(Function);
     });
 
+    it('should return option if elem is a child of parent with list role (ol, ul, menu)', () => {
+      let elem = createElement('option');
+      let parent = createElement('ol');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.option(elem)).toEqual('option');
+      elem = createElement('option');
+      parent = createElement('ul');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.option(elem)).toEqual('option');
+      elem = createElement('option');
+      parent = createElement('menu');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.option(elem)).toEqual('option');
+    });
+
     it('should return option if the option is a child of select', () => {
-      expect(TagToRoleMap.option({ parent: {
-        tagName: 'SELECT',
-      } })).toEqual('option');
-      expect(TagToRoleMap.option({ parent: {
-        tagName: 'DIV',
-        parent: {
-          tagName: 'SELECT',
-        },
-      } })).toEqual('option');
-      expect(TagToRoleMap.option({})).toBeUndefined();
+      let elem = createElement('option');
+      let parent = createElement('select');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.option(elem)).toEqual('option');
     });
 
     it('should return option if the option is a child of datalist', () => {
-      expect(TagToRoleMap.option({ parent: {
-        tagName: 'DATALIST',
-      } })).toEqual('option');
-      expect(TagToRoleMap.option({ parent: {
-        tagName: 'DIV',
-        parent: {
-          tagName: 'DATALIST',
-        },
-      } })).toEqual('option');
-      expect(TagToRoleMap.option({})).toBeUndefined();
+      let elem = createElement('option');
+      let parent = createElement('datalist');
+      parent.appendChild(elem);
+      expect(TagToRoleMap.option(elem)).toEqual('option');
+    });
+
+    it('should return nothing otherwise', () => {
+      expect(TagToRoleMap.option(createElement('options'))).toBeUndefined();
     });
   });
 
@@ -871,16 +805,17 @@ describe('TagToRoleMap', () => {
       expect(TagToRoleMap.section).toBeInstanceOf(Function);
     });
 
-    it('should return region if element has aria-label', () => {
-      expect(TagToRoleMap.section({ ariaLabel: 'label' })).toEqual('region');
-      expect(TagToRoleMap.section({ ariaLabel: '' })).toBeUndefined();
-      expect(TagToRoleMap.section({})).toBeUndefined();
+    it('should return region if the section has an accessible name', () => {
+      const elem = createElement('section');
+      elem.name = 'name';
+      expect(TagToRoleMap.section(elem)).toEqual('region');
     });
 
-    it('should return region if element has textContent', () => {
-      expect(TagToRoleMap.section({ textContent: 'label' })).toEqual('region');
-      expect(TagToRoleMap.section({ textContent: '' })).toBeUndefined();
-      expect(TagToRoleMap.section({})).toBeUndefined();
+    it('should return generic if there is no accessible name', () => {
+      const elem = createElement('section');
+      expect(TagToRoleMap.section(elem)).toEqual('generic');
+      elem.name = '';
+      expect(TagToRoleMap.section(elem)).toEqual('generic');
     });
   });
 
@@ -890,13 +825,19 @@ describe('TagToRoleMap', () => {
     });
 
     it('should return combobox if element has no multiple attr or size is no greater than 1', () => {
-      expect(TagToRoleMap.select({})).toEqual('combobox');
-      expect(TagToRoleMap.select({ size: 1 })).toEqual('combobox');
+      const elem = createElement('select');
+      expect(TagToRoleMap.select(elem)).toEqual('combobox');
+      elem.size = 1;
+      expect(TagToRoleMap.select(elem)).toEqual('combobox');
     });
 
     it('should return listbox if element has multiple attr or size is greater than 1', () => {
-      expect(TagToRoleMap.select({ multiple: true })).toEqual('listbox');
-      expect(TagToRoleMap.select({ size: 2 })).toEqual('listbox');
+      let elem = createElement('select');
+      elem.multiple = true;
+      expect(TagToRoleMap.select(elem)).toEqual('listbox');
+      elem = createElement('select');
+      elem.size = 2;
+      expect(TagToRoleMap.select(elem)).toEqual('listbox');
     });
   });
 
@@ -948,36 +889,41 @@ describe('TagToRoleMap', () => {
     expect(TagToRoleMap.tbody).toEqual('rowgroup');
   });
 
-  // TODO: do this after running through the string and undefined values
+
   describe('should support <td>', () => {
     it('should be a function', () => {
       expect(TagToRoleMap.td).toBeInstanceOf(Function);
     });
 
-    it('should return cell if isDescendantOf table with table role', () => {
-      expect(TagToRoleMap.td({ parent: {
-        role: 'table',
-      }})).toEqual('cell');
-      expect(TagToRoleMap.td({ parent: {
-        role: 'row',
-        parent: {
-          role: 'table',
-        },
-      }})).toEqual('cell');
-      expect(TagToRoleMap.td({})).toBeUndefined();
+    it('should return cell if child of table with table role', () => {
+      const elem = createElement('td');
+      const row = createElement('tr');
+      const table = createElement('table');
+      table.appendChild(row);
+      row.appendChild(elem);
+      expect(TagToRoleMap.td(elem)).toEqual('cell');
     });
 
     it('should return gridcell if isDescendantOf table with table role', () => {
-      expect(TagToRoleMap.td({ parent: {
-        role: 'grid',
-      }})).toEqual('gridcell');
-      expect(TagToRoleMap.td({ parent: {
-        role: 'row',
-        parent: {
-          role: 'treegrid',
-        },
-      }})).toEqual('gridcell');
-      expect(TagToRoleMap.td({})).toBeUndefined();
+      const elem = createElement('td');
+      const row = createElement('tr');
+      const table = createElement('table');
+      table.appendChild(row);
+      row.appendChild(elem);
+      table.role = 'grid';
+      expect(TagToRoleMap.td(elem)).toEqual('gridcell');
+      table.role = 'treegrid';
+      expect(TagToRoleMap.td(elem)).toEqual('gridcell');
+    });
+
+    it('should not have a role if table does not have table, grid, or gridcell role', () => {
+      const elem = createElement('td');
+      const row = createElement('tr');
+      const table = createElement('table');
+      table.appendChild(row);
+      row.appendChild(elem);
+      table.role = 'not a table';
+      expect(TagToRoleMap.td(elem)).toBeUndefined();
     });
   });
 
@@ -993,37 +939,41 @@ describe('TagToRoleMap', () => {
     expect(TagToRoleMap.tfoot).toEqual('rowgroup');
   });
 
-  // TODO: do this after running through the string and undefined values
-  // TODO: role calculation of th prop should check whether th is columnheader or rowheader
+  // TODO: role calculation of th prop should include columnheader and rowheader
   describe('should support <th>', () => {
     it('should be a function', () => {
       expect(TagToRoleMap.th).toBeInstanceOf(Function);
     });
 
-    it('should return cell if isDescendantOf table with table role', () => {
-      expect(TagToRoleMap.th({ parent: {
-        role: 'table',
-      }})).toEqual('cell');
-      expect(TagToRoleMap.th({ parent: {
-        role: 'row',
-        parent: {
-          role: 'table',
-        },
-      }})).toEqual('cell');
-      expect(TagToRoleMap.th({})).toBeUndefined();
+    it('should return cell if child of table with table role', () => {
+      const elem = createElement('th');
+      const row = createElement('tr');
+      const table = createElement('table');
+      table.appendChild(row);
+      row.appendChild(elem);
+      expect(TagToRoleMap.th(elem)).toEqual('cell');
     });
 
     it('should return gridcell if isDescendantOf table with table role', () => {
-      expect(TagToRoleMap.th({ parent: {
-        role: 'grid',
-      }})).toEqual('gridcell');
-      expect(TagToRoleMap.th({ parent: {
-        role: 'row',
-        parent: {
-          role: 'treegrid',
-        },
-      }})).toEqual('gridcell');
-      expect(TagToRoleMap.td({})).toBeUndefined();
+      const elem = createElement('th');
+      const row = createElement('tr');
+      const table = createElement('table');
+      table.appendChild(row);
+      row.appendChild(elem);
+      table.role = 'grid';
+      expect(TagToRoleMap.th(elem)).toEqual('gridcell');
+      table.role = 'treegrid';
+      expect(TagToRoleMap.th(elem)).toEqual('gridcell');
+    });
+
+    it('should not have a role if table does not have table, grid, or gridcell role', () => {
+      const elem = createElement('th');
+      const row = createElement('tr');
+      const table = createElement('table');
+      table.appendChild(row);
+      row.appendChild(elem);
+      table.role = 'not a table';
+      expect(TagToRoleMap.th(elem)).toBeUndefined();
     });
   });
 

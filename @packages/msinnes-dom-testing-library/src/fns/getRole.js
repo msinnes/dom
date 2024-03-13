@@ -16,22 +16,14 @@ const checkAncestors = (elem, fn) => {
   return found;
 };
 
-const HEADER_FOOTER_PARENT_TAGS = ['article', 'aside', 'main', 'nav', 'section'];
 const HEADER_FOOTER_PARENT_ROLES = ['article', 'complementary', 'main', 'navigation', 'region'];
 
-const isDescendantOf = (elem, cb) => {
-  let parent = elem.parent;
-  let found = false;
-  while (!found && parent) {
-    found = cb(parent);
-    parent = parent.parent;
-  }
-  return found;
+const headerFooter = elem => {
+  if (checkAncestors(elem, parent =>
+    HEADER_FOOTER_PARENT_ROLES.includes(getRole(parent)) || parent.tagName.toLowerCase() === 'section'
+  )) return 'generic';
+  return 'contentinfo';
 };
-
-const checkHeaderAndFooter = elem => isDescendantOf(elem, parent =>
-  HEADER_FOOTER_PARENT_TAGS.includes(parent.tagName.toLowerCase()) || HEADER_FOOTER_PARENT_ROLES.includes(parent.role)
-);
 
 const INPUT_TYPE_MAP = {
   button: 'button',
@@ -49,8 +41,14 @@ const INPUT_COMBOBOX_TYPES = ['email', 'tel', 'text', 'url'];
 
 const LI_PARENT_TAGS = ['ul', 'ol', 'menu'];
 
-const parentTableWithTableRole = elem => isDescendantOf(elem, parent => parent.role === 'table');
-const parentWithGridOrTreegridRole = elem => isDescendantOf(elem, parent => parent.role === 'grid' || parent.role === 'treegrid');
+const OPTION_PARENT_TAGS = ['datalist', 'select'];
+
+const TABLE_GRIDCELL_ROLES = ['grid', 'treegrid'];
+
+const tdTh = elem => {
+  if (checkAncestors(elem, parent => parent.tagName.toLowerCase() === 'table' && getRole(parent) === 'table')) return 'cell';
+  if (checkAncestors(elem, parent => parent.tagName.toLowerCase() === 'table' && TABLE_GRIDCELL_ROLES.includes(getRole(parent)))) return 'gridcell';
+};
 
 const TagToRoleMap = {
   // a
@@ -95,7 +93,7 @@ const TagToRoleMap = {
   fieldset: 'group',
   figcaption: undefined,
   figure: 'figure',
-  footer: elem => checkHeaderAndFooter(elem) ? 'contentinfo' : 'generic',
+  footer: headerFooter,
   form: 'form',
   // g
   // h
@@ -105,7 +103,7 @@ const TagToRoleMap = {
   h4: 'heading',
   h5: 'heading',
   h6: 'heading',
-  header: elem => checkHeaderAndFooter(elem) ? 'banner' : 'generic',
+  header: headerFooter,
   hgroup: 'group',
   hr: 'separator',
   html: 'document',
@@ -149,10 +147,7 @@ const TagToRoleMap = {
   ol: 'list',
   optgroup: 'group',
   option: elem => {
-    if (isDescendantOf(elem, parent => {
-      const tag = parent.tagName.toLowerCase();
-      return (tag === 'select' || tag === 'datalist');
-    })) return 'option';
+    if (checkAncestors(elem, parent => getRole(parent) === 'list' || OPTION_PARENT_TAGS.includes(parent.tagName.toLowerCase()))) return 'option';
   },
   output: 'status',
   // p
@@ -172,9 +167,7 @@ const TagToRoleMap = {
   samp: 'generic',
   script: undefined,
   search: 'search',
-  section: elem => {
-    if (elem.ariaLabel || elem.textContent) return 'region';
-  },
+  section: elem => elem.name && elem.name.length ? 'region' : 'generic',
   select: elem => {
     if (elem.multiple || (elem.size && elem.size > 1)) return 'listbox';
     return 'combobox';
@@ -193,17 +186,11 @@ const TagToRoleMap = {
   // t
   table: 'table',
   tbody: 'rowgroup',
-  td: elem => {
-    if (parentTableWithTableRole(elem)) return 'cell';
-    if (parentWithGridOrTreegridRole(elem)) return 'gridcell';
-  },
+  td: tdTh,
   template: undefined,
   textarea: 'textbox',
   tfoot: 'rowgroup',
-  th: elem => {
-    if (parentTableWithTableRole(elem)) return 'cell';
-    if (parentWithGridOrTreegridRole(elem)) return 'gridcell';
-  },
+  th: tdTh,
   thead: 'rowgroup',
   time: 'time',
   title: undefined,
