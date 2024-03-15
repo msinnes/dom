@@ -2,9 +2,11 @@ import { abstract } from '@internal/oop';
 
 import { JSXComponent } from './JSXComponent';
 
+// TODO: isSVGComponent will be set to false here
 const DomComponent = abstract(class extends JSXComponent {
   isDomComponent = true;
 
+  // TODO: this should pass isSvgComponent to DomParent constructor
   render() {
     if (this.domParent) this.domParent.increment();
     this.domContext.addValue(new DomParent(this.elem));
@@ -23,6 +25,7 @@ class DomParent {
     return this.node.elem;
   }
 
+  // TODO: should set an isSvgNode prop based on input Boolean value
   constructor(node) {
     this.node = node;
   }

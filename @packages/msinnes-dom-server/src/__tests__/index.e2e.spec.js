@@ -422,3 +422,5 @@ describe('e2e', () => {
     });
   });
 });
+
+// TODO: add e2e tests for svg components

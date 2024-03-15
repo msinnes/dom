@@ -550,3 +550,6 @@ describe('e2e.context', () => {
     expect(document.body.innerHTML).toEqual('<div><span>provided value</span><span>default value</span></div>');
   });
 });
+
+// TODO: add svg e2e tests for all svg elements
+// This needs to run the gambit to make sure that the jsx transpiler is configured to work with svg components

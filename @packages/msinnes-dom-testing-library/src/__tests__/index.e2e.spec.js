@@ -1750,3 +1750,5 @@ describe('fetch', () => {
     expect(screen.container.innerHTML).toEqual('no name');
   });
 });
+
+// TODO: add e2e tests for svg components
