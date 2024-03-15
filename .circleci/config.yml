@@ -48,9 +48,9 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: yarn
-      - add_ssh_keys:
-          fingerprints:
-            - "33:cd:89:d5:2f:9c:02:c6:ca:b5:18:1a:ab:2d:e6:9c"
+      # - add_ssh_keys:
+      #     fingerprints:
+      #       - "33:cd:89:d5:2f:9c:02:c6:ca:b5:18:1a:ab:2d:e6:9c"
       - run:
           command: git config user.email "michael.sinnes@gmail.com"
           name: Add Git Email

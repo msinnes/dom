@@ -48,8 +48,10 @@ class SsrScope extends HookableScope {
     // Top-level DOM scope, also maps other scopes to the document object model where necessary.
     this.append('dom', new DomScope(config.dom, this.time, this.fetch));
 
-    // Setup for ease of use. This body ref will get used for rendering.
-    this.body = new DomRef(this.dom.dom.window.document.body);
+    // Setup for ease of use. These refs are used for rendering and queries.
+    this.window = this.dom.dom.window;
+    this.document = this.window.document;
+    this.body = new DomRef(this.document.body);
     //Hook into fetch to trigger a rerender.
     this.fetch.hook(() => {
       this.trigger();

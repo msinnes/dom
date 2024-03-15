@@ -111,8 +111,9 @@ const TagToRoleMap = {
   i: 'generic',
   iframe: undefined,
   img: elem => {
-    if (typeof elem.alt === 'string' && elem.alt.length === 0) return 'none';
-    return 'img';
+    if (typeof elem.alt === 'string' && elem.alt.length > 0) return 'img';
+    else if (typeof elem.alt === 'string' && elem.alt.length === 0) return 'presentation';
+    else if (!elem.alt) return 'img';
   },
   input: elem => {
     if (INPUT_TYPE_MAP[elem.type]) return INPUT_TYPE_MAP[elem.type];
@@ -182,7 +183,7 @@ const TagToRoleMap = {
   style: undefined,
   summary: undefined,
   sup: 'superscript',
-  SVG: 'graphics-document',
+  svg: 'graphics-document',
   // t
   table: 'table',
   tbody: 'rowgroup',

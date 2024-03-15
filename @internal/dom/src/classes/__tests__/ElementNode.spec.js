@@ -69,6 +69,27 @@ describe('ElementNode', () => {
         // make sure style is not assigned to element
         expect(ObjectAssignMock.mock.calls[1][1].style).toBeUndefined();
       });
+
+      it('should not call Object.assign if there is no style prop', () => {
+        const props = {};
+        instance.update(props);
+        expect(ObjectAssignMock).toHaveBeenCalledTimes(1);
+      });
+
+      it('it should set the list attribute if one is passed', () => {
+        const spy = jest.spyOn(instance.elem, 'setAttribute');
+        const props = { list: 'datalist' };
+        instance.update(props);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith('list', 'datalist');
+      });
+
+      it('should not set the list attribute if one is not passed', () => {
+        const spy = jest.spyOn(instance.elem, 'setAttribute');
+        const props = {};
+        instance.update(props);
+        expect(spy).toHaveBeenCalledTimes(0);
+      });
     });
   });
 });

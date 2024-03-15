@@ -438,17 +438,19 @@ describe('TagToRoleMap', () => {
       expect(TagToRoleMap.img(mockElement)).toEqual('img');
     });
 
+    // TODO: this should return an array on presentation, none
     it('should return presentation if alt is empty text', () => {
       const mockElement = createElement('img');
       mockElement.alt = '';
-      expect(TagToRoleMap.img(mockElement)).toEqual('none');
+      expect(TagToRoleMap.img(mockElement)).toEqual('presentation');
     });
 
-    it('should return img if alt is not present', () => {
-      const mockElement = createElement('img');
-      mockElement.alt = undefined;
-      expect(TagToRoleMap.img(mockElement)).toEqual('img');
-    });
+    // alt cannot be deleted, but this is true from docs
+    // it('should return img if alt is not present', () => {
+    //   const mockElement = createElement('img');
+    //   delete mockElement.alt;
+    //   expect(TagToRoleMap.img(mockElement)).toEqual('img');
+    // });
   });
 
   describe('should support <input>', () => {
@@ -489,9 +491,13 @@ describe('TagToRoleMap', () => {
     it('should return textbox when type is email and list attribute is undefined', () => {
       const mockElement = createElement('input');
       mockElement.type = 'email';
+      const mockList = createElement('datalist');
+      mockList.id = 'datalist-id';
+      document.body.appendChild(mockElement);
+      document.body.appendChild(mockList);
       expect(TagToRoleMap.input(mockElement)).toEqual('textbox');
-      // jsdom has issues setting the list attribute
-      expect(TagToRoleMap.input({ type: 'email', list: true })).toEqual('combobox');
+      mockElement.setAttribute('list', 'datalist-id');
+      expect(TagToRoleMap.input(mockElement)).toEqual('combobox');
     });
 
     it('should return undefined if type is file', () => {
@@ -518,15 +524,15 @@ describe('TagToRoleMap', () => {
       expect(TagToRoleMap.input(mockElement)).toBeUndefined();
     });
 
-    it('should return spinbutton when type is password', () => {
+    it('should return spinbutton when type is number', () => {
       const mockElement = createElement('input');
-      mockElement.type = 'password';
-      expect(TagToRoleMap.input(mockElement)).toBeUndefined();
+      mockElement.type = 'number';
+      expect(TagToRoleMap.input(mockElement)).toEqual('spinbutton');
     });
 
-    it('should return undefined if type is hidden', () => {
+    it('should return undefined when type is password', () => {
       const mockElement = createElement('input');
-      mockElement.type = 'hidden';
+      mockElement.type = 'password';
       expect(TagToRoleMap.input(mockElement)).toBeUndefined();
     });
 
@@ -551,9 +557,13 @@ describe('TagToRoleMap', () => {
     it('should return searchbox when type is search and list attribute is undefined', () => {
       const mockElement = createElement('input');
       mockElement.type = 'search';
+      const mockList = createElement('datalist');
+      mockList.id = 'datalist-id';
+      document.body.appendChild(mockElement);
+      document.body.appendChild(mockList);
       expect(TagToRoleMap.input(mockElement)).toEqual('searchbox');
-      // jsdom has issues setting the list attribute
-      expect(TagToRoleMap.input({ type: 'search', list: true })).toEqual('combobox');
+      mockElement.setAttribute('list', 'datalist-id');
+      expect(TagToRoleMap.input(mockElement)).toEqual('combobox');
     });
 
     it('should return button when type is submit', () => {
@@ -565,16 +575,24 @@ describe('TagToRoleMap', () => {
     it('should return textbox when type is tel and list attribute is undefined', () => {
       const mockElement = createElement('input');
       mockElement.type = 'tel';
+      const mockList = createElement('datalist');
+      mockList.id = 'datalist-id';
+      document.body.appendChild(mockElement);
+      document.body.appendChild(mockList);
       expect(TagToRoleMap.input(mockElement)).toEqual('textbox');
-      // jsdom has issues setting the list attribute
+      mockElement.setAttribute('list', 'datalist-id');
       expect(TagToRoleMap.input({ type: 'tel', list: true })).toEqual('combobox');
     });
 
     it('should return textbox when type is text and list attribute is undefined', () => {
       const mockElement = createElement('input');
       mockElement.type = 'text';
+      const mockList = createElement('datalist');
+      mockList.id = 'datalist-id';
+      document.body.appendChild(mockElement);
+      document.body.appendChild(mockList);
       expect(TagToRoleMap.input(mockElement)).toEqual('textbox');
-      // jsdom has issues setting the list attribute
+      mockElement.setAttribute('list', 'datalist-id');
       expect(TagToRoleMap.input({ type: 'text', list: true })).toEqual('combobox');
     });
 
@@ -587,8 +605,12 @@ describe('TagToRoleMap', () => {
     it('should return textbox when type is url and list attribute is undefined', () => {
       const mockElement = createElement('input');
       mockElement.type = 'url';
+      const mockList = createElement('datalist');
+      mockList.id = 'datalist-id';
+      document.body.appendChild(mockElement);
+      document.body.appendChild(mockList);
       expect(TagToRoleMap.input(mockElement)).toEqual('textbox');
-      // jsdom has issues setting the list attribute
+      mockElement.setAttribute('list', 'datalist-id');
       expect(TagToRoleMap.input({ type: 'url', list: true })).toEqual('combobox');
     });
 
@@ -878,7 +900,7 @@ describe('TagToRoleMap', () => {
   });
 
   it('should support <SVG>', () => {
-    expect(TagToRoleMap.SVG).toEqual('graphics-document');
+    expect(TagToRoleMap.svg).toEqual('graphics-document');
   });
 
   it('should support <table>', () => {
