@@ -59,6 +59,14 @@ describe('SsrScope', () => {
       expect(instance.fetch).toBeInstanceOf(FetchScope);
     });
 
+    it('should expose the window object on a body getter', () => {
+      expect(instance.window).toBe(instance.dom.dom.window);
+    });
+
+    it('should expose the document object on a body getter', () => {
+      expect(instance.document).toBe(instance.dom.dom.window.document);
+    });
+
     it('should expose the body element on a body getter', () => {
       expect(instance.body.elem).toBe(instance.dom.dom.window.document.body);
     });

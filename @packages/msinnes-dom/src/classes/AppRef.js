@@ -11,6 +11,7 @@ class AppRef extends DomRef {
 
     let controller = null;
     this.hydrate = render => {
+      // TODO: check the logic behind this render in a later release
       if (controller) return this.render(render);
       controller = new HydrateController(render, this, infra.services);
       controller.bootstrap();
