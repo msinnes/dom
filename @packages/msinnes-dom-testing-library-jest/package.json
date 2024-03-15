@@ -1,6 +1,6 @@
 {
   "name": "@msinnes/dom-testing-library-jest",
-  "version": "0.0.12-alpha.0",
+  "version": "0.0.14-alpha.0",
   "description": "A set of jest helpers for @msinnes/dom-testing-library.",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "https://github.com/msinnes/dom/@packages/msinnes-dom-testing-library-jest/#readme",
@@ -24,8 +24,8 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-env": "^7.19.3",
-    "@msinnes/dom": "^0.0.9-alpha.0",
-    "@msinnes/dom-testing-library": "^0.0.12-alpha.0",
+    "@msinnes/dom": "^0.0.14-alpha.0",
+    "@msinnes/dom-testing-library": "^0.0.14-alpha.0",
     "@shared/eslint-config": "^0.0.4-alpha.0",
     "eslint": "^8.33.0"
   },

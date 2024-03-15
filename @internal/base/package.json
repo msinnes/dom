@@ -1,6 +1,6 @@
 {
   "name": "@internal/base",
-  "version": "0.0.9-alpha.0",
+  "version": "0.0.14-alpha.0",
   "description": "base rendering library",
   "keywords": [
     "renderer"
@@ -18,14 +18,14 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@internal/component": "^0.0.9-alpha.0",
+    "@internal/component": "^0.0.14-alpha.0",
     "@internal/oop": "^0.0.9-alpha.0",
-    "@internal/render": "^0.0.9-alpha.0"
+    "@internal/render": "^0.0.14-alpha.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-env": "^7.20.2",
-    "@internal/dom": "^0.0.9-alpha.0",
+    "@internal/dom": "^0.0.14-alpha.0",
     "@internal/utils": "^0.0.4-alpha.0",
     "@shared/eslint-config": "^0.0.4-alpha.0",
     "eslint": "^8.33.0"
