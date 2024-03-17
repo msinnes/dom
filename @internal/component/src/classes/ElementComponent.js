@@ -1,4 +1,4 @@
-import { ElementNode } from '@internal/dom';
+import { HtmlNode } from '@internal/dom';
 
 import { DomComponent } from './base/DomComponent';
 
@@ -11,7 +11,7 @@ class ElementComponent extends DomComponent {
   constructor(signature, props) {
     super(signature, props);
     // TODO: this will happen in the respective subclass constructor
-    this.elem = new ElementNode(signature);
+    this.elem = new HtmlNode(signature);
   }
 
   render() {

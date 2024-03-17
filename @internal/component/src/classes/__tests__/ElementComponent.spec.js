@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { createRender } from '@internal/render';
-import { ElementNode } from '@internal/dom';
+import { HtmlNode } from '@internal/dom';
 
 import { DomComponent, DomParent } from '../base/DomComponent';
 
@@ -50,7 +50,7 @@ describe('ElementComponent', () => {
     });
 
     it('should have an elem prop', () => {
-      expect(instance.elem).toBeInstanceOf(ElementNode);
+      expect(instance.elem).toBeInstanceOf(HtmlNode);
       expect(instance.elem.tag).toEqual('div');
     });
 

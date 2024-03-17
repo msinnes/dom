@@ -2,29 +2,29 @@
  * @jest-environment jsdom
  */
 import { DomRef } from '../DomRef';
-import { BaseDomNode } from '../BaseDomNode';
+import { BaseElementNode } from '../BaseElementNode';
 
-import { ElementNode } from '../ElementNode';
+import { HtmlNode } from '../HtmlNode';
 
-describe('ElementNode', () => {
+describe('HtmlNode', () => {
   it('should be a class', () => {
-    expect(ElementNode).toBeAClass();
+    expect(HtmlNode).toBeAClass();
   });
 
-  it('should extend BaseDomNode', () => {
-    expect(ElementNode).toExtend(BaseDomNode);
+  it('should extend BaseElementNode', () => {
+    expect(HtmlNode).toExtend(BaseElementNode);
   });
 
   describe('instance', () => {
     let instance;
     beforeEach(() => {
-      instance = new ElementNode('div');
+      instance = new HtmlNode('div');
     });
 
     it('should have a ref prop', () => {
       expect(instance.ref).toBeInstanceOf(DomRef);
       const ref = new DomRef('div');
-      instance = new ElementNode(ref);
+      instance = new HtmlNode(ref);
       expect(instance.ref).toBe(ref);
     });
 
@@ -34,8 +34,26 @@ describe('ElementNode', () => {
 
     it('should put an element in the node.elem property', () => {
       const ref = new DomRef('div');
-      instance = new ElementNode(ref);
+      instance = new HtmlNode(ref);
       expect(instance.elem).toBe(ref.elem);
+    });
+
+    describe('create', () => {
+      it('should be a function', () => {
+        expect(instance.create).toBeInstanceOf(Function);
+      });
+
+      it('should create a DomRef if one is passed', () => {
+        const domRef = instance.create('div');
+        expect(domRef).toBeInstanceOf(DomRef);
+        expect(domRef.elem).toBeInstanceOf(HTMLElement);
+      });
+
+      it('should pass a non-string if one is passed', () => {
+        const ref = {};
+        const domRef = instance.create(ref);
+        expect(domRef).toBe(ref);
+      });
     });
 
 
