@@ -5,7 +5,7 @@
 
  import { ArrayComponent } from '../../classes/ArrayComponent';
  import { ClassComponent } from '../../classes/ClassComponent';
- import { ElementComponent } from '../../classes/ElementComponent';
+ import { HtmlComponent } from '../../classes/HtmlComponent';
  import { EmptyComponent } from '../../classes/EmptyComponent';
  import { FunctionComponent } from '../../classes/FunctionComponent';
  import { TextComponent } from '../../classes/TextComponent';
@@ -49,10 +49,10 @@
        expect(component.services).toBe(servicesRef);
      });
 
-     it('should create an ElementComponent from an ElementRender and inject the dom context', () => {
+     it('should create an HtmlComponent from an ElementRender and inject the dom context', () => {
        const elementRender = createRender({ signature: 'div' });
        const component = createComponent(elementRender);
-       expect(component).toBeInstanceOf(ElementComponent);
+       expect(component).toBeInstanceOf(HtmlComponent);
        expect(component.domContext).toBe(domContextRef);
        expect(component.services).toBe(servicesRef);
      });
