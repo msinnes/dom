@@ -1,4 +1,4 @@
-import { validHtmlAttributes } from '@shared/json/validHtmlAttributes';
+import { validHtmlAttributes } from '@shared/json/validXHtmlAttributes';
 import { voidElementTags } from '@shared/json/voidElementTags';
 
 const renderArray = components => components.map(comp => renderComponent(comp)).join('');
