@@ -711,11 +711,10 @@ describe('role queries', () => {
     expect(screen.getByRole('superscript')).toBe(screen.container.firstChild);
   });
 
-  // TODO: svg will have to be supported in a later release
-  // it('should support <SVG>', () => {
-  //   const screen = render(Dom.createElement('svg'));
-  //   expect(screen.getByRole('graphics-document')).toBe(screen.container.firstChild);
-  // });
+  it('should support <svg>', () => {
+    const screen = render(Dom.createElement('svg'));
+    expect(screen.getByRole('graphics-document')).toBe(screen.container.firstChild);
+  });
 
   it('should support <table>', () => {
     const screen = render(Dom.createElement('table'));

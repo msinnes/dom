@@ -11,8 +11,6 @@ import { SvgComponent } from '../classes/SvgComponent';
 const createComponentFactory = (BaseClass, domContext, services) => render => {
   let component;
   if (render.isArrayRender) component = new ArrayComponent(render.render);
-  // TODO: This should check if it should create an HTMLComponent or SVGComponent
-  // If domContext.value.isSVGNode is true or render.signature is 'svg' render SVGComponent
   else if (render.isElementRender) component = (render.signature === 'svg' || domContext.value.isSvgParent)
     ? new SvgComponent(render.signature, render.props)
     : new HtmlComponent(render.signature, render.props);
