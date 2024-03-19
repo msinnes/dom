@@ -1,4 +1,4 @@
-import { validHTMLAttributes } from '@shared/json/validHtmlAttributes';
+import { validHtmlAttributes } from '@shared/json/validHtmlAttributes';
 import { voidElementTags } from '@shared/json/voidElementTags';
 
 const renderArray = components => components.map(comp => renderComponent(comp)).join('');
@@ -12,7 +12,7 @@ const renderElement = component => {
 };
 
 const renderAttrs = elem => {
-  const attrs = Object.keys(elem).filter(key => validHTMLAttributes.indexOf(key) >= 0);
+  const attrs = Object.keys(elem).filter(key => validHtmlAttributes.indexOf(key) >= 0);
   const accumulator = elem.className ? ` class="${elem.className}" ` : ' ';
   if (attrs.length === 0 && accumulator.trim().length === 0) return '';
 

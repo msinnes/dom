@@ -1,5 +1,5 @@
 // TODO: add deprecated attrs as welll
-const validHTMLAttributes = [
+const validHtmlAttributes = [
   'accept',
   'accept',
   'accesskey',
@@ -134,4 +134,4 @@ const validHTMLAttributes = [
   'wrap',
 ];
 
-export { validHTMLAttributes };
+export { validHtmlAttributes };
