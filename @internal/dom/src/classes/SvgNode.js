@@ -9,7 +9,7 @@ class SvgNode extends BaseElementNode {
   }
 
   update(props) {
-    Object.keys(props).forEach(key => this.elem.setAttribute(key, props[key]));
+    Object.keys(props).forEach(key => this.elem.setAttributeNS(null, key, props[key]));
   }
 }
 

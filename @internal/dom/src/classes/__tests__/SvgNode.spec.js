@@ -58,10 +58,10 @@ describe('SvgNode', () => {
 
 
     describe('update', () => {
-      let setAttributeMock;
+      let setAttributeNSMock;
 
       beforeEach(() => {
-        setAttributeMock = jest.spyOn(instance.elem, 'setAttribute');
+        setAttributeNSMock = jest.spyOn(instance.elem, 'setAttributeNS');
       });
 
       it('should be a function', () => {
@@ -70,9 +70,9 @@ describe('SvgNode', () => {
 
       it('should call setAttribute for each property passed', () => {
         instance.update({ key1: 'value1', key2: 'value2' });
-        expect(setAttributeMock).toHaveBeenCalledTimes(2);
-        expect(setAttributeMock).toHaveBeenCalledWith('key1', 'value1');
-        expect(setAttributeMock).toHaveBeenCalledWith('key2', 'value2');
+        expect(setAttributeNSMock).toHaveBeenCalledTimes(2);
+        expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key1', 'value1');
+        expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key2', 'value2');
       });
     });
   });

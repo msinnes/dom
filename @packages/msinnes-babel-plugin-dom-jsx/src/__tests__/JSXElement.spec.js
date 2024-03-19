@@ -181,4 +181,18 @@ const expected = `({
     const out = process(jsx, plugins);
     expect(out).toEqual(expected);
   });
+
+  it('should process case 15', () => {
+    const jsx = `
+<circle stroke-width="10" />
+`;
+    const expected = `({
+  signature: "circle",
+  props: {
+    'stroke-width': "10"
+  }
+});`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 });

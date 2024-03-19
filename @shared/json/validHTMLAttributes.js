@@ -1,3 +1,4 @@
+// TODO: add deprecated attrs as welll
 const validHTMLAttributes = [
   'accept',
   'accept',
