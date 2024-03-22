@@ -1,12 +1,12 @@
-import { validHtmlAttributes } from '@shared/json/validHtmlAttributes';
-import { voidElementTags } from '@shared/json/voidElementTags';
+import { validHtmlAttributes } from '@shared/json/htmlAttributes';
+import { voidHtmlTags } from '@shared/json/htmlTags';
 
 const renderArray = components => components.map(comp => renderComponent(comp)).join('');
 
 const renderElement = component => {
   const { tag, elem } = component.elem;
   const attrs = renderAttrs(elem);
-  if (voidElementTags.indexOf(tag) >= 0) return renderVoidElement(tag, attrs);
+  if (voidHtmlTags.indexOf(tag) >= 0) return renderVoidElement(tag, attrs);
   const children = renderElementChildren(component);
   return renderNormalElement(tag, attrs, children);
 };

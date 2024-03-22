@@ -1,3 +1,20 @@
+// Check against https://www.w3.org/TR/2014/REC-html5-20141028/obsolete.html
+const deprecatedHtmlTags = [
+  'acronym',
+  'applet',
+  'basefont',
+  'big',
+  'center',
+  'dir',
+  'font',
+  'frame',
+  'frameset',
+  'noframes',
+  'strike',
+  'tt',
+];
+
+// Check against https://www.w3.org/TR/2012/WD-html-markup-20121025/elements.html
 const validHtmlTags = [
   'a',
   'abbr',
@@ -111,4 +128,22 @@ const validHtmlTags = [
   'wbr'
 ];
 
-export { validHtmlTags };
+// Check against https://www.w3.org/TR/2011/WD-html-markup-20110113/syntax.html
+const voidHtmlTags = [
+  'area',
+  'base',
+  'br',
+  'col',
+  'embed',
+  'hr',
+  'img',
+  'input',
+  'link',
+  'meta',
+  'param',
+  'source',
+  'track',
+  'wbr',
+];
+
+export {deprecatedHtmlTags, validHtmlTags, voidHtmlTags };

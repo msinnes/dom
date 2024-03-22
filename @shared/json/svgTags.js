@@ -1,3 +1,20 @@
+// Check against https://developer.mozilla.org/en-US/docs/Web/SVG/Element#obsolete_and_deprecated_elements
+const deprecatedSvgTags = [
+  'cursor',
+  'font',
+  'font-face',
+  'font-face-format',
+  'font-face-src',
+  'font-face-uri',
+  'glyph',
+  'glyphRef',
+  'hkern',
+  'missing-glyph',
+  'tref',
+  'vkern',
+];
+
+// Check against https://developer.mozilla.org/en-US/docs/Web/SVG/Element
 const validSvgTags = [
   // A
   'a',
@@ -79,7 +96,7 @@ const validSvgTags = [
   // U
   'use',
   // V
-'view',
+  'view',
 ];
 
 export { validSvgTags };

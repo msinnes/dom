@@ -1,9 +1,9 @@
 import { builder } from './builder';
 
-import { validHtmlTags } from '@shared/json/validHtmlTags';
-import { validSvgTags } from '@shared/json/validSvgTags';
-import { validSvgAttributes } from '@shared/json/validSvgAttributes';
-import { deprecatedHtmlTags } from '@shared/json/deprecatedHtmlTags';
+import { validHtmlTags } from '@shared/json/htmlTags';
+import { validSvgTags } from '@shared/json/svgTags';
+import { validSvgAttributes } from '@shared/json/svgAttributes';
+import { deprecatedHtmlTags } from '@shared/json/htmlTags';
 
 const memberExpressionSignature = node => {
   return builder.memberExpression(node.object.name, node.property.name);

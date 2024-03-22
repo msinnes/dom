@@ -1,4 +1,9 @@
-// TODO: add deprecated attrs as welll
+// Check against https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
+// TODO: copy this from the list in the sidebar -- deprecated attrs have a trash can
+const deprecatedSvgAttributes = [];
+
+// Check against https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
+// TODO: remove any deprecated attrs from this list
 const validSvgAttributes = [
   // A
   'accent-height',
