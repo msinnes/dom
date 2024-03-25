@@ -589,6 +589,20 @@ describe('e2e.svg', () => {
     expect(document.body.innerHTML).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"><animate attributeName="rx" values="0;5;0" dur="10s" repeatCount="indefinite"></animate></rect></svg>');
   });
 
+  it('should render <animateMotion>', () => {
+    ref.render(createElement('svg', { viewBox: '0 0 200 200' }, [
+      createElement('path', { fill: 'none', stroke: 'lightgrey', d:'M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z' }),
+      createElement('circle', { r: 5, fill: 'red' }, [
+        createElement('animateMotion', { dur: '10s', repeatCount: 'indefinite', path:'M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z' }),
+      ]),
+    ]));
+    expect(document.body.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild.nextSibling).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild.nextSibling.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.innerHTML).toEqual('<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="lightgrey" d="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z"></path><circle r="5" fill="red"><animateMotion dur="10s" repeatCount="indefinite" path="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z"></animateMotion></circle></svg>');
+  });
+
   it('should render <animateTransform>', () => {
     ref.render(createElement('svg', { height: '120', width: '120', viewBox: '0 0 120 120' }, [
       createElement('polygon', { points: '60,30 90,90 30,90' }, [

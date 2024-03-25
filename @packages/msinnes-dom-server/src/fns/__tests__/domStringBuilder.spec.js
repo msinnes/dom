@@ -50,6 +50,14 @@ describe('renderElement', () => {
       elem: { tag: 'circle' }
     })).toEqual('<circle cx="40" cy="30" r="20"></circle>');
   });
+
+  it('should filter tags with camel case', () => {
+    expect(renderElement({
+      props: {},
+      isSvgComponent: true,
+      elem: { tag: 'animatetransform' }
+    })).toEqual('<animateTransform></animateTransform>');
+  });
 });
 
 describe('renderSvgAttrs', () => {

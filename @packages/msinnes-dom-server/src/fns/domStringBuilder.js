@@ -4,6 +4,13 @@ import { voidHtmlTags } from '@shared/json/htmlTags';
 
 const renderArray = components => components.map(comp => renderComponent(comp)).join('');
 
+const tagFilters = {
+  animatemotion: 'animateMotion',
+  animatetransform: 'animateTransform',
+};
+
+const filterTag = tag => tagFilters[tag] ? tagFilters[tag] : tag;
+
 // TODO: (svg-update) check this for valid and deprecated tags
 const renderElement = component => {
   const { tag, elem } = component.elem;
@@ -12,7 +19,7 @@ const renderElement = component => {
   const attrs = isSvgComponent ? renderSvgAttrs(props, tag) : renderHtmlAttrs(elem);
   if (voidHtmlTags.indexOf(tag) >= 0) return renderVoidElement(tag, attrs);
   const children = renderElementChildren(component);
-  return renderNormalElement(tag, attrs, children);
+  return renderNormalElement(filterTag(tag), attrs, children);
 };
 
 const getAttributeString = (attrs, data, accumulator) => {

@@ -442,4 +442,23 @@ describe('e2e.svg', () => {
     ]));
     expect(screen.html).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"><animate attributeName="rx" values="0;5;0" dur="10s" repeatCount="indefinite"></animate></rect></svg>');
   });
+
+  it('should render <animateMotion>', () => {
+    const screen = api.renderToScreen(Dom.createElement('svg', { viewBox: '0 0 200 200' }, [
+      Dom.createElement('path', { fill: 'none', stroke: 'lightgrey', d:'M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z' }),
+      Dom.createElement('circle', { r: 5, fill: 'red' }, [
+        Dom.createElement('animateMotion', { dur: '10s', repeatCount: 'indefinite', path:'M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z' }),
+      ]),
+    ]));
+    expect(screen.html).toEqual('<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="lightgrey" d="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z"></path><circle r="5" fill="red"><animateMotion dur="10s" repeatCount="indefinite" path="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z"></animateMotion></circle></svg>');
+  });
+
+  it('should render <animateTransform>', () => {
+    const screen = api.renderToScreen(Dom.createElement('svg', { height: '120', width: '120', viewBox: '0 0 120 120' }, [
+      Dom.createElement('polygon', { points: '60,30 90,90 30,90' }, [
+        Dom.createElement('animateTransform', { attributeName: 'transform', attributeType: 'XML', type: 'rotate', from: '0 60 70', to: '360 60 70', dur: '10s', repeatCount: 'indefinite' }),
+      ]),
+    ]));
+    expect(screen.html).toEqual('<svg height="120" width="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><polygon points="60,30 90,90 30,90"><animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 60 70" to="360 60 70" dur="10s" repeatCount="indefinite"></animateTransform></polygon></svg>');
+  });
 });
