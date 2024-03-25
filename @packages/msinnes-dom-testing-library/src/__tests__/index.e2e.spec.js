@@ -397,8 +397,7 @@ describe('role queries', () => {
     expect(screen.getByRole('separator')).toEqual(screen.container.firstChild);
   });
 
-  // TODO: This will require work in @ssr/internal on the ssrrendercontroller
-  // Determine whether or not to support this
+  // This query will not be supported, the document, head, and body will be exposed on scope.
   // it('should support <html>', () => {
   //   expect(TagToRoleMap.html).toEqual('document');
   // });
@@ -1750,4 +1749,23 @@ describe('fetch', () => {
   });
 });
 
-// TODO: add e2e tests for svg components
+// TODO: (svg-update) add e2e tests for svg components
+describe('e2e.svg', () => {
+  it('should support <a>', () => {
+    const screen = render(Dom.createElement('svg', { viewBox: '0 0 100 100' }, [
+      Dom.createElement('a', { href: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle' }, [
+        Dom.createElement('circle', { cx: 50, cy: 40, r: 35 }),
+      ]),
+    ]));
+    expect(screen.container.innerHTML).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle"><circle cx="50" cy="40" r="35"></circle></a></svg>');
+  });
+
+  it('should render <animate>', () => {
+    const screen = render(Dom.createElement('svg', { viewBox: '0 0 100 100' }, [
+      Dom.createElement('rect', { width: 10, height: 10 }, [
+        Dom.createElement('animate', { attributeName: 'rx', values: '0;5;0', dur: '10s', repeatCount: 'indefinite' }),
+      ]),
+    ]));
+    expect(screen.container.innerHTML).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"><animate attributeName="rx" values="0;5;0" dur="10s" repeatCount="indefinite"></animate></rect></svg>');
+  });
+});

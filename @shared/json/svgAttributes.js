@@ -274,6 +274,8 @@ const validSvgAttributes = [
   'xml:base',
   'xml:lang',
   'xml:space',
+  // added for svg component
+  'xmlns',
   // Y
   'y',
   'y1',

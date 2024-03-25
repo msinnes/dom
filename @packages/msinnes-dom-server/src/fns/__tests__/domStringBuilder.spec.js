@@ -1,7 +1,8 @@
 import {
   renderArray,
   renderElement,
-  renderAttrs,
+  renderSvgAttrs,
+  renderHtmlAttrs,
   renderElementChildren,
   renderBaseElement,
   renderNormalElement,
@@ -27,7 +28,7 @@ describe('renderElement', () => {
   });
 
   it('should render a self-closing tag if the element has a void tag', () => {
-    expect(renderElement({ elem : { tag: 'input', elem: { value: 'text' } }})).toEqual('<input value="text" />');
+    expect(renderElement({ elem : { tag: 'input', elem: { value: 'text' }, props: {}, isSvgComponent: false }})).toEqual('<input value="text" />');
   });
 
   it('should render a normal element by default', () => {
@@ -37,24 +38,70 @@ describe('renderElement', () => {
         elem: { width: 'width' },
       },
       children: [{ isTextComponent: true, text: 'text' }],
+      props: {},
+      isSvgComponent: false,
     })).toEqual('<div width="width">text</div>');
+  });
+
+  it('should render an svg component', () => {
+    expect(renderElement({
+      props: { cx: 40, cy: 30, r: 20 },
+      isSvgComponent: true,
+      elem: { tag: 'circle' }
+    })).toEqual('<circle cx="40" cy="30" r="20"></circle>');
   });
 });
 
-describe('renderAttrs', () => {
+describe('renderSvgAttrs', () => {
   it('should be a function', () => {
-    expect(renderAttrs).toBeInstanceOf(Function);
+    expect(renderSvgAttrs).toBeInstanceOf(Function);
   });
 
   it('should accumulate valid html attributes into a string', () => {
-    expect(renderAttrs({
+    expect(renderSvgAttrs({
+      cx: 10,
+      cy: 20,
+    })).toEqual(' cx="10" cy="20"');
+  });
+
+  it('should not stringify invalid attributes', () => {
+    expect(renderSvgAttrs({
+      invalid: 'invalid',
+      cx: 10,
+      cy: 20,
+    })).toEqual(' cx="10" cy="20"');
+  });
+
+  it('should return an empty string if an element has no attrs', () => {
+    expect(renderSvgAttrs({})).toEqual('');
+  });
+
+  it('should append xmlns if the input is an svg component', () => {
+    expect(renderSvgAttrs({
+      cx: 10,
+      cy: 20,
+    })).toEqual(' cx="10" cy="20"');
+    expect(renderSvgAttrs({
+      cx: 10,
+      cy: 20,
+    }, 'svg')).toEqual(' cx="10" cy="20" xmlns=\"http://www.w3.org/2000/svg\"');
+  });
+});
+
+describe('renderHtmlAttrs', () => {
+  it('should be a function', () => {
+    expect(renderHtmlAttrs).toBeInstanceOf(Function);
+  });
+
+  it('should accumulate valid html attributes into a string', () => {
+    expect(renderHtmlAttrs({
       height: 'height',
       width: 'width',
     })).toEqual(' height="height" width="width"');
   });
 
   it('should not stringify invalid attributes', () => {
-    expect(renderAttrs({
+    expect(renderHtmlAttrs({
       invalid: 'invalid',
       height: 'height',
       width: 'width',
@@ -62,7 +109,7 @@ describe('renderAttrs', () => {
   });
 
   it('should write className to the class attr', () => {
-    expect(renderAttrs({
+    expect(renderHtmlAttrs({
       className: 'className',
       height: 'height',
       width: 'width',
@@ -70,7 +117,7 @@ describe('renderAttrs', () => {
   });
 
   it('should return an empty string if there are no attrs', () => {
-    expect(renderAttrs({
+    expect(renderHtmlAttrs({
       invalid: 'invalid',
     })).toEqual('');
   });
@@ -159,7 +206,6 @@ describe('renderVoidElement', () => {
   });
 });
 
-
 describe('renderComponent', () => {
   it('should be a function', () => {
     expect(renderComponent).toBeInstanceOf(Function);
@@ -176,15 +222,17 @@ describe('renderComponent', () => {
   });
 
   it('should return a void element render', () => {
-    const elementComponent = { isElementComponent: true, elem: { tag: 'input', elem: { value: 'value' } } };
+    const elementComponent = { isElementComponent: true, isSvgComponent: false, elem: { tag: 'input', elem: { value: 'value' } } };
     expect(renderComponent(elementComponent)).toEqual('<input value="value" />');
   });
 
   it('should return a normal element render', () => {
     const elementComponent = {
       isElementComponent: true,
+      isSvgComponent: false,
       elem: { tag: 'div', elem: { width: 'width' } },
       children: [{ isTextComponent: true, text: 'text' }],
+      props: {},
     };
     expect(renderComponent(elementComponent)).toEqual('<div width="width">text</div>');
   });

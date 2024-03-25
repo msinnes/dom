@@ -18,14 +18,14 @@ describe('SvgRef', () => {
 
     it('should pass the ref to the elem property', () => {
       const ref = {};
-      const svgRef = new SvgRef(ref);
+      const svgRef = new SvgRef('http://www.w3.org/2000/svg', ref);
       expect(svgRef.elem).toEqual(ref);
       expect(createElementMock).not.toHaveBeenCalled();
     });
 
     it('should create an element if a string is passed to the constructor', () => {
       const testString = 'svg';
-      const svgRef = new SvgRef(testString);
+      const svgRef = new SvgRef('http://www.w3.org/2000/svg', testString);
       expect(createElementMock).toHaveBeenCalledTimes(1);
       expect(createElementMock).toHaveBeenCalledWith('http://www.w3.org/2000/svg', testString);
       expect(svgRef.elem).toBeInstanceOf(SVGElement);

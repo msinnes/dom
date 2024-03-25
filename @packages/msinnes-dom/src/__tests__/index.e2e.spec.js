@@ -551,5 +551,53 @@ describe('e2e.context', () => {
   });
 });
 
-// TODO: add svg e2e tests for all svg elements
+// TODO: (svg-update) add svg e2e tests for all svg elements
 // This needs to run the gambit to make sure that the jsx transpiler is configured to work with svg components
+describe('e2e.svg', () => {
+  let ref;
+  beforeEach(() => {
+    ref = createRef(document.body);
+  });
+
+  afterEach(() => {
+    while(document.body.firstChild) {
+      document.body.removeChild(document.body.firstChild);
+    }
+  });
+
+  it('should render <a>', () => {
+    ref.render(createElement('svg', { viewBox: '0 0 100 100' }, [
+      createElement('a', { href: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle' }, [
+        createElement('circle', { cx: 50, cy: 40, r: 35 }),
+      ]),
+    ]));
+    expect(document.body.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.innerHTML).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle"><circle cx="50" cy="40" r="35"></circle></a></svg>');
+  });
+
+  it('should render <animate>', () => {
+    ref.render(createElement('svg', { viewBox: '0 0 100 100' }, [
+      createElement('rect', { width: 10, height: 10 }, [
+        createElement('animate', { attributeName: 'rx', values: '0;5;0', dur: '10s', repeatCount: 'indefinite' }),
+      ]),
+    ]));
+    expect(document.body.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.innerHTML).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"><animate attributeName="rx" values="0;5;0" dur="10s" repeatCount="indefinite"></animate></rect></svg>');
+  });
+
+  it('should render <animateTransform>', () => {
+    ref.render(createElement('svg', { height: '120', width: '120', viewBox: '0 0 120 120' }, [
+      createElement('polygon', { points: '60,30 90,90 30,90' }, [
+        createElement('animateTransform', { attributeName: 'transform', attributeType: 'XML', type: 'rotate', from: '0 60 70', to: '360 60 70', dur: '10s', repeatCount: 'indefinite' }),
+      ]),
+    ]));
+    expect(document.body.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.innerHTML).toEqual('<svg height="120" width="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><polygon points="60,30 90,90 30,90"><animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 60 70" to="360 60 70" dur="10s" repeatCount="indefinite"></animateTransform></polygon></svg>');
+  });
+});

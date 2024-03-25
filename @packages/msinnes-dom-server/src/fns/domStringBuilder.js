@@ -1,28 +1,47 @@
 import { validHtmlAttributes } from '@shared/json/htmlAttributes';
+import { validSvgAttributes } from '@shared/json/svgAttributes';
 import { voidHtmlTags } from '@shared/json/htmlTags';
 
 const renderArray = components => components.map(comp => renderComponent(comp)).join('');
 
+// TODO: (svg-update) check this for valid and deprecated tags
 const renderElement = component => {
   const { tag, elem } = component.elem;
-  const attrs = renderAttrs(elem);
+  const { isSvgComponent, props } = component;
+
+  const attrs = isSvgComponent ? renderSvgAttrs(props, tag) : renderHtmlAttrs(elem);
   if (voidHtmlTags.indexOf(tag) >= 0) return renderVoidElement(tag, attrs);
   const children = renderElementChildren(component);
   return renderNormalElement(tag, attrs, children);
 };
 
-const renderAttrs = elem => {
+const getAttributeString = (attrs, data, accumulator) => {
+  const lastIndex = attrs.length - 1;
+  return attrs.reduce((acc, attr, index) => {
+    const datum = data[attr];
+    acc += `${attr}="${datum}"`;
+    acc += index === lastIndex ? '' : ' ';
+    return acc;
+  }, accumulator);
+};
+
+const renderSvgAttrs = (props, tag) => {
+  let updateProps;
+  if (tag === 'svg') updateProps = { ...props, xmlns: 'http://www.w3.org/2000/svg' };
+  else updateProps = props;
+  const attrs = Object.keys(updateProps).filter(key => validSvgAttributes.indexOf(key) >= 0);
+  if (attrs.length === 0) return '';
+
+  return getAttributeString(attrs, updateProps, ' ');
+};
+
+// TODO: (svg-update) check this for svg and deprecated
+const renderHtmlAttrs = elem => {
   const attrs = Object.keys(elem).filter(key => validHtmlAttributes.indexOf(key) >= 0);
   const accumulator = elem.className ? ` class="${elem.className}" ` : ' ';
   if (attrs.length === 0 && accumulator.trim().length === 0) return '';
 
-  const lastIndex = attrs.length - 1;
-  return attrs.reduce((acc, attr, index) => {
-    const data = elem[attr];
-    acc += `${attr}="${data}"`;
-    acc += index === lastIndex ? '' : ' ';
-    return acc;
-  }, accumulator);
+  return getAttributeString(attrs, elem, accumulator);
 };
 
 const renderElementChildren = component => {
@@ -44,7 +63,8 @@ const renderComponent = component => {
 
 export {
   renderArray,
-  renderAttrs,
+  renderHtmlAttrs,
+  renderSvgAttrs,
   renderComponent,
   renderElement,
   renderElementChildren,

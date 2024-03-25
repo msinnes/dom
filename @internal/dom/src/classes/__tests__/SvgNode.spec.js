@@ -23,7 +23,7 @@ describe('SvgNode', () => {
 
     it('should have a ref prop', () => {
       expect(instance.ref).toBeInstanceOf(SvgRef);
-      const ref = new SvgRef('div');
+      const ref = new SvgRef('http://www.w3.org/2000/svg', 'div');
       instance = new SvgNode(ref);
       expect(instance.ref).toBe(ref);
     });
@@ -33,7 +33,7 @@ describe('SvgNode', () => {
     });
 
     it('should put an element in the node.elem property', () => {
-      const ref = new SvgRef('div');
+      const ref = new SvgRef('http://www.w3.org/2000/svg', 'div');
       instance = new SvgNode(ref);
       expect(instance.elem).toBe(ref.elem);
     });
@@ -73,6 +73,16 @@ describe('SvgNode', () => {
         expect(setAttributeNSMock).toHaveBeenCalledTimes(2);
         expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key1', 'value1');
         expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key2', 'value2');
+      });
+
+      it('should update the xmlns prop if the element tag is svg', () => {
+        instance = new SvgNode('svg');
+        setAttributeNSMock = jest.spyOn(instance.elem, 'setAttributeNS');
+        instance.update({ key1: 'value1', key2: 'value2' });
+        expect(setAttributeNSMock).toHaveBeenCalledTimes(3);
+        expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key1', 'value1');
+        expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key2', 'value2');
+        expect(setAttributeNSMock).toHaveBeenCalledWith('http://www.w3.org/2000/xmlns/', 'xmlns', 'http://www.w3.org/2000/svg');
       });
     });
   });

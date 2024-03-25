@@ -423,4 +423,23 @@ describe('e2e', () => {
   });
 });
 
-// TODO: add e2e tests for svg components
+// TODO: (svg-update) add e2e tests for svg components
+describe('e2e.svg', () => {
+  it('should support <a>', () => {
+    const screen = api.renderToScreen(Dom.createElement('svg', { viewBox: '0 0 100 100' }, [
+      Dom.createElement('a', { href: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle' }, [
+        Dom.createElement('circle', { cx: 50, cy: 40, r: 35 }),
+      ]),
+    ]));
+    expect(screen.html).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle"><circle cx="50" cy="40" r="35"></circle></a></svg>');
+  });
+
+  it('should render <animate>', () => {
+    const screen = api.renderToScreen(Dom.createElement('svg', { viewBox: '0 0 100 100' }, [
+      Dom.createElement('rect', { width: 10, height: 10 }, [
+        Dom.createElement('animate', { attributeName: 'rx', values: '0;5;0', dur: '10s', repeatCount: 'indefinite' }),
+      ]),
+    ]));
+    expect(screen.html).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"><animate attributeName="rx" values="0;5;0" dur="10s" repeatCount="indefinite"></animate></rect></svg>');
+  });
+});
