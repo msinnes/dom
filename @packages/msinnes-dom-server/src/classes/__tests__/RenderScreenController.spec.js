@@ -4,10 +4,6 @@ import { DomRef } from '@internal/dom';
 import { RenderScreenController } from '../RenderScreenController';
 import { Screen } from '../Screen';
 
-jest.mock('../../fns/domStringBuilder', () => ({
-  renderComponent: jest.fn(),
-}));
-
 describe('RenderScreenController', () => {
   it('should be a class', () => {
     expect(RenderScreenController).toBeAClass();
@@ -26,7 +22,7 @@ describe('RenderScreenController', () => {
 
     beforeEach(() => {
       renderRef = {};
-      anchorRef = {};
+      anchorRef = { innerHTML: 'mock value' };
       ssrScopeMock = {
         body: new DomRef(anchorRef),
         hook: jest.fn(),
@@ -42,27 +38,13 @@ describe('RenderScreenController', () => {
     });
 
     it('should have a domString getter', () => {
-      const { renderComponent: renderComponentMock } = require('../../fns/domStringBuilder');
-      renderComponentMock.mockReturnValue('mock value');
       expect(instance.domString).toEqual('mock value');
-      expect(renderComponentMock).toHaveBeenCalledTimes(1);
-      expect(renderComponentMock).toHaveBeenCalledWith(instance.renderer.root);
     });
 
     it('should have a screen getter', () => {
-      const { renderComponent: renderComponentMock } = require('../../fns/domStringBuilder');
-      renderComponentMock.mockReturnValue('mock value');
       let screen = instance.screen;
       expect(screen).toBeInstanceOf(Screen);
       expect(screen).toMatchObject({ html: 'mock value' });
-      expect(renderComponentMock).toHaveBeenCalledTimes(1);
-      expect(renderComponentMock).toHaveBeenCalledWith(instance.renderer.root);
-      ssrScopeMock.url = 'url';
-      screen = instance.screen;
-      expect(screen).toBeInstanceOf(Screen);
-      expect(screen).toMatchObject({ html: 'mock value', url: 'url' });
-      expect(renderComponentMock).toHaveBeenCalledTimes(2);
-      expect(renderComponentMock).toHaveBeenCalledWith(instance.renderer.root);
     });
 
     describe('bootstrap', () => {

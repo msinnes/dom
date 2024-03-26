@@ -614,4 +614,63 @@ describe('e2e.svg', () => {
     expect(document.body.firstChild.firstChild.firstChild).toBeInstanceOf(SVGElement);
     expect(document.body.innerHTML).toEqual('<svg height="120" width="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><polygon points="60,30 90,90 30,90"><animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 60 70" to="360 60 70" dur="10s" repeatCount="indefinite"></animateTransform></polygon></svg>');
   });
+
+  it('should render <circle>', () => {
+    ref.render(createElement('svg', { viewBox: '0 0 100 100' }, [
+      createElement('circle', { cx: 50, cy: 50, r: 50 }),
+    ]));
+    expect(document.body.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.innerHTML).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50"></circle></svg>');
+  });
+
+  it('should render <clipPath>', () => {
+    ref.render(createElement('svg', { viewBox: '0 0 100 100' }, [
+      createElement('clipPath', { id: 'myClip' }, [
+        createElement('circle', { cx: 40, cy: 35, r: 35 }),
+      ]),
+      createElement('path', { id: 'heart', d: 'M10,30 A20,20,0,0,1,50,30 A20,20,0,0,1,90,30 Q90,60,50,90 Q10,60,10,30 Z' }),
+      createElement('use', { 'clip-path': 'url(#myClip)', href: '#heart', fill: 'red' }),
+    ]));
+    expect(document.body.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild.firstChild).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild.nextSibling).toBeInstanceOf(SVGElement);
+    expect(document.body.firstChild.firstChild.nextSibling.nextSibling).toBeInstanceOf(SVGElement);
+    expect(document.body.innerHTML).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><clipPath id="myClip"><circle cx="40" cy="35" r="35"></circle></clipPath><path id="heart" d="M10,30 A20,20,0,0,1,50,30 A20,20,0,0,1,90,30 Q90,60,50,90 Q10,60,10,30 Z"></path><use clip-path="url(#myClip)" href="#heart" fill="red"></use></svg>');
+  });
+
+  it('should render <defs>', () => {
+    ref.render(createElement('svg', { viewBox: '0 0 10 10' }, [
+      createElement('defs', {}, [
+        createElement('circle', { id:'myCircle', cx: 0, cy: 0, r: 5 }),
+        createElement('linearGradient', { id: 'myGradient', gradientTransform: 'rotate(90)' }, [
+          createElement('stop', { offset: '20%', 'stop-color': 'gold' }),
+          createElement('stop', { offset: '90%', 'stop-color': 'red' }),
+        ]),
+      ]),
+      createElement('use', { x: 5, y: 5, href: '#myCircle', fill: 'url(\'#myGradient\')' }),
+    ]));
+    expect(document.body.innerHTML).toEqual('<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><defs><circle id="myCircle" cx="0" cy="0" r="5"></circle><linearGradient id="myGradient" gradientTransform="rotate(90)"><stop offset="20%" stop-color="gold"></stop><stop offset="90%" stop-color="red"></stop></linearGradient></defs><use x="5" y="5" href="#myCircle" fill="url(\'#myGradient\')"></use></svg>');
+  });
+
+  it('should render <desc>', () => {
+    ref.render(createElement('svg', { viewBox: '0 0 10 10' }, [
+      createElement('circle', { cx: 5, cy: 5, r: 4 }, [
+        createElement('desc', {}, [
+          'I\'m a circle and that description is here to demonstrate how I can be described, but is it really necessary to describe a simple circle like me?'
+        ]),
+      ]),
+    ]));
+    expect(document.body.innerHTML).toEqual('<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="5" r="4"><desc>I\'m a circle and that description is here to demonstrate how I can be described, but is it really necessary to describe a simple circle like me?</desc></circle></svg>');
+  });
+
+  it('should render <ellipse>', () => {
+    ref.render(createElement('svg', { viewBox: '0 0 200 100' }, [
+      createElement('ellipse', { cx: 100, cy: 50, rx: 100, ry: 50 }),
+    ]));
+    expect(document.body.innerHTML).toEqual('<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="100" cy="50" rx="100" ry="50"></ellipse></svg>');
+  });
+
+  // TODO: (svg-foreign-object-support): foriegn object support will require some work on @internal, similar to svg implementation
 });
