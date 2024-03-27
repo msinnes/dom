@@ -134,6 +134,23 @@ describe('SsrScope', () => {
       expect(instance.openHandles).toEqual(1);
     });
 
+    describe('createEvent', () => {
+      it('should be a function', () => {
+        expect(instance.createEvent).toBeInstanceOf(Function);
+      });
+
+      it('should create an event', () => {
+        const event = instance.createEvent('input');
+        expect(event).toBeInstanceOf(instance.window.Event);
+      });
+
+      it('should pass a config to the event', () => {
+        const event = instance.createEvent('input', { bubbles: true, cancelable: true });
+        expect(event.bubbles).toBe(true);
+        expect(event.cancelable).toBe(true);
+      });
+    });
+
     describe('digest', () => {
       let fn1;
       let fn2;

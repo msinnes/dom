@@ -1749,8 +1749,22 @@ describe('fetch', () => {
   });
 });
 
+describe('events', () => {
+  // TODO: (testing-events) run the gambit on events, make an event service, document changes
+  describe('oninput event', () => {
+    let value = '';
+    const oninput = event => {
+      value = event.target.value;
+    };
+    const screen = render(Dom.createElement('input', { type: 'text', value, oninput }));
+    screen.createEvent('input', { cancelable: true, bubbles: true });
+    screen.dispatchEvent(screen.container.firstChild, screen.createEvent('input', { cancelable: true, bubbles: true }), { value: 'a' });
+    expect(value).toEqual('a');
+  });
+});
+
 // TODO: (svg-update) add e2e tests for svg components
-describe('e2e.svg', () => {
+describe('svg.e2e', () => {
   it('should support <a>', () => {
     const screen = render(Dom.createElement('svg', { viewBox: '0 0 100 100' }, [
       Dom.createElement('a', { href: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle' }, [

@@ -58,6 +58,10 @@ class SsrScope extends HookableScope {
     });
   }
 
+  createEvent(type, config) {
+    return new this.window.Event(type, config);
+  }
+
   digest() {
     return [
       ...this.time.digest(),
