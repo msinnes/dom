@@ -16,6 +16,11 @@ class Screen {
     this.container = controller.scope.body.elem;
     const queries = new Queries(this.container);
 
+    this.createEvent = (type, config) => controller.scope.createEvent(type, config);
+    this.dispatchEvent = (elem, event, targetMutation) => {
+      Object.assign(elem, targetMutation);
+      elem.dispatchEvent(event);
+    };
     this.getByLabelText = text => {
       const results = queries.byLabelText(text);
       return getBy('getByLabelText', results);

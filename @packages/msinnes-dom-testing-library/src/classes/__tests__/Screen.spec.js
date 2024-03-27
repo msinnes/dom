@@ -13,13 +13,49 @@ describe('Screen', () => {
 
     beforeEach(() => {
       container = { tagName: 'DIV' };
-      ssrScope = { body: { elem: container }, enable: jest.fn(), disable: jest.fn() };
+      ssrScope = { body: { elem: container }, createEvent: jest.fn(), enable: jest.fn(), disable: jest.fn() };
       renderController = { scope: ssrScope, digest: jest.fn(), processHandler: jest.fn() };
       instance = new Screen(renderController);
     });
 
     it('should set the container prop from the input controller', () => {
       expect(instance.container).toBe(container);
+    });
+
+    describe('createEvent', () => {
+      it('should be a function', () => {
+        expect(instance.createEvent).toBeInstanceOf(Function);
+      });
+
+      it('should create an event from the scope', () => {
+        const ref = {};
+        const config = {};
+        ssrScope.createEvent.mockReturnValue(ref);
+        expect(instance.createEvent('input', config)).toBe(ref);
+        expect(ssrScope.createEvent).toHaveBeenCalledTimes(1);
+        expect(ssrScope.createEvent).toHaveBeenCalledWith('input', config);
+      });
+    });
+
+    describe('dispatchEvent', () => {
+      it('should be a function', () => {
+        expect(instance.dispatchEvent).toBeInstanceOf(Function);
+      });
+
+      it('should call elem.dispatchEvent on the input element', () => {
+        const elem = { dispatchEvent: jest.fn() };
+        const event = {};
+        instance.dispatchEvent(elem, event);
+        expect(elem.dispatchEvent).toHaveBeenCalledTimes(1);
+        expect(elem.dispatchEvent).toHaveBeenCalledWith(event);
+      });
+
+      it('should mutate the target element', () => {
+        const elem = { dispatchEvent: jest.fn() };
+        const event = {};
+        instance.dispatchEvent(elem, event, { value: 10 });
+        expect(elem.value).toEqual(10);
+      });
     });
 
     describe('getByLabelText', () => {
