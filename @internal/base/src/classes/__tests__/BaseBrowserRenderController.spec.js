@@ -26,10 +26,6 @@ describe('BaseBrowserRenderController', () => {
     expect(BaseBrowserRenderController).toExtend(BaseRenderController);
   });
 
-  it('should have an abstract bootstrap method', () => {
-    expect(BaseBrowserRenderController).toHaveAbstractMethod('bootstrap');
-  });
-
   describe('instance', () => {
     let anchorRef;
     let renderRef;

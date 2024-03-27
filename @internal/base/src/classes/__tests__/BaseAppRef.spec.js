@@ -1,31 +1,53 @@
 /**
  * @jest-environment jsdom
  */
-import { BaseAppRef } from '@internal/base';
+import { DomRef } from '@internal/dom';
+import { Infra } from '@internal/infra';
 import { createElement } from '@internal/utils';
 
-import { AppRef } from '../AppRef';
+import { BaseAppRef } from '../BaseAppRef';
+import { BaseRenderController } from '../BaseRenderController';
 
-describe('AppRef', () => {
+class TestableRenderController extends BaseRenderController {
+  render() {
+    super.render();
+  }
+}
+
+class TestableBaseAppRef extends BaseAppRef {
+  constructor(ref) {
+    super(ref);
+
+    this.create = render => new TestableRenderController(render, this, new Infra().services);
+  }
+}
+
+describe('BaseAppRef', () => {
   afterEach(() => {
     while(document.body.firstChild) {
       document.body.removeChild(document.body.firstChild);
     }
+    jest.resetAllMocks();
   });
 
   it('should be a class', () => {
-    expect(AppRef).toBeAClass();
+    expect(BaseAppRef).toBeAClass();
   });
 
-  it('should extend DomRef', () => {
-    expect(AppRef).toExtend(BaseAppRef);
+  it('should be abstract', () => {
+    expect(BaseAppRef).toBeAbstract();
+  });
+
+  it('should extends DomRef', () => {
+    expect(BaseAppRef).toExtend(DomRef);
   });
 
   describe('instance', () => {
     let instance;
-
+    let infra;
     beforeEach(() => {
-      instance = new AppRef(document.body);
+      infra = new Infra();
+      instance = new TestableBaseAppRef(document.body, TestableRenderController, infra.services);
     });
 
     it('should have the DomRef elem prop', () => {

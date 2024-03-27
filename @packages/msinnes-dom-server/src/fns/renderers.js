@@ -2,14 +2,15 @@ import { isDefined } from '@internal/is';
 import { SsrScope, parseConfig } from '@internal/ssr';
 
 import { RenderScreenController } from '../classes/RenderScreenController';
+import { AppRef } from '../classes/AppRef';
 
 const isDoingFetch = config => isDefined(config.fetch.digestFetch) ? config.fetch.digestFetch : true;
 
 const getBootStrappedController = (render, userConfig) => {
   const config = parseConfig(userConfig);
-  const ssrScope = new SsrScope(config);
+  const ssrScope = new SsrScope(config, AppRef);
   const controller = new RenderScreenController(render, ssrScope);
-  controller.bootstrap();
+  controller.render();
   return [controller, config];
 };
 

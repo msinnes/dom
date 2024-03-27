@@ -14,10 +14,6 @@ class RenderScreenController extends BaseServerRenderController {
       url: this.scope.url,
     });
   }
-
-  bootstrap() {
-    this.render();
-  }
 }
 
 export { RenderScreenController };

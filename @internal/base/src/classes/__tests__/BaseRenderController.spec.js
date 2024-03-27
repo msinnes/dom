@@ -143,10 +143,6 @@ describe('BaseRenderableComponent', () => {
     expect(BaseRenderableComponent).toBeAbstract();
   });
 
-  it('should have an abstract render method', () => {
-    expect(BaseRenderableComponent).toHaveAbstractMethod('render');
-  });
-
   describe('instance', () => {
     let instance;
     let propsRef;

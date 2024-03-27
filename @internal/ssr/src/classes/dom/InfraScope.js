@@ -12,16 +12,20 @@ Dom.createContext = defaultValue => Infra.contextService.createEntity(defaultVal
 const useContextOriginal = Dom.useContext;
 const useEffectOriginal = Dom.useEffect;
 const useMemoOriginal = Dom.useMemo;
+const useRefOriginal = Dom.useRef;
 const useStateOriginal = Dom.useState;
+
+const createRefOriginal = Dom.createRef;
 
 class InfraScope extends Scope {
   static contextService = this.contextService;
 
-  constructor(infra) {
+  constructor(infra, AppRef) {
     super();
     this.contextService = infra.contextService;
     this.hooks = infra.hooks;
     this.services = infra.services;
+    this.AppRef = AppRef;
   }
 
   enable() {
@@ -29,14 +33,20 @@ class InfraScope extends Scope {
     Dom.useContext = useContext;
     Dom.useEffect = useEffect;
     Dom.useMemo = useMemo;
+    Dom.useRef = ref => useMemo(() => Dom.createRef(ref));
     Dom.useState = useState;
+
+    Dom.createRef = ref => new this.AppRef(ref, this);
   }
 
   disable() {
     Dom.useContext = useContextOriginal;
     Dom.useEffect = useEffectOriginal;
     Dom.useMemo = useMemoOriginal;
+    Dom.useRef = useRefOriginal;
     Dom.useState = useStateOriginal;
+
+    Dom.createRef = createRefOriginal;
   }
 }
 

@@ -1,4 +1,4 @@
-import { abstract, abstractMethod } from '@internal/oop';
+import { abstract } from '@internal/oop';
 
 import { Renderer } from './Renderer';
 import { FrameQueue } from './Frame';
@@ -6,7 +6,6 @@ import { FrameQueue } from './Frame';
 const BaseRenderableComponent = abstract(class {
   constructor(props) {
     this.props = props;
-    abstractMethod(this, 'render');
   }
 });
 
