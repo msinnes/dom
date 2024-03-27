@@ -1,6 +1,6 @@
 {
   "name": "@e2e/auth-app",
-  "version": "0.0.15-alpha.0",
+  "version": "0.0.17-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -26,7 +26,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "@msinnes/dom": "^0.0.15-alpha.0",
+    "@msinnes/dom": "^0.0.17-alpha.0",
     "@msinnes/dom-redux-light": "^0.0.6-alpha.0",
     "@msinnes/dom-router": "^0.0.7-alpha.0"
   }
