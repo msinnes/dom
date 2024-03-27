@@ -10,10 +10,6 @@ class RenderController extends BaseServerRenderController {
     this.wrapElement = this.wrapElement.bind(this);
   }
 
-  bootstrap() {
-    this.render();
-  }
-
   render() {
     super.render();
     traverse(this.scope.body.elem, elem => {

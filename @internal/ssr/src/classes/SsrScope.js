@@ -26,7 +26,7 @@ class SsrScope extends HookableScope {
     return url;
   }
 
-  constructor(config) {
+  constructor(config, AppRef) {
     super();
     // Wrap the fetch fn in disable scope/enable scope calls. This will allow the fetch request to process in server mode.
     const fetchConfig = {
@@ -41,7 +41,7 @@ class SsrScope extends HookableScope {
     };
 
     // Scopes for replicating a client side rendering environment
-    this.append('infra', new InfraScope(new Infra()));
+    this.append('infra', new InfraScope(new Infra(), AppRef));
     this.append('time', new TimeScope(config.time));
     this.append('fetch', new FetchScope(fetchConfig));
 

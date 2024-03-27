@@ -46,18 +46,5 @@ describe('RenderScreenController', () => {
       expect(screen).toBeInstanceOf(Screen);
       expect(screen).toMatchObject({ html: 'mock value' });
     });
-
-    describe('bootstrap', () => {
-      it('should be a function', () => {
-        expect(instance.bootstrap).toBeInstanceOf(Function);
-      });
-
-      it('should call the render function', () => {
-        let renderMock = jest.fn();
-        instance.render = renderMock;
-        instance.bootstrap();
-        expect(renderMock).toHaveBeenCalledTimes(1);
-      });
-    });
   });
 });

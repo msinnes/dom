@@ -154,6 +154,17 @@ describe('render.e2e', () => {
     screen.container.firstChild.click();
     expect(screen.container.innerHTML).toEqual('<button>Click 2</button>');
   });
+
+  it('should render a component with useRef', () => {
+    const Form = () => {
+      const formRef = Dom.useRef('form');
+      return Dom.createElement(formRef);
+    };
+    const screen = render(Dom.createElement(Form));
+    expect(screen.container.innerHTML).toEqual('<form></form>');
+    const formElem = screen.getByRole('form');
+    expect(formElem).toBeDefined();
+  });
 });
 
 describe('role queries', () => {

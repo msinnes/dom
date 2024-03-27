@@ -54,6 +54,12 @@ describe('e2e.basic', () => {
     expect(document.body.innerHTML).toEqual('<div></div>');
   });
 
+  it('should render a ref to the dom', () => {
+    const divRef = createRef('div');
+    ref.render(createElement(divRef));
+    expect(document.body.innerHTML).toEqual('<div></div>');
+  });
+
   it('should render a function component to the dom', () => {
     const App = () => 'text';
     ref.render(createElement(App));

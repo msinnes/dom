@@ -1,16 +1,10 @@
-import { abstract, abstractMethod } from '@internal/oop';
+import { abstract } from '@internal/oop';
 
 import { BaseRenderController } from './BaseRenderController';
 
 const BaseBrowserRenderController = abstract(class extends BaseRenderController {
   renderTimeoutId = null;
   trace = 0;
-
-  constructor(render, anchor, services) {
-    super(render, anchor, services);
-
-    abstractMethod(this, 'bootstrap');
-  }
 
   processEffects() {
     if (this.trace > 50) throw new Error('ImplementationError: Maximum call depth exceeded');

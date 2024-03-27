@@ -28,18 +28,5 @@ describe('RenderController', () => {
       expect(instance.renderer.root.root).toBe(renderRef);
       expect(instance.renderer.root.elem.elem).toBe(anchorRef);
     });
-
-    describe('bootstrap', () => {
-      it('should be a function', () => {
-        expect(instance.bootstrap).toBeInstanceOf(Function);
-      });
-
-      it('should call the render function', () => {
-        let renderMock = jest.fn();
-        instance.render = renderMock;
-        instance.bootstrap();
-        expect(renderMock).toHaveBeenCalledTimes(1);
-      });
-    });
   });
 });

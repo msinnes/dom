@@ -18,8 +18,11 @@ describe('FetchScope', () => {
   describe('instance', () => {
     let instance;
 
+    let fetchOriginal;
+
     beforeEach(() => {
       instance = new FetchScope({});
+      fetchOriginal = global.fetch;
     });
 
     it('should expose instance.requests.getAll on a getAll getter', () => {
@@ -175,6 +178,7 @@ describe('FetchScope', () => {
         instance.requests.requests[0].resolve(mockData);
         expect(mockFn).toHaveBeenCalledTimes(1);
         expect(mockFn).toHaveBeenCalledWith(mockData);
+        instance.disable();
       });
     });
 
@@ -188,7 +192,7 @@ describe('FetchScope', () => {
         expect(fetch).toBeDefined();
         expect(fetch).toBeInstanceOf(Function);
         instance.disable();
-        expect(global.fetch).toBeUndefined();
+        expect(global.fetch).toBe(fetchOriginal);
       });
     });
   });

@@ -35,6 +35,15 @@ describe('e2e', () => {
     expect(html).toEqual('<div></div>');
   });
 
+  it('should render a component with useRef', () => {
+    const Form = () => {
+      const formRef = Dom.useRef('form');
+      return Dom.createElement(formRef);
+    };
+    const html = api.renderToString(Dom.createElement(Form));
+    expect(html).toEqual('<form></form>');
+  });
+
   it('should render a function component to the dom', () => {
     const App = () => 'text';
     const html = api.renderToString(Dom.createElement(App));

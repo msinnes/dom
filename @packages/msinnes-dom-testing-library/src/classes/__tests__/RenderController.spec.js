@@ -29,18 +29,6 @@ describe('RenderController', () => {
       expect(instance.renderer.root.elem.elem).toBe(ssrScope.body.elem);
     });
 
-    describe('bootstrap', () => {
-      it('should be a function', () => {
-        expect(instance.bootstrap).toBeInstanceOf(Function);
-      });
-
-      it('should call the render method', () => {
-        const renderMock = jest.spyOn(instance, 'render').mockImplementation(() => {});
-        instance.bootstrap();
-        expect(renderMock).toHaveBeenCalledTimes(1);
-      });
-    });
-
     describe('render', () => {
       let processEffectsMock;
       let wrapElementMock;

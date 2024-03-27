@@ -4,6 +4,9 @@ import { SyncPromise } from '../base/SyncPromise';
 
 import { Requests } from './request/Requests';
 
+const fetchOriginal = global.fetch;
+Object.defineProperty(global, 'fetch', { writable: true });
+
 class FetchScope extends HookableScope {
   digestFetch = true;
   openRequests = 0;
@@ -44,7 +47,7 @@ class FetchScope extends HookableScope {
   }
 
   disable() {
-    delete global.fetch;
+    global.fetch = fetchOriginal;
   }
 
   enable() {
