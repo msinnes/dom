@@ -9,14 +9,13 @@ describe('DomRef', () => {
   });
 
   describe('instance', () => {
-    let ref;
     let createElementMock;
     beforeEach(() => {
-      ref = {};
-      createElementMock = jest.spyOn(document, 'createElement').mockImplementation(() => ref);
+      createElementMock = jest.spyOn(document, 'createElement');
     });
 
     it('should pass the ref to the elem property', () => {
+      const ref = {};
       const domRef = new DomRef(ref);
       expect(domRef.elem).toEqual(ref);
       expect(createElementMock).not.toHaveBeenCalled();
@@ -27,7 +26,7 @@ describe('DomRef', () => {
       const domRef = new DomRef(testString);
       expect(createElementMock).toHaveBeenCalledTimes(1);
       expect(createElementMock).toHaveBeenCalledWith(testString);
-      expect(domRef.elem).toEqual(ref);
+      expect(domRef.elem).toBeInstanceOf(HTMLElement);
     });
   });
 });

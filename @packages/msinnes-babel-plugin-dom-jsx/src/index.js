@@ -1,7 +1,9 @@
 import { builder } from './builder';
 
-import { validHtmlTags } from '@shared/json/validHtmlTags';
-import { deprecatedHtmlTags } from '@shared/json/deprecatedHtmlTags';
+// TODO: (svg-update) Implement deprecated svg tags, html attributes, and deprecated attributes for svg and html
+import { deprecatedHtmlTags, validHtmlTags } from '@shared/json/htmlTags';
+import { validSvgTags } from '@shared/json/svgTags';
+import { validSvgAttributes } from '@shared/json/svgAttributes';
 
 const memberExpressionSignature = node => {
   return builder.memberExpression(node.object.name, node.property.name);
@@ -10,7 +12,7 @@ const memberExpressionSignature = node => {
 const nameSignature = node => {
   const id = node.name;
   let value;
-  if (validHtmlTags.indexOf(id) >= 0) value = builder.stringLiteral(id);
+  if (validHtmlTags.indexOf(id) >= 0 || validSvgTags.indexOf(id) >= 0) value = builder.stringLiteral(id);
   else if (deprecatedHtmlTags.indexOf(id) >= 0) throw new Error('TypeError: Deprecated html tags are not supported');
   else value = builder.identifier(id);
   return value;
@@ -30,7 +32,8 @@ const getPropsProperty = node => {
 
   const props = attrs.map(attr => {
     if (attr.type === 'JSXSpreadAttribute') return builder.spreadElement(attr.argument);
-    const name = attr.name.name;
+    let name = attr.name.name;
+    if (/[-]/.test(name) && validSvgAttributes.indexOf(name)) name = `'${name}'`;
     let prop = attr.value;
     if (prop === null) prop = builder.booleanLiteral(true);
     else if (prop.type === 'JSXExpressionContainer') prop = prop.expression;

@@ -1,12 +1,11 @@
 import { BaseServerRenderController } from '@internal/base';
 
-import { renderComponent } from '../fns/domStringBuilder';
 import { Screen } from './Screen';
 
 // TODO: extend this class into an AsyncRenderScreenController
 class RenderScreenController extends BaseServerRenderController {
   get domString() {
-    return renderComponent(this.renderer.root);
+    return this.renderer.root.elem.elem.innerHTML;
   }
 
   get screen() {

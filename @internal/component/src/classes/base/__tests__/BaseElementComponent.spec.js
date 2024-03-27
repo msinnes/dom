@@ -2,19 +2,29 @@
  * @jest-environment jsdom
  */
 import { createRender } from '@internal/render';
-import { ElementNode } from '@internal/dom';
 
-import { DomComponent, DomParent } from '../base/DomComponent';
+import { DomComponent, DomParent } from '../DomComponent';
 
-import { ElementComponent } from '../ElementComponent';
+import { BaseElementComponent } from '../BaseElementComponent';
 
-describe('ElementComponent', () => {
+class TestableBaseElementComponent extends BaseElementComponent {
+  elem = {
+    tag: 'div',
+    update: jest.fn(),
+  };
+}
+
+describe('BaseElementComponent', () => {
   it('should be a class', () => {
-    expect(ElementComponent).toBeAClass();
+    expect(BaseElementComponent).toBeAClass();
+  });
+
+  it('should be abstract', () => {
+    expect(BaseElementComponent).toBeAbstract();
   });
 
   it('should extend DomComponent', () => {
-    expect(ElementComponent).toExtend(DomComponent);
+    expect(BaseElementComponent).toExtend(DomComponent);
   });
 
   describe('instance', () => {
@@ -31,7 +41,7 @@ describe('ElementComponent', () => {
           increment: () => {},
         },
       };
-      instance = new ElementComponent('div', props);
+      instance = new TestableBaseElementComponent('div', props);
       instance.domContext = domContextRef;
     });
 
@@ -47,11 +57,6 @@ describe('ElementComponent', () => {
 
     it('should have a props prop', () => {
       expect(instance.props).toEqual(props);
-    });
-
-    it('should have an elem prop', () => {
-      expect(instance.elem).toBeInstanceOf(ElementNode);
-      expect(instance.elem.tag).toEqual('div');
     });
 
     describe('canUpdate', () => {
@@ -85,6 +90,10 @@ describe('ElementComponent', () => {
       it('should call the super.render method', () => {
         instance.render();
         expect(addValueMock).toHaveBeenCalledTimes(1);
+        expect(instance.elem.update).toHaveBeenCalledTimes(1);
+        // eslint-disable-next-line no-unused-vars
+        const { children, ...rest } = instance.props;
+        expect(instance.elem.update.mock.calls[0][0]).toMatchObject(rest);
         const domParent = addValueMock.mock.calls[0][0];
         expect(domParent).toBeInstanceOf(DomParent);
         expect(domParent.node.tag).toBe('div');

@@ -4,10 +4,11 @@ import { JSXComponent } from './JSXComponent';
 
 const DomComponent = abstract(class extends JSXComponent {
   isDomComponent = true;
+  isSvgComponent = false;
 
   render() {
     if (this.domParent) this.domParent.increment();
-    this.domContext.addValue(new DomParent(this.elem));
+    this.domContext.addValue(new DomParent(this.elem, this.isSvgComponent));
   }
 
   unmountChildren() {
@@ -23,8 +24,9 @@ class DomParent {
     return this.node.elem;
   }
 
-  constructor(node) {
+  constructor(node, isSvgParent) {
     this.node = node;
+    this.isSvgParent = isSvgParent;
   }
 
   increment() {

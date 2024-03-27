@@ -52,6 +52,7 @@ describe('DomComponent', () => {
     it('should set the correct component flags', () => {
       expect(instance.isJSXComponent).toBe(true);
       expect(instance.isDomComponent).toBe(true);
+      expect(instance.isSvgComponent).toBe(false);
     });
 
     describe('render', () => {
@@ -65,6 +66,21 @@ describe('DomComponent', () => {
         const domParent = addValueMock.mock.calls[0][0];
         expect(domParent).toBeInstanceOf(DomParent);
         expect(domParent.elem).toBe(instance.elem.elem);
+      });
+
+      it('should set domParent.isSvgParent to false by default', () => {
+        instance.render();
+        expect(addValueMock).toHaveBeenCalledTimes(1);
+        const domParent = addValueMock.mock.calls[0][0];
+        expect(domParent.isSvgParent).toBe(false);
+      });
+
+      it('should set domParent.isSvgParent to true if parent is an svg component', () => {
+        instance.isSvgComponent = true;
+        instance.render();
+        expect(addValueMock).toHaveBeenCalledTimes(1);
+        const domParent = addValueMock.mock.calls[0][0];
+        expect(domParent.isSvgParent).toBe(true);
       });
 
       it('should call domParent.increment', () => {
@@ -125,7 +141,7 @@ describe('DomParent', () => {
       nodeRef = {
         elem: elemRef,
       };
-      instance = new DomParent(nodeRef);
+      instance = new DomParent(nodeRef, false);
     });
 
     it('should have a node prop', () => {
@@ -138,6 +154,12 @@ describe('DomParent', () => {
 
     it('should have an index props set to 0', () => {
       expect(instance.index).toBe(0);
+    });
+
+    it('should have isSvgParent prop', () => {
+      expect(instance.isSvgParent).toBe(false);
+      instance = new DomParent(nodeRef, true);
+      expect(instance.isSvgParent).toBe(true);
     });
 
     describe('increment', () => {

@@ -1,5 +1,34 @@
-const validHTMLAttributes = [
-  'accept',
+// Check against https://www.w3.org/TR/2014/REC-html5-20141028/obsolete.html
+const deprecatedHtmlAttributes = [
+  'applet',
+  'acronym',
+  'bgsound',
+  'dir',
+  'frame',
+  'frameset',
+  'noframes',
+  'hgroup',
+  'isindex',
+  'listing',
+  'nextid',
+  'noembed',
+  'plaintext',
+  'strike',
+  'xmp',
+  'basefont',
+  'big',
+  'blink',
+  'center',
+  'font',
+  'marquee',
+  'multicol',
+  'nobr',
+  'spacer',
+  'tt',
+];
+
+// Check against https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
+const validHtmlAttributes = [
   'accept',
   'accesskey',
   'action',
@@ -133,4 +162,4 @@ const validHTMLAttributes = [
   'wrap',
 ];
 
-export { validHTMLAttributes };
+export { validHtmlAttributes };
