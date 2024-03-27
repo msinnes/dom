@@ -1,6 +1,6 @@
 {
   "name": "@e2e/item-list-test-client",
-  "version": "0.0.14-alpha.0",
+  "version": "0.0.15-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -14,7 +14,7 @@
     "@babel/cli": "^7.19.3",
     "@babel/plugin-syntax-jsx": "^7.18.6",
     "@babel/preset-env": "^7.19.3",
-    "@msinnes/babel-preset-dom-jsx": "^0.0.5-alpha.0",
+    "@msinnes/babel-preset-dom-jsx": "^0.0.15-alpha.0",
     "babel-loader": "^8.2.5",
     "html-webpack-plugin": "^5.5.0",
     "rimraf": "^3.0.2",
@@ -24,7 +24,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "@msinnes/dom": "^0.0.14-alpha.0",
+    "@msinnes/dom": "^0.0.15-alpha.0",
     "classnames": "^2.3.2"
   }
 }

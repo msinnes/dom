@@ -1,6 +1,6 @@
 {
   "name": "@msinnes/babel-preset-dom-jsx",
-  "version": "0.0.5-alpha.0",
+  "version": "0.0.15-alpha.0",
   "description": "A babel preset for use in the msinnes/dom* libraries.",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "https://github.com/msinnes/dom/@packages/msinnes-babel-preset-dom-jsx/#readme",
@@ -24,7 +24,7 @@
   "dependencies": {
     "@babel/plugin-syntax-jsx": "^7.18.6",
     "@babel/preset-env": "^7.15.8",
-    "@msinnes/babel-plugin-dom-jsx": "^0.0.5-alpha.0"
+    "@msinnes/babel-plugin-dom-jsx": "^0.0.15-alpha.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",

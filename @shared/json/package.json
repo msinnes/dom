@@ -1,6 +1,6 @@
 {
   "name": "@shared/json",
-  "version": "0.0.4-alpha.0",
+  "version": "0.0.15-alpha.0",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
   "main": "./",

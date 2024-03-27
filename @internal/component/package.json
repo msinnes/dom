@@ -1,6 +1,6 @@
 {
   "name": "@internal/component",
-  "version": "0.0.14-alpha.0",
+  "version": "0.0.15-alpha.0",
   "description": "component lib",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -15,14 +15,14 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@internal/dom": "^0.0.14-alpha.0",
+    "@internal/dom": "^0.0.15-alpha.0",
     "@internal/is": "^0.0.6-alpha.0",
     "@internal/oop": "^0.0.9-alpha.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-env": "^7.20.2",
-    "@internal/render": "^0.0.14-alpha.0",
+    "@internal/render": "^0.0.15-alpha.0",
     "@shared/eslint-config": "^0.0.4-alpha.0",
     "eslint": "^8.33.0"
   }

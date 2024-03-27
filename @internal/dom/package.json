@@ -1,6 +1,6 @@
 {
   "name": "@internal/dom",
-  "version": "0.0.14-alpha.0",
+  "version": "0.0.15-alpha.0",
   "description": "dom interface",
   "keywords": [
     "dom"

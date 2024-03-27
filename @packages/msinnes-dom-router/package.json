@@ -1,6 +1,6 @@
 {
   "name": "@msinnes/dom-router",
-  "version": "0.0.14-alpha.0",
+  "version": "0.0.15-alpha.0",
   "description": "A router implementation for use in @msinnes/dom applications.",
   "keywords": [
     "router"
@@ -38,9 +38,9 @@
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-env": "^7.20.2",
     "@internal/routes": "^0.0.9-alpha.0",
-    "@msinnes/dom": "^0.0.14-alpha.0",
-    "@msinnes/dom-testing-library": "^0.0.14-alpha.0",
-    "@msinnes/dom-testing-library-jest": "^0.0.14-alpha.0",
+    "@msinnes/dom": "^0.0.15-alpha.0",
+    "@msinnes/dom-testing-library": "^0.0.15-alpha.0",
+    "@msinnes/dom-testing-library-jest": "^0.0.15-alpha.0",
     "@rollup/plugin-node-resolve": "^14.1.0",
     "@shared/eslint-config": "^0.0.4-alpha.0",
     "@shared/rollup-config": "^0.0.4-alpha.0",

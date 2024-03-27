@@ -1,6 +1,6 @@
 {
   "name": "@msinnes/babel-plugin-dom-jsx",
-  "version": "0.0.5-alpha.0",
+  "version": "0.0.15-alpha.0",
   "description": "A dom jsx plugin for transpiling jsx into a renderable format.",
   "keywords": [
     "dom",
@@ -36,7 +36,7 @@
     "@babel/preset-env": "^7.20.2",
     "@rollup/plugin-node-resolve": "^14.1.0",
     "@shared/eslint-config": "^0.0.4-alpha.0",
-    "@shared/json": "^0.0.4-alpha.0",
+    "@shared/json": "^0.0.15-alpha.0",
     "@shared/rollup-config": "^0.0.4-alpha.0",
     "eslint": "^8.33.0",
     "rimraf": "^3.0.2",
