@@ -1768,6 +1768,7 @@ describe('events', () => {
       value = event.target.value;
     };
     const screen = render(Dom.createElement('input', { type: 'text', value, oninput }));
+    // TODO: this is a duplicate line
     screen.createEvent('input', { cancelable: true, bubbles: true });
     screen.dispatchEvent(screen.container.firstChild, screen.createEvent('input', { cancelable: true, bubbles: true }), { value: 'a' });
     expect(value).toEqual('a');

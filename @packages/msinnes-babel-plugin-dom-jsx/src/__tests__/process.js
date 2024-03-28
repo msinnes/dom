@@ -8,11 +8,11 @@ const config = {
 };
 
 const gen = ast => generate(ast).code;
-const parse = text => parser.parse(text, config);
 
 const process = (input, plugins) => {
-  const ast = parse(input);
-  traverse(ast, plugins().visitor);
+  const plugin = plugins();
+  const ast = parser.parse(input, config);
+  traverse(ast, plugin.visitor);
   return gen(ast);
 };
 
