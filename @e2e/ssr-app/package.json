@@ -1,6 +1,6 @@
 {
   "name": "@e2e/ssr-app",
-  "version": "0.0.17-alpha.0",
+  "version": "0.0.18-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -23,11 +23,11 @@
   "devDependencies": {
     "@babel/cli": "^7.19.3",
     "@babel/preset-env": "^7.19.3",
-    "@msinnes/babel-plugin-dom-jsx": "^0.0.15-alpha.0",
+    "@msinnes/babel-plugin-dom-jsx": "^0.0.18-alpha.0",
     "@msinnes/dom": "^0.0.17-alpha.0",
-    "@msinnes/dom-redux-light": "^0.0.17-alpha.0",
-    "@msinnes/dom-router": "^0.0.17-alpha.0",
-    "@msinnes/dom-server": "^0.0.17-alpha.0",
+    "@msinnes/dom-redux-light": "^0.0.18-alpha.0",
+    "@msinnes/dom-router": "^0.0.18-alpha.0",
+    "@msinnes/dom-server": "^0.0.18-alpha.0",
     "babel-loader": "^8.2.5",
     "babel-node": "^0.0.1-security",
     "css-loader": "^6.7.1",

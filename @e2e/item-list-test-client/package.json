@@ -1,6 +1,6 @@
 {
   "name": "@e2e/item-list-test-client",
-  "version": "0.0.17-alpha.0",
+  "version": "0.0.18-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -13,7 +13,7 @@
   "devDependencies": {
     "@babel/cli": "^7.19.3",
     "@babel/preset-env": "^7.19.3",
-    "@msinnes/babel-preset-dom-jsx": "^0.0.15-alpha.0",
+    "@msinnes/babel-preset-dom-jsx": "^0.0.18-alpha.0",
     "babel-loader": "^8.2.5",
     "html-webpack-plugin": "^5.5.0",
     "rimraf": "^3.0.2",

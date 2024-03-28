@@ -1,6 +1,6 @@
 {
   "name": "@e2e/redux-task-list",
-  "version": "0.0.17-alpha.0",
+  "version": "0.0.18-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
-    "@msinnes/babel-preset-dom-jsx": "^0.0.15-alpha.0",
+    "@msinnes/babel-preset-dom-jsx": "^0.0.18-alpha.0",
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.5.0",
