@@ -76,6 +76,9 @@ const getFragment = node => {
 };
 
 export default () => ({
+  manipulateOptions: (opts, parserOptions) => {
+    parserOptions.plugins.push('jsx');
+  },
   visitor: {
     JSXElement: path => {
       const node = path.node;

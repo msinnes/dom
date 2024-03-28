@@ -13,7 +13,7 @@ const configBase = {
       use: {
         loader: 'babel-loader',
         options: {
-          plugins: ['@babel/plugin-syntax-jsx', domJsxPlugin],
+          plugins: [domJsxPlugin],
           presets: ['@babel/preset-env']
         },
       },

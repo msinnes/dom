@@ -33,7 +33,7 @@ const pageConfig = {
         use: {
           loader: 'babel-loader',
           options: {
-            plugins: ['@babel/plugin-syntax-jsx', domJsxPlugin],
+            plugins: [domJsxPlugin],
             presets: ['@babel/preset-env']
           },
         },
@@ -110,7 +110,7 @@ const getFilesInDir = async dir => {
 const transformFile = file => {
   return new Promise((resolve, reject) => {
     babel.transformFile(file, {
-      plugins: ['@babel/plugin-syntax-jsx', domJsxPlugin, ["module-resolver", {
+      plugins: [domJsxPlugin, ["module-resolver", {
         "root": ["../../@packages"],
         "alias": {
           "@msinnes/dom": "./@packages/msinnes-dom",
