@@ -80,6 +80,8 @@ describe('BaseComponent', () => {
 
     it('should have component flags set to false', () => {
       expect(instance.isDomComponent).toBe(false);
+      expect(instance.isSvgComponent).toBe(false);
+      expect(instance.isForeignObjectComponent).toBe(false);
       expect(instance.isJSXComponent).toBe(false);
       expect(instance.isArrayComponent).toBe(false);
       expect(instance.isClassComponent).toBe(false);

@@ -8,7 +8,7 @@ const DomComponent = abstract(class extends JSXComponent {
 
   render() {
     if (this.domParent) this.domParent.increment();
-    this.domContext.addValue(new DomParent(this.elem, this.isSvgComponent));
+    this.domContext.addValue(new DomParent(this.elem, this.isSvgComponent, this.isForeignObjectComponent));
   }
 
   unmountChildren() {
@@ -24,9 +24,10 @@ class DomParent {
     return this.node.elem;
   }
 
-  constructor(node, isSvgParent) {
+  constructor(node, isSvgParent, isForeignObjectParent) {
     this.node = node;
     this.isSvgParent = isSvgParent;
+    this.isForeignObjectParent = isForeignObjectParent;
   }
 
   increment() {

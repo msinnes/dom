@@ -38,6 +38,12 @@ describe('SvgNode', () => {
       expect(instance.elem).toBe(ref.elem);
     });
 
+    it('should update the xmlns prop if the element tag is svg', () => {
+      expect(instance.elem.getAttribute('xmlns')).toBe(null);
+      instance = new SvgNode('svg');
+      expect(instance.elem.getAttribute('xmlns')).toBe('http://www.w3.org/2000/svg');
+    });
+
     describe('create', () => {
       it('should be a function', () => {
         expect(instance.create).toBeInstanceOf(Function);
@@ -53,6 +59,24 @@ describe('SvgNode', () => {
         const ref = {};
         const svgRef = instance.create(ref);
         expect(svgRef).toBe(ref);
+      });
+    });
+
+    describe('setXMLNS', () => {
+      let setAttributeNSMock;
+
+      beforeEach(() => {
+        setAttributeNSMock = jest.spyOn(instance.elem, 'setAttributeNS');
+      });
+
+      it('should be a function', () => {
+        expect(instance.setXMLNS).toBeInstanceOf(Function);
+      });
+
+      it('should should call the setAttributeNS mock', () => {
+        instance.setXMLNS('http://www.w3.org/1999/xhtml');
+        expect(setAttributeNSMock).toHaveBeenCalledTimes(1);
+        expect(setAttributeNSMock).toHaveBeenCalledWith('http://www.w3.org/2000/xmlns/', 'xmlns', 'http://www.w3.org/1999/xhtml');
       });
     });
 
@@ -73,16 +97,6 @@ describe('SvgNode', () => {
         expect(setAttributeNSMock).toHaveBeenCalledTimes(2);
         expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key1', 'value1');
         expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key2', 'value2');
-      });
-
-      it('should update the xmlns prop if the element tag is svg', () => {
-        instance = new SvgNode('svg');
-        setAttributeNSMock = jest.spyOn(instance.elem, 'setAttributeNS');
-        instance.update({ key1: 'value1', key2: 'value2' });
-        expect(setAttributeNSMock).toHaveBeenCalledTimes(3);
-        expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key1', 'value1');
-        expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key2', 'value2');
-        expect(setAttributeNSMock).toHaveBeenCalledWith('http://www.w3.org/2000/xmlns/', 'xmlns', 'http://www.w3.org/2000/svg');
       });
     });
   });

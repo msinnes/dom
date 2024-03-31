@@ -1783,7 +1783,7 @@ describe('svg.e2e', () => {
         Dom.createElement('circle', { cx: 50, cy: 40, r: 35 }),
       ]),
     ]));
-    expect(screen.container.innerHTML).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle"><circle cx="50" cy="40" r="35"></circle></a></svg>');
+    expect(screen.container.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle"><circle cx="50" cy="40" r="35"></circle></a></svg>');
   });
 
   it('should render <animate>', () => {
@@ -1792,7 +1792,7 @@ describe('svg.e2e', () => {
         Dom.createElement('animate', { attributeName: 'rx', values: '0;5;0', dur: '10s', repeatCount: 'indefinite' }),
       ]),
     ]));
-    expect(screen.container.innerHTML).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"><animate attributeName="rx" values="0;5;0" dur="10s" repeatCount="indefinite"></animate></rect></svg>');
+    expect(screen.container.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="10" height="10"><animate attributeName="rx" values="0;5;0" dur="10s" repeatCount="indefinite"></animate></rect></svg>');
   });
 
   it('should render <animateMotion>', () => {
@@ -1802,7 +1802,7 @@ describe('svg.e2e', () => {
         Dom.createElement('animateMotion', { dur: '10s', repeatCount: 'indefinite', path:'M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z' }),
       ]),
     ]));
-    expect(screen.container.innerHTML).toEqual('<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="lightgrey" d="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z"></path><circle r="5" fill="red"><animateMotion dur="10s" repeatCount="indefinite" path="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z"></animateMotion></circle></svg>');
+    expect(screen.container.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="none" stroke="lightgrey" d="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z"></path><circle r="5" fill="red"><animateMotion dur="10s" repeatCount="indefinite" path="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z"></animateMotion></circle></svg>');
   });
 
   it('should render <animateTransform>', () => {
@@ -1811,14 +1811,14 @@ describe('svg.e2e', () => {
         Dom.createElement('animateTransform', { attributeName: 'transform', attributeType: 'XML', type: 'rotate', from: '0 60 70', to: '360 60 70', dur: '10s', repeatCount: 'indefinite' }),
       ]),
     ]));
-    expect(screen.container.innerHTML).toEqual('<svg height="120" width="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><polygon points="60,30 90,90 30,90"><animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 60 70" to="360 60 70" dur="10s" repeatCount="indefinite"></animateTransform></polygon></svg>');
+    expect(screen.container.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" height="120" width="120" viewBox="0 0 120 120"><polygon points="60,30 90,90 30,90"><animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 60 70" to="360 60 70" dur="10s" repeatCount="indefinite"></animateTransform></polygon></svg>');
   });
 
   it('should render <circle>', () => {
     const screen = render(Dom.createElement('svg', { viewBox: '0 0 100 100' }, [
       Dom.createElement('circle', { cx: 50, cy: 50, r: 50 }),
     ]));
-    expect(screen.container.innerHTML).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50"></circle></svg>');
+    expect(screen.container.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>');
   });
 
   it('should render <clipPath>', () => {
@@ -1829,7 +1829,7 @@ describe('svg.e2e', () => {
       Dom.createElement('path', { id: 'heart', d: 'M10,30 A20,20,0,0,1,50,30 A20,20,0,0,1,90,30 Q90,60,50,90 Q10,60,10,30 Z' }),
       Dom.createElement('use', { 'clip-path': 'url(#myClip)', href: '#heart', fill: 'red' }),
     ]));
-    expect(screen.container.innerHTML).toEqual('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><clipPath id="myClip"><circle cx="40" cy="35" r="35"></circle></clipPath><path id="heart" d="M10,30 A20,20,0,0,1,50,30 A20,20,0,0,1,90,30 Q90,60,50,90 Q10,60,10,30 Z"></path><use clip-path="url(#myClip)" href="#heart" fill="red"></use></svg>');
+    expect(screen.container.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><clipPath id="myClip"><circle cx="40" cy="35" r="35"></circle></clipPath><path id="heart" d="M10,30 A20,20,0,0,1,50,30 A20,20,0,0,1,90,30 Q90,60,50,90 Q10,60,10,30 Z"></path><use clip-path="url(#myClip)" href="#heart" fill="red"></use></svg>');
   });
 
   it('should render <defs>', () => {
@@ -1843,7 +1843,7 @@ describe('svg.e2e', () => {
       ]),
       Dom.createElement('use', { x: 5, y: 5, href: '#myCircle', fill: 'url(\'#myGradient\')' }),
     ]));
-    expect(screen.container.innerHTML).toEqual('<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><defs><circle id="myCircle" cx="0" cy="0" r="5"></circle><linearGradient id="myGradient" gradientTransform="rotate(90)"><stop offset="20%" stop-color="gold"></stop><stop offset="90%" stop-color="red"></stop></linearGradient></defs><use x="5" y="5" href="#myCircle" fill="url(\'#myGradient\')"></use></svg>');
+    expect(screen.container.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><defs><circle id="myCircle" cx="0" cy="0" r="5"></circle><linearGradient id="myGradient" gradientTransform="rotate(90)"><stop offset="20%" stop-color="gold"></stop><stop offset="90%" stop-color="red"></stop></linearGradient></defs><use x="5" y="5" href="#myCircle" fill="url(\'#myGradient\')"></use></svg>');
   });
 
   it('should render <desc>', () => {
@@ -1854,14 +1854,14 @@ describe('svg.e2e', () => {
         ]),
       ]),
     ]));
-    expect(screen.container.innerHTML).toEqual('<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="5" r="4"><desc>I\'m a circle and that description is here to demonstrate how I can be described, but is it really necessary to describe a simple circle like me?</desc></circle></svg>');
+    expect(screen.container.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4"><desc>I\'m a circle and that description is here to demonstrate how I can be described, but is it really necessary to describe a simple circle like me?</desc></circle></svg>');
   });
 
   it('should render <ellipse>', () => {
     const screen = render(Dom.createElement('svg', { viewBox: '0 0 200 100' }, [
       Dom.createElement('ellipse', { cx: 100, cy: 50, rx: 100, ry: 50 }),
     ]));
-    expect(screen.container.innerHTML).toEqual('<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="100" cy="50" rx="100" ry="50"></ellipse></svg>');
+    expect(screen.container.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"><ellipse cx="100" cy="50" rx="100" ry="50"></ellipse></svg>');
   });
 
   // TODO: (svg-foreign-object-support): foriegn object support will require some work on @internal, similar to svg implementation
