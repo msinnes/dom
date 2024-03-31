@@ -5,6 +5,7 @@
 
  import { ArrayComponent } from '../../classes/ArrayComponent';
  import { ClassComponent } from '../../classes/ClassComponent';
+ import { ForeignObjectComponent } from '../../classes/ForeignObjectComponent';
  import { HtmlComponent } from '../../classes/HtmlComponent';
  import { EmptyComponent } from '../../classes/EmptyComponent';
  import { FunctionComponent } from '../../classes/FunctionComponent';
@@ -24,7 +25,7 @@
      let domContextRef;
      let servicesRef;
      beforeEach(() => {
-      domContextRef = { value: { isSvgParent: false }};
+      domContextRef = { value: { isSvgParent: false, isForeignObjectParent: false }};
       servicesRef = {};
       createComponent = createComponentFactory(Component, domContextRef, servicesRef);
     });
@@ -71,6 +72,23 @@
       const elementRender = createRender({ signature: 'circle' });
       const component = createComponent(elementRender);
       expect(component).toBeInstanceOf(SvgComponent);
+      expect(component.domContext).toBe(domContextRef);
+      expect(component.services).toBe(servicesRef);
+    });
+
+    it('should create a ForeignObjectComponent if the input signature is foreignObject', () => {
+      const elementRender = createRender({ signature: 'foreignObject' });
+      const component = createComponent(elementRender);
+      expect(component).toBeInstanceOf(ForeignObjectComponent);
+      expect(component.domContext).toBe(domContextRef);
+      expect(component.services).toBe(servicesRef);
+    });
+
+    it('should create a ForeignObjectComponent if the context parent is a foreignObject parent', () => {
+      domContextRef.value.isForeignObjectParent = true;
+      const elementRender = createRender({ signature: 'div' });
+      const component = createComponent(elementRender);
+      expect(component).toBeInstanceOf(ForeignObjectComponent);
       expect(component.domContext).toBe(domContextRef);
       expect(component.services).toBe(servicesRef);
     });

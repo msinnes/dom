@@ -18,7 +18,7 @@ describe('ForeignObjectComponent', () => {
     let instance;
 
     beforeEach(() => {
-      instance = new ForeignObjectComponent('foreignObject');
+      instance = new ForeignObjectComponent('foreignObject', {});
     });
 
     it('should set the correct component flags', () => {

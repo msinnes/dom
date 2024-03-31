@@ -678,5 +678,14 @@ describe('e2e.svg', () => {
     expect(document.body.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"><ellipse cx="100" cy="50" rx="100" ry="50"></ellipse></svg>');
   });
 
-  // TODO: (svg-foreign-object-support): foriegn object support will require some work on @internal, similar to svg implementation
+  it('should render <foreignObject>', () => {
+    ref.render(createElement('svg', { viewBox: '0 0 200 200' }, [
+      createElement('style', {}, ['div { color: white; font: 18px serif; height: 100%; overflow: auto; }']),
+      createElement('polygon', { points: '5,5 195,10 185,185 10,195' }),
+      createElement('foreignObject', { x: 20, y: 20, width: 160, height: 160 }, [
+        createElement('div', {}, ['Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis mollis mi ut ultricies. Nullam magna ipsum, porta vel dui convallis, rutrum imperdiet eros. Aliquam erat volutpat.'])
+      ]),
+    ]));
+    expect(document.body.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><style>div { color: white; font: 18px serif; height: 100%; overflow: auto; }</style><polygon points="5,5 195,10 185,185 10,195"></polygon><foreignObject x="20" y="20" width="160" height="160"><div xmlns="http://www.w3.org/1999/xhtml">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis mollis mi ut ultricies. Nullam magna ipsum, porta vel dui convallis, rutrum imperdiet eros. Aliquam erat volutpat.</div></foreignObject></svg>');
+  });
 });
