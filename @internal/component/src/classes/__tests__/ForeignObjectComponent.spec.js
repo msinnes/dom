@@ -28,11 +28,5 @@ describe('ForeignObjectComponent', () => {
       expect(instance.isSvgComponent).toBe(true);
       expect(instance.isForeignObjectComponent).toBe(true);
     });
-
-    it('should set the xmlns prop if the tag is not foreignObject', () => {
-      expect(instance.elem.elem.getAttribute('xmlns')).toBe(null);
-      instance = new ForeignObjectComponent('div');
-      expect(instance.elem.elem.getAttribute('xmlns')).toBe('http://www.w3.org/1999/xhtml');
-    });
   });
 });

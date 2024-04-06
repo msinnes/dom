@@ -38,12 +38,6 @@ describe('SvgNode', () => {
       expect(instance.elem).toBe(ref.elem);
     });
 
-    it('should update the xmlns prop if the element tag is svg', () => {
-      expect(instance.elem.getAttribute('xmlns')).toBe(null);
-      instance = new SvgNode('svg');
-      expect(instance.elem.getAttribute('xmlns')).toBe('http://www.w3.org/2000/svg');
-    });
-
     describe('create', () => {
       it('should be a function', () => {
         expect(instance.create).toBeInstanceOf(Function);
@@ -97,6 +91,15 @@ describe('SvgNode', () => {
         expect(setAttributeNSMock).toHaveBeenCalledTimes(2);
         expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key1', 'value1');
         expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key2', 'value2');
+      });
+
+      it('should call setXMLNS for the prop xmlns', () => {
+        const setXMLNSMock = jest.spyOn(instance, 'setXMLNS').mockImplementation(() => {});
+        instance.update({ xmlns: 'xmlns', key1: 'value1' });
+        expect(setAttributeNSMock).toHaveBeenCalledTimes(1);
+        expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key1', 'value1');
+        expect(setXMLNSMock).toHaveBeenCalledTimes(1);
+        expect(setXMLNSMock).toHaveBeenCalledWith('xmlns');
       });
     });
   });

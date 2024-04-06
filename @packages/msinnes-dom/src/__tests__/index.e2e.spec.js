@@ -572,7 +572,7 @@ describe('e2e.svg', () => {
   });
 
   it('should render <a>', () => {
-    ref.render(createElement('svg', { viewBox: '0 0 100 100' }, [
+    ref.render(createElement('svg', { viewBox: '0 0 100 100', xmlns: 'http://www.w3.org/2000/svg' }, [
       createElement('a', { href: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle' }, [
         createElement('circle', { cx: 50, cy: 40, r: 35 }),
       ]),
@@ -584,7 +584,7 @@ describe('e2e.svg', () => {
   });
 
   it('should render <animate>', () => {
-    ref.render(createElement('svg', { viewBox: '0 0 100 100' }, [
+    ref.render(createElement('svg', { viewBox: '0 0 100 100', xmlns: 'http://www.w3.org/2000/svg' }, [
       createElement('rect', { width: 10, height: 10 }, [
         createElement('animate', { attributeName: 'rx', values: '0;5;0', dur: '10s', repeatCount: 'indefinite' }),
       ]),
@@ -596,7 +596,7 @@ describe('e2e.svg', () => {
   });
 
   it('should render <animateMotion>', () => {
-    ref.render(createElement('svg', { viewBox: '0 0 200 200' }, [
+    ref.render(createElement('svg', { viewBox: '0 0 200 200', xmlns: 'http://www.w3.org/2000/svg' }, [
       createElement('path', { fill: 'none', stroke: 'lightgrey', d:'M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z' }),
       createElement('circle', { r: 5, fill: 'red' }, [
         createElement('animateMotion', { dur: '10s', repeatCount: 'indefinite', path:'M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z' }),
@@ -610,7 +610,7 @@ describe('e2e.svg', () => {
   });
 
   it('should render <animateTransform>', () => {
-    ref.render(createElement('svg', { height: '120', width: '120', viewBox: '0 0 120 120' }, [
+    ref.render(createElement('svg', { height: '120', width: '120', viewBox: '0 0 120 120', xmlns: 'http://www.w3.org/2000/svg' }, [
       createElement('polygon', { points: '60,30 90,90 30,90' }, [
         createElement('animateTransform', { attributeName: 'transform', attributeType: 'XML', type: 'rotate', from: '0 60 70', to: '360 60 70', dur: '10s', repeatCount: 'indefinite' }),
       ]),
@@ -622,7 +622,7 @@ describe('e2e.svg', () => {
   });
 
   it('should render <circle>', () => {
-    ref.render(createElement('svg', { viewBox: '0 0 100 100' }, [
+    ref.render(createElement('svg', { viewBox: '0 0 100 100', xmlns: 'http://www.w3.org/2000/svg' }, [
       createElement('circle', { cx: 50, cy: 50, r: 50 }),
     ]));
     expect(document.body.firstChild).toBeInstanceOf(SVGElement);
@@ -631,7 +631,7 @@ describe('e2e.svg', () => {
   });
 
   it('should render <clipPath>', () => {
-    ref.render(createElement('svg', { viewBox: '0 0 100 100' }, [
+    ref.render(createElement('svg', { viewBox: '0 0 100 100', xmlns: 'http://www.w3.org/2000/svg' }, [
       createElement('clipPath', { id: 'myClip' }, [
         createElement('circle', { cx: 40, cy: 35, r: 35 }),
       ]),
@@ -647,7 +647,7 @@ describe('e2e.svg', () => {
   });
 
   it('should render <defs>', () => {
-    ref.render(createElement('svg', { viewBox: '0 0 10 10' }, [
+    ref.render(createElement('svg', { viewBox: '0 0 10 10', xmlns: 'http://www.w3.org/2000/svg' }, [
       createElement('defs', {}, [
         createElement('circle', { id:'myCircle', cx: 0, cy: 0, r: 5 }),
         createElement('linearGradient', { id: 'myGradient', gradientTransform: 'rotate(90)' }, [
@@ -661,7 +661,7 @@ describe('e2e.svg', () => {
   });
 
   it('should render <desc>', () => {
-    ref.render(createElement('svg', { viewBox: '0 0 10 10' }, [
+    ref.render(createElement('svg', { viewBox: '0 0 10 10', xmlns: 'http://www.w3.org/2000/svg' }, [
       createElement('circle', { cx: 5, cy: 5, r: 4 }, [
         createElement('desc', {}, [
           'I\'m a circle and that description is here to demonstrate how I can be described, but is it really necessary to describe a simple circle like me?'
@@ -672,18 +672,18 @@ describe('e2e.svg', () => {
   });
 
   it('should render <ellipse>', () => {
-    ref.render(createElement('svg', { viewBox: '0 0 200 100' }, [
+    ref.render(createElement('svg', { viewBox: '0 0 200 100', xmlns: 'http://www.w3.org/2000/svg' }, [
       createElement('ellipse', { cx: 100, cy: 50, rx: 100, ry: 50 }),
     ]));
     expect(document.body.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"><ellipse cx="100" cy="50" rx="100" ry="50"></ellipse></svg>');
   });
 
   it('should render <foreignObject>', () => {
-    ref.render(createElement('svg', { viewBox: '0 0 200 200' }, [
+    ref.render(createElement('svg', { viewBox: '0 0 200 200', xmlns: 'http://www.w3.org/2000/svg' }, [
       createElement('style', {}, ['div { color: white; font: 18px serif; height: 100%; overflow: auto; }']),
       createElement('polygon', { points: '5,5 195,10 185,185 10,195' }),
       createElement('foreignObject', { x: 20, y: 20, width: 160, height: 160 }, [
-        createElement('div', {}, ['Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis mollis mi ut ultricies. Nullam magna ipsum, porta vel dui convallis, rutrum imperdiet eros. Aliquam erat volutpat.'])
+        createElement('div', { xmlns: 'http://www.w3.org/1999/xhtml' }, ['Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis mollis mi ut ultricies. Nullam magna ipsum, porta vel dui convallis, rutrum imperdiet eros. Aliquam erat volutpat.'])
       ]),
     ]));
     expect(document.body.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><style>div { color: white; font: 18px serif; height: 100%; overflow: auto; }</style><polygon points="5,5 195,10 185,185 10,195"></polygon><foreignObject x="20" y="20" width="160" height="160"><div xmlns="http://www.w3.org/1999/xhtml">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis mollis mi ut ultricies. Nullam magna ipsum, porta vel dui convallis, rutrum imperdiet eros. Aliquam erat volutpat.</div></foreignObject></svg>');

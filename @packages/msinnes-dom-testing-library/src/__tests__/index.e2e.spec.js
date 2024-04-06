@@ -1778,7 +1778,7 @@ describe('events', () => {
 // TODO: (svg-update) add e2e tests for svg components
 describe('svg.e2e', () => {
   it('should support <a>', () => {
-    const screen = render(Dom.createElement('svg', { viewBox: '0 0 100 100' }, [
+    const screen = render(Dom.createElement('svg', { viewBox: '0 0 100 100', xmlns: 'http://www.w3.org/2000/svg' }, [
       Dom.createElement('a', { href: 'https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle' }, [
         Dom.createElement('circle', { cx: 50, cy: 40, r: 35 }),
       ]),
@@ -1787,7 +1787,7 @@ describe('svg.e2e', () => {
   });
 
   it('should render <animate>', () => {
-    const screen = render(Dom.createElement('svg', { viewBox: '0 0 100 100' }, [
+    const screen = render(Dom.createElement('svg', { viewBox: '0 0 100 100', xmlns: 'http://www.w3.org/2000/svg' }, [
       Dom.createElement('rect', { width: 10, height: 10 }, [
         Dom.createElement('animate', { attributeName: 'rx', values: '0;5;0', dur: '10s', repeatCount: 'indefinite' }),
       ]),
@@ -1796,7 +1796,7 @@ describe('svg.e2e', () => {
   });
 
   it('should render <animateMotion>', () => {
-    const screen = render(Dom.createElement('svg', { viewBox: '0 0 200 200' }, [
+    const screen = render(Dom.createElement('svg', { viewBox: '0 0 200 200', xmlns: 'http://www.w3.org/2000/svg' }, [
       Dom.createElement('path', { fill: 'none', stroke: 'lightgrey', d:'M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z' }),
       Dom.createElement('circle', { r: 5, fill: 'red' }, [
         Dom.createElement('animateMotion', { dur: '10s', repeatCount: 'indefinite', path:'M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z' }),
@@ -1806,7 +1806,7 @@ describe('svg.e2e', () => {
   });
 
   it('should render <animateTransform>', () => {
-    const screen = render(Dom.createElement('svg', { height: '120', width: '120', viewBox: '0 0 120 120' }, [
+    const screen = render(Dom.createElement('svg', { height: '120', width: '120', viewBox: '0 0 120 120', xmlns: 'http://www.w3.org/2000/svg' }, [
       Dom.createElement('polygon', { points: '60,30 90,90 30,90' }, [
         Dom.createElement('animateTransform', { attributeName: 'transform', attributeType: 'XML', type: 'rotate', from: '0 60 70', to: '360 60 70', dur: '10s', repeatCount: 'indefinite' }),
       ]),
@@ -1815,14 +1815,14 @@ describe('svg.e2e', () => {
   });
 
   it('should render <circle>', () => {
-    const screen = render(Dom.createElement('svg', { viewBox: '0 0 100 100' }, [
+    const screen = render(Dom.createElement('svg', { viewBox: '0 0 100 100', xmlns: 'http://www.w3.org/2000/svg' }, [
       Dom.createElement('circle', { cx: 50, cy: 50, r: 50 }),
     ]));
     expect(screen.container.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>');
   });
 
   it('should render <clipPath>', () => {
-    const screen = render(Dom.createElement('svg', { viewBox: '0 0 100 100' }, [
+    const screen = render(Dom.createElement('svg', { viewBox: '0 0 100 100', xmlns: 'http://www.w3.org/2000/svg' }, [
       Dom.createElement('clipPath', { id: 'myClip' }, [
         Dom.createElement('circle', { cx: 40, cy: 35, r: 35 }),
       ]),
@@ -1833,7 +1833,7 @@ describe('svg.e2e', () => {
   });
 
   it('should render <defs>', () => {
-    const screen = render(Dom.createElement('svg', { viewBox: '0 0 10 10' }, [
+    const screen = render(Dom.createElement('svg', { viewBox: '0 0 10 10', xmlns: 'http://www.w3.org/2000/svg' }, [
       Dom.createElement('defs', {}, [
         Dom.createElement('circle', { id:'myCircle', cx: 0, cy: 0, r: 5 }),
         Dom.createElement('linearGradient', { id: 'myGradient', gradientTransform: 'rotate(90)' }, [
@@ -1847,7 +1847,7 @@ describe('svg.e2e', () => {
   });
 
   it('should render <desc>', () => {
-    const screen = render(Dom.createElement('svg', { viewBox: '0 0 10 10' }, [
+    const screen = render(Dom.createElement('svg', { viewBox: '0 0 10 10', xmlns: 'http://www.w3.org/2000/svg' }, [
       Dom.createElement('circle', { cx: 5, cy: 5, r: 4 }, [
         Dom.createElement('desc', {}, [
           'I\'m a circle and that description is here to demonstrate how I can be described, but is it really necessary to describe a simple circle like me?'
@@ -1858,18 +1858,18 @@ describe('svg.e2e', () => {
   });
 
   it('should render <ellipse>', () => {
-    const screen = render(Dom.createElement('svg', { viewBox: '0 0 200 100' }, [
+    const screen = render(Dom.createElement('svg', { viewBox: '0 0 200 100', xmlns: 'http://www.w3.org/2000/svg' }, [
       Dom.createElement('ellipse', { cx: 100, cy: 50, rx: 100, ry: 50 }),
     ]));
     expect(screen.container.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"><ellipse cx="100" cy="50" rx="100" ry="50"></ellipse></svg>');
   });
 
   it('should render <foreignObject>', () => {
-    const screen = render(Dom.createElement('svg', { viewBox: '0 0 200 200' }, [
+    const screen = render(Dom.createElement('svg', { viewBox: '0 0 200 200', xmlns: 'http://www.w3.org/2000/svg' }, [
       Dom.createElement('style', {}, ['div { color: white; font: 18px serif; height: 100%; overflow: auto; }']),
       Dom.createElement('polygon', { points: '5,5 195,10 185,185 10,195' }),
       Dom.createElement('foreignObject', { x: 20, y: 20, width: 160, height: 160 }, [
-        Dom.createElement('div', {}, ['Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis mollis mi ut ultricies. Nullam magna ipsum, porta vel dui convallis, rutrum imperdiet eros. Aliquam erat volutpat.'])
+        Dom.createElement('div', { xmlns: 'http://www.w3.org/1999/xhtml' }, ['Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis mollis mi ut ultricies. Nullam magna ipsum, porta vel dui convallis, rutrum imperdiet eros. Aliquam erat volutpat.'])
       ]),
     ]));
     expect(screen.container.innerHTML).toEqual('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><style>div { color: white; font: 18px serif; height: 100%; overflow: auto; }</style><polygon points="5,5 195,10 185,185 10,195"></polygon><foreignObject x="20" y="20" width="160" height="160"><div xmlns="http://www.w3.org/1999/xhtml">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis mollis mi ut ultricies. Nullam magna ipsum, porta vel dui convallis, rutrum imperdiet eros. Aliquam erat volutpat.</div></foreignObject></svg>');

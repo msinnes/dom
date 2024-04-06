@@ -195,4 +195,30 @@ const expected = `({
     const out = process(jsx, plugins);
     expect(out).toEqual(expected);
   });
+
+  it('should process case 16', () => {
+    const jsx = `
+<style>{\`
+  div {
+    color: white;
+    font: 18px serif;
+    height: 100%;
+    overflow: auto;
+  }
+\`}</style>
+`;
+    const expected = `({
+  signature: "style",
+  children: [\`
+  div {
+    color: white;
+    font: 18px serif;
+    height: 100%;
+    overflow: auto;
+  }
+\`]
+});`;
+    const out = process(jsx, plugins);
+    expect(out).toEqual(expected);
+  });
 });
