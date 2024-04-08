@@ -3,14 +3,14 @@ import { BaseDomNode } from '../BaseDomNode';
 import { BaseElementNode } from '../BaseElementNode';
 
 const createMock = jest.fn();
-const updateMock = jest.fn();
+const updatePropsMock = jest.fn();
 
 class TestableBaseElementNode extends BaseElementNode {
   create(...args) {
     return createMock(...args);
   }
-  update(...args) {
-    updateMock(...args);
+  updateProps(...args) {
+    updatePropsMock(...args);
   }
 }
 
@@ -31,16 +31,16 @@ describe('BaseElementNode', () => {
 
   it('should have an abstract create method', () => {
     class CreateTestableBaseElementNode extends BaseElementNode {
-      update() {}
+      updateProps() {}
     }
     expect(CreateTestableBaseElementNode).toHaveAbstractMethod('create');
   });
 
-  it('should have an abstract update method', () => {
-    class UpdateTestableBaseElementNode extends BaseElementNode {
+  it('should have an abstract updateProps method', () => {
+    class UpdatePropsTestableBaseElementNode extends BaseElementNode {
       create() {}
     }
-    expect(UpdateTestableBaseElementNode).toHaveAbstractMethod('update');
+    expect(UpdatePropsTestableBaseElementNode).toHaveAbstractMethod('updateProps');
   });
 
   describe('instance', () => {
@@ -48,7 +48,7 @@ describe('BaseElementNode', () => {
     let ref;
     let instance;
     beforeEach(() => {
-      elem = { tagName: 'DIV' };
+      elem = { tagName: 'DIV', style: {} };
       ref = { elem };
       createMock.mockReturnValue(ref);
       instance = new TestableBaseElementNode(ref);
@@ -62,6 +62,64 @@ describe('BaseElementNode', () => {
 
     it('should have a tag prop', () => {
       expect(instance.tag).toEqual('div');
+    });
+
+    describe('update', () => {
+      it('should be a function', () => {
+        expect(instance.update).toBeInstanceOf(Function);
+      });
+
+      it('should call instance.updateProps without the style prop', () => {
+        const inputProps = { style: {}, key1: 'data1', key2: 'data2' };
+        instance.update(inputProps);
+        expect(updatePropsMock).toHaveBeenCalledTimes(1);
+        expect(updatePropsMock.mock.calls[0][0]).toMatchObject({ key1: 'data1', key2: 'data2' });
+      });
+
+      it('should pass the style prop to update style', () => {
+        const updateStyleMock = jest.spyOn(instance, 'updateStyle').mockImplementation(() => {});
+        const inputProps = { style: {} };
+        instance.update(inputProps);
+        expect(updateStyleMock).toHaveBeenCalledTimes(1);
+        expect(updateStyleMock).toHaveBeenCalledWith(inputProps.style);
+      });
+    });
+
+    describe('updateStyle', () => {
+      let setAttributeMock;
+      let ObjectAssignMock;
+      let ObjectAssignOriginal;
+
+      beforeEach(() => {
+        setAttributeMock = jest.fn();
+        instance.elem.setAttribute = setAttributeMock;
+        ObjectAssignOriginal = Object.assign;
+        ObjectAssignMock = jest.fn();
+        Object.assign = ObjectAssignMock;
+      });
+
+      afterEach(() => {
+        Object.assign = ObjectAssignOriginal;
+      });
+
+      it('should be a function', () => {
+        expect(instance.updateStyle).toBeInstanceOf(Function);
+      });
+
+      it('should call setAttribute if input style is a string', () => {
+        instance.updateStyle('color: blue;');
+        expect(setAttributeMock).toHaveBeenCalledTimes(1);
+        expect(ObjectAssignMock).toHaveBeenCalledTimes(0);
+        expect(setAttributeMock).toHaveBeenCalledWith('style', 'color: blue;');
+      });
+
+      it('should call Object.assign if the input style is an object', () => {
+        const style = { color: 'blue' };
+        instance.updateStyle(style);
+        expect(setAttributeMock).toHaveBeenCalledTimes(0);
+        expect(ObjectAssignMock).toHaveBeenCalledTimes(1);
+        expect(ObjectAssignMock).toHaveBeenCalledWith(instance.elem.style, style);
+      });
     });
   });
 });

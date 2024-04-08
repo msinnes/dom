@@ -16,7 +16,6 @@ const createDomComponent = (render, domContext) => {
 const createComponentFactory = (BaseClass, domContext, services) => render => {
   let component;
   if (render.isArrayRender) component = new ArrayComponent(render.render);
-  // TODO: this needs to filter out foeignObject components as well
   else if (render.isElementRender) component = createDomComponent(render, domContext);
   else if (render.isEmptyRender) component = new EmptyComponent();
   else if (render.isTextRender) component = new TextComponent(render.render);

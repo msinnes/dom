@@ -15,7 +15,7 @@ class SvgNode extends BaseElementNode {
     this.elem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns', ns);
   }
 
-  update({ xmlns, ...props }) {
+  updateProps({ xmlns, ...props }) {
     if (xmlns) this.setXMLNS(xmlns);
     Object.keys(props).forEach(key => this.elem.setAttributeNS(null, key.replace(reg, ''), props[key]));
   }

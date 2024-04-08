@@ -75,7 +75,7 @@ describe('SvgNode', () => {
     });
 
 
-    describe('update', () => {
+    describe('updateProps', () => {
       let setAttributeNSMock;
 
       beforeEach(() => {
@@ -83,11 +83,11 @@ describe('SvgNode', () => {
       });
 
       it('should be a function', () => {
-        expect(instance.update).toBeInstanceOf(Function);
+        expect(instance.updateProps).toBeInstanceOf(Function);
       });
 
       it('should call setAttribute for each property passed', () => {
-        instance.update({ key1: 'value1', key2: 'value2' });
+        instance.updateProps({ key1: 'value1', key2: 'value2' });
         expect(setAttributeNSMock).toHaveBeenCalledTimes(2);
         expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key1', 'value1');
         expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key2', 'value2');
@@ -95,7 +95,7 @@ describe('SvgNode', () => {
 
       it('should call setXMLNS for the prop xmlns', () => {
         const setXMLNSMock = jest.spyOn(instance, 'setXMLNS').mockImplementation(() => {});
-        instance.update({ xmlns: 'xmlns', key1: 'value1' });
+        instance.updateProps({ xmlns: 'xmlns', key1: 'value1' });
         expect(setAttributeNSMock).toHaveBeenCalledTimes(1);
         expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key1', 'value1');
         expect(setXMLNSMock).toHaveBeenCalledTimes(1);
