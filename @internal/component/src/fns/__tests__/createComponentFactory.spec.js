@@ -24,7 +24,7 @@ describe('createComponentFactory', () => {
     let domContextRef;
     let servicesRef;
       beforeEach(() => {
-      domContextRef = { value: { isSvgParent: false, isForeignObjectParent: false }};
+      domContextRef = { value: { isSvgParent: false }};
       servicesRef = {};
       createComponent = createComponentFactory(Component, domContextRef, servicesRef);
     });
