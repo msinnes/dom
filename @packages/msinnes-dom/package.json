@@ -1,6 +1,6 @@
 {
   "name": "@msinnes/dom",
-  "version": "0.0.17-alpha.0",
+  "version": "0.0.19-alpha.0",
   "description": "A dom library.",
   "keywords": [
     "dom"
@@ -37,9 +37,9 @@
     "@babel/core": "^7.19.3",
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-env": "^7.20.2",
-    "@internal/base": "^0.0.17-alpha.0",
-    "@internal/dom": "^0.0.15-alpha.0",
-    "@internal/infra": "^0.0.17-alpha.0",
+    "@internal/base": "^0.0.19-alpha.0",
+    "@internal/dom": "^0.0.19-alpha.0",
+    "@internal/infra": "^0.0.19-alpha.0",
     "@internal/utils": "^0.0.4-alpha.0",
     "@rollup/plugin-node-resolve": "^14.1.0",
     "@shared/eslint-config": "^0.0.4-alpha.0",
