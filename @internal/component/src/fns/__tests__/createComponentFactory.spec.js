@@ -1,29 +1,29 @@
 /**
  * @jest-environment jsdom
  */
- import { createRender } from '@internal/render';
+import { createRender } from '@internal/render';
 
- import { ArrayComponent } from '../../classes/ArrayComponent';
- import { ClassComponent } from '../../classes/ClassComponent';
- import { HtmlComponent } from '../../classes/HtmlComponent';
- import { EmptyComponent } from '../../classes/EmptyComponent';
- import { FunctionComponent } from '../../classes/FunctionComponent';
- import { SvgComponent } from '../../classes/SvgComponent';
- import { TextComponent } from '../../classes/TextComponent';
+import { ArrayComponent } from '../../classes/ArrayComponent';
+import { ClassComponent } from '../../classes/ClassComponent';
+import { HtmlComponent } from '../../classes/HtmlComponent';
+import { EmptyComponent } from '../../classes/EmptyComponent';
+import { FunctionComponent } from '../../classes/FunctionComponent';
+import { SvgComponent } from '../../classes/SvgComponent';
+import { TextComponent } from '../../classes/TextComponent';
 
- import { createComponentFactory } from '../createComponentFactory';
+import { createComponentFactory } from '../createComponentFactory';
 
- describe('createComponentFactory', () => {
-   it('should be a function', () => {
-     expect(createComponentFactory).toBeInstanceOf(Function);
-   });
+describe('createComponentFactory', () => {
+  it('should be a function', () => {
+    expect(createComponentFactory).toBeInstanceOf(Function);
+  });
 
-   describe('createComponent', () => {
-     let createComponent;
-     class Component {}
-     let domContextRef;
-     let servicesRef;
-     beforeEach(() => {
+  describe('createComponent', () => {
+    let createComponent;
+    class Component {}
+    let domContextRef;
+    let servicesRef;
+      beforeEach(() => {
       domContextRef = { value: { isSvgParent: false }};
       servicesRef = {};
       createComponent = createComponentFactory(Component, domContextRef, servicesRef);
@@ -98,5 +98,5 @@
       expect(component.domContext).toBe(domContextRef);
       expect(component.services).toBe(servicesRef);
     });
-   });
- });
+  });
+});

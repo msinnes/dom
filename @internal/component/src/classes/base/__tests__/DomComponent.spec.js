@@ -141,7 +141,7 @@ describe('DomParent', () => {
       nodeRef = {
         elem: elemRef,
       };
-      instance = new DomParent(nodeRef, false);
+      instance = new DomParent(nodeRef, false, false);
     });
 
     it('should have a node prop', () => {

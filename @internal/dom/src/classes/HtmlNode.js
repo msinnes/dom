@@ -8,7 +8,7 @@ class HtmlNode extends BaseElementNode {
     return isString(ref) ? new DomRef(ref) : ref;
   }
 
-  update({ list, style, ...rest }) {
+  updateProps({ list, style, ...rest }) {
     if (list) this.elem.setAttribute('list', list);
     if (style) Object.assign(this.elem.style, style);
     Object.assign(this.elem, rest);

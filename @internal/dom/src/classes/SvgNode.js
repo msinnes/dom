@@ -3,16 +3,22 @@ import { isString } from '@internal/is';
 import { BaseElementNode } from './BaseElementNode';
 import { SvgRef } from './SvgRef';
 
-const xmlns = 'http://www.w3.org/2000/svg';
+const xmlnsNs = 'http://www.w3.org/2000/xmlns/';
+const xmlnsAttr = 'xmlns';
+const reg = new RegExp('[\'"]', 'g');
 
 class SvgNode extends BaseElementNode {
-  create(ref) {
+  create(ref, xmlns) {
     return isString(ref) ? new SvgRef(xmlns, ref) : ref;
   }
 
-  update(props) {
-    Object.keys(props).forEach(key => this.elem.setAttributeNS(null, key, props[key]));
-    if (this.tag === 'svg') this.elem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns', xmlns);
+  setXMLNS(ns) {
+    this.elem.setAttributeNS(xmlnsNs, xmlnsAttr, ns);
+  }
+
+  updateProps({ xmlns, ...props }) {
+    if (xmlns) this.setXMLNS(xmlns);
+    Object.keys(props).forEach(key => this.elem.setAttributeNS(null, key.replace(reg, ''), props[key]));
   }
 }
 

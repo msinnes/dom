@@ -57,7 +57,7 @@ describe('HtmlNode', () => {
     });
 
 
-    describe('update', () => {
+    describe('updateProps', () => {
       let ObjectAssignMock;
       let ObjectAssignOriginal;
 
@@ -72,13 +72,13 @@ describe('HtmlNode', () => {
       });
 
       it('should be a function', () => {
-        expect(instance.update).toBeInstanceOf(Function);
+        expect(instance.updateProps).toBeInstanceOf(Function);
       });
 
       it('should call Object.assign with a separate style call', () => {
         const styleProp = {};
         const props = { style: styleProp };
-        instance.update(props);
+        instance.updateProps(props);
         expect(ObjectAssignMock).toHaveBeenCalledTimes(2);
         expect(ObjectAssignMock.mock.calls[0][0]).toEqual(instance.elem.style);
         expect(ObjectAssignMock.mock.calls[0][1]).toEqual(styleProp);
@@ -90,14 +90,14 @@ describe('HtmlNode', () => {
 
       it('should not call Object.assign if there is no style prop', () => {
         const props = {};
-        instance.update(props);
+        instance.updateProps(props);
         expect(ObjectAssignMock).toHaveBeenCalledTimes(1);
       });
 
       it('it should set the list attribute if one is passed', () => {
         const spy = jest.spyOn(instance.elem, 'setAttribute');
         const props = { list: 'datalist' };
-        instance.update(props);
+        instance.updateProps(props);
         expect(spy).toHaveBeenCalledTimes(1);
         expect(spy).toHaveBeenCalledWith('list', 'datalist');
       });
@@ -105,7 +105,7 @@ describe('HtmlNode', () => {
       it('should not set the list attribute if one is not passed', () => {
         const spy = jest.spyOn(instance.elem, 'setAttribute');
         const props = {};
-        instance.update(props);
+        instance.updateProps(props);
         expect(spy).toHaveBeenCalledTimes(0);
       });
     });

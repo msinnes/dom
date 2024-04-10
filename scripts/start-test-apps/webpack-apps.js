@@ -46,6 +46,7 @@ const apps = [
   'item-list-test-client',
   'redux-task-list',
   'router-app',
+  'svg-app',
 ].forEach((appName, i) => {
   const compiler = webpack({
     entry: path.resolve(__dirname, `../../@e2e/${appName}/src/index.js`),

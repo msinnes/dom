@@ -2,6 +2,7 @@ import { abstract, abstractMethod } from '@internal/oop';
 
 const BaseComponent = abstract(class {
   isDomComponent = false;
+  isSvgComponent = false;
   isJSXComponent = false;
 
   isArrayComponent = false;
