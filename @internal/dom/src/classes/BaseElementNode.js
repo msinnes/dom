@@ -4,12 +4,12 @@ import { abstract, abstractMethod } from '@internal/oop';
 import { BaseDomNode } from './BaseDomNode';
 
 const BaseElementNode = abstract(class extends BaseDomNode {
-  constructor(ref) {
+  constructor(...args) {
     super();
     abstractMethod(this, 'create');
     abstractMethod(this, 'updateProps');
 
-    this.ref = this.create(ref);
+    this.ref = this.create(...args);
     this.tag = this.elem.tagName.toLowerCase();
   }
 

@@ -6,6 +6,8 @@ import { BaseElementNode } from '../BaseElementNode';
 
 import { SvgNode } from '../SvgNode';
 
+const svgXmlns = 'http://www.w3.org/2000/svg';
+
 describe('SvgNode', () => {
   it('should be a class', () => {
     expect(SvgNode).toBeAClass();
@@ -18,13 +20,13 @@ describe('SvgNode', () => {
   describe('instance', () => {
     let instance;
     beforeEach(() => {
-      instance = new SvgNode('div');
+      instance = new SvgNode('div', svgXmlns);
     });
 
     it('should have a ref prop', () => {
       expect(instance.ref).toBeInstanceOf(SvgRef);
-      const ref = new SvgRef('http://www.w3.org/2000/svg', 'div');
-      instance = new SvgNode(ref);
+      const ref = new SvgRef(svgXmlns, 'div');
+      instance = new SvgNode(ref, svgXmlns);
       expect(instance.ref).toBe(ref);
     });
 
@@ -33,8 +35,8 @@ describe('SvgNode', () => {
     });
 
     it('should put an element in the node.elem property', () => {
-      const ref = new SvgRef('http://www.w3.org/2000/svg', 'div');
-      instance = new SvgNode(ref);
+      const ref = new SvgRef(svgXmlns, 'div');
+      instance = new SvgNode(ref, svgXmlns);
       expect(instance.elem).toBe(ref.elem);
     });
 
@@ -44,14 +46,14 @@ describe('SvgNode', () => {
       });
 
       it('should create a DomRef if one is passed', () => {
-        const svgRef = instance.create('svg');
+        const svgRef = instance.create('svg', svgXmlns);
         expect(svgRef).toBeInstanceOf(SvgRef);
         expect(svgRef.elem).toBeInstanceOf(SVGElement);
       });
 
       it('should pass a non-string if one is passed', () => {
         const ref = {};
-        const svgRef = instance.create(ref);
+        const svgRef = instance.create(ref, svgXmlns);
         expect(svgRef).toBe(ref);
       });
     });
