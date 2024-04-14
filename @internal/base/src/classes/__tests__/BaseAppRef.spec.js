@@ -16,9 +16,7 @@ class TestableRenderController extends BaseRenderController {
 
 class TestableBaseAppRef extends BaseAppRef {
   constructor(ref) {
-    super(ref);
-
-    this.create = render => new TestableRenderController(render, this, new Infra().services);
+    super(ref, render => new TestableRenderController(render, this, new Infra().services));
   }
 }
 

@@ -7,21 +7,23 @@ function emptyElementChildren(elem) {
   }
 }
 
+// TODO: onError will call this.unmount and then this.create with the error text
+// TODO: add onError onto the services object
 const BaseAppRef = abstract(class extends DomRef {
-  constructor(ref) {
+  constructor(ref, create) {
     super(ref);
 
     let controller = null;
     this.hydrate = render => {
       emptyElementChildren(this.elem);
-      controller = this.create(render);
+      controller = create(render);
       controller.render();
       return this;
     };
 
     this.render = render => {
       if (controller) controller.unmount();
-      controller = this.create(render);
+      controller = create(render);
       controller.render();
       return this;
     };
