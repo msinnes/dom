@@ -1,4 +1,4 @@
-import { HookableScope } from '../base/HookableScope';
+import { DigestibleScope } from '../base/DigestibleScope';
 import { DomScope } from '../dom/DomScope';
 import { FetchScope } from '../fetch/FetchScope';
 import { InfraScope } from '../dom/InfraScope';
@@ -12,7 +12,7 @@ describe('SsrScope', () => {
   });
 
   it('should extends HookableScope', () => {
-    expect(SsrScope).toExtend(HookableScope);
+    expect(SsrScope).toExtend(DigestibleScope);
   });
 
   describe('instance', () => {
@@ -118,10 +118,10 @@ describe('SsrScope', () => {
 
     it('should be hooked into the fetch schop', () => {
       const mockFn = jest.fn();
-      instance.hook(() => {
+      instance.hook('fetchResolve', () => {
         mockFn();
       });
-      instance.fetch.trigger();
+      instance.fetch.trigger('resolve');
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
 

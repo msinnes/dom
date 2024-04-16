@@ -1,7 +1,7 @@
 import { DomRef } from '@internal/dom';
 import { Infra } from '@internal/infra';
 
-import { HookableScope } from './base/HookableScope';
+import { DigestibleScope } from './base/DigestibleScope';
 
 import { DomScope } from './dom/DomScope';
 import { FetchScope } from './fetch/FetchScope';
@@ -11,7 +11,7 @@ import { TimeScope } from './time/TimeScope';
 // this is found in the jsdom configuration docs.
 const DEFAULT_JSDOM_URL = 'about:blank';
 
-class SsrScope extends HookableScope {
+class SsrScope extends DigestibleScope {
   get openHandles() {
     return this.fetch.openRequests;
   }
@@ -53,8 +53,8 @@ class SsrScope extends HookableScope {
     this.document = this.window.document;
     this.body = new DomRef(this.document.body);
     //Hook into fetch to trigger a rerender.
-    this.fetch.hook(() => {
-      this.trigger();
+    this.fetch.hook('resolve', () => {
+      this.trigger('fetchResolve');
     });
   }
 

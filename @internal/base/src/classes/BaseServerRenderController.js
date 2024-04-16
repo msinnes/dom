@@ -2,17 +2,14 @@ import { abstract } from '@internal/oop';
 
 import { BaseRenderController } from './BaseRenderController';
 
-// TODO: during reorganization, this should be abstracted with hookable in scopes.
 const BaseServerRenderController = abstract(class extends BaseRenderController {
-  hooks = [];
-
   constructor(render, ssrScope) {
     super(render, ssrScope.body, ssrScope.services);
 
     this.scope = ssrScope;
-    this.scope.hook(() => {
+    this.scope.hook('fetchResolve', () => {
       this.render();
-      this.trigger();
+      this.trigger('fetchResolve');
     });
 
     this.processHandlerBound = this.processHandler.bind(this);
@@ -29,10 +26,6 @@ const BaseServerRenderController = abstract(class extends BaseRenderController {
       results.forEach(this.processHandlerBound);
       this.digest(trace + 1);
     }
-  }
-
-  hook(fn) {
-    this.hooks.push(fn);
   }
 
   processEffects(trace = 0) {
@@ -64,10 +57,6 @@ const BaseServerRenderController = abstract(class extends BaseRenderController {
     this.processEffects();
     this.digest();
     this.scope.disable();
-  }
-
-  trigger() {
-    this.hooks.forEach(hook => hook());
   }
 });
 

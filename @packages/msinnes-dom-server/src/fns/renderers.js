@@ -36,7 +36,7 @@ const getRenderPromise = (render, userConfig) => {
       clearTimeout(timeoutId);
     };
 
-    controller.hook(after);
+    controller.hook('fetchResolve', after);
     after();
   });
 };

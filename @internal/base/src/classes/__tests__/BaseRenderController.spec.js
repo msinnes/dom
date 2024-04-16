@@ -4,6 +4,7 @@ import { Renderer } from '../Renderer';
 import { FrameQueue } from '../Frame';
 
 import { BaseRenderController, BaseRenderableComponent } from '../BaseRenderController';
+import { Hookable } from '../Hookable';
 
 class TestableRenderController extends BaseRenderController {}
 class TestableComponent extends BaseRenderableComponent {
@@ -17,6 +18,10 @@ describe('BaseRenderController', () => {
 
   it('should be abstract', () => {
     expect(BaseRenderController).toBeAbstract();
+  });
+
+  it('should extend hookable', () => {
+    expect(BaseRenderController).toExtend(Hookable);
   });
 
   describe('instance', () => {
