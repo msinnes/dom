@@ -8,8 +8,8 @@ const Hookable = abstract(class {
     else this.hooks[key] = [fn];
   }
 
-  trigger(key) {
-    if (this.hooks[key]) this.hooks[key].forEach(hook => hook());
+  trigger(key, ...args) {
+    if (this.hooks[key]) this.hooks[key].forEach(hook => hook(...args));
   }
 });
 

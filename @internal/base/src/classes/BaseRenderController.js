@@ -29,7 +29,11 @@ const BaseRenderController = abstract(class extends Hookable {
   }
 
   render() {
-    this.renderer.rootRender();
+    try {
+      this.renderer.rootRender();
+    } catch (e) {
+      this.trigger('error', e);
+    }
   }
 
   renderFrame() {

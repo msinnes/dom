@@ -52,6 +52,15 @@ describe('BaseAppRef', () => {
       expect(instance.elem).toBe(document.body);
     });
 
+    it('should hook into the RenderController and write an error to the dom, exiting and cleaning up the app before throwing the error', () => {
+      expect(() => {
+        instance.render(createElement(() => {
+          throw new Error('custom error');
+        }));
+      }).toThrow('custom error');
+      expect(document.body.innerHTML).toEqual('custom error');
+    });
+
     describe('hydrate', () => {
       it('should be a function', () => {
         expect(instance.hydrate).toBeInstanceOf(Function);

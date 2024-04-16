@@ -69,6 +69,14 @@ describe('Hookable', () => {
         expect(mock2).toHaveBeenCalledTimes(1);
         expect(mock3).toHaveBeenCalledTimes(1);
       });
+
+      it('should pass all but first args to event handlers', () => {
+        const mock1 = jest.fn();
+        instance.hook('key', mock1);
+        instance.trigger('key', 'one', 'two', 'three');
+        expect(mock1).toHaveBeenCalledTimes(1);
+        expect(mock1).toHaveBeenCalledWith('one', 'two', 'three');
+      });
     });
   });
 });

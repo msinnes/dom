@@ -14,17 +14,24 @@ const BaseAppRef = abstract(class extends DomRef {
     super(ref);
 
     let controller = null;
+    const bootstrap = render => {
+      controller = create(render);
+      controller.hook('error', e => {
+        emptyElementChildren(document.body);
+        document.body.appendChild(document.createTextNode(e.message));
+        throw e;
+      });
+      controller.render();
+    };
     this.hydrate = render => {
       emptyElementChildren(this.elem);
-      controller = create(render);
-      controller.render();
+      bootstrap(render);
       return this;
     };
 
     this.render = render => {
       if (controller) controller.unmount();
-      controller = create(render);
-      controller.render();
+      bootstrap(render);
       return this;
     };
 
