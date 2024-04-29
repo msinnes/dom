@@ -1,28 +1,28 @@
 import { isDefined } from '@internal/is';
 import { SsrScope, parseConfig } from '@internal/ssr';
 
-import { RenderScreenController } from '../classes/RenderScreenController';
 import { AppRef } from '../classes/AppRef';
+import { Screen } from '../classes/Screen';
 
 const isDoingFetch = config => isDefined(config.fetch.digestFetch) ? config.fetch.digestFetch : true;
 
-const getBootStrappedController = (render, userConfig) => {
-  const config = parseConfig(userConfig);
+const createScopeAndRender = (render, config) => {
   const ssrScope = new SsrScope(config, AppRef);
-  const controller = new RenderScreenController(render, ssrScope);
-  controller.render();
-  return [controller, config];
+  ssrScope.container.render(render);
+  return ssrScope;
 };
 
-const getSyncController = (render, userConfig) => {
-  const [controller, config] = getBootStrappedController(render, userConfig);
-  controller.close();
-  if (controller.scope.openHandles > 0 && isDoingFetch(config)) console.warn('Open Handles Detected -- Open handles are ignored after a render is closed');
-  return controller;
+const getScope = (render, userConfig) => {
+  const config = parseConfig(userConfig);
+  const ssrScope = createScopeAndRender(render, config);
+  ssrScope.close();
+  if (ssrScope.openHandles > 0 && isDoingFetch(config)) console.warn('Open Handles Detected -- Open handles are ignored after a render is closed');
+  return ssrScope;
 };
 
-const getRenderPromise = (render, userConfig) => {
-  const [controller, config] = getBootStrappedController(render, userConfig);
+const getScopeAsync = (render, userConfig) => {
+  const config = parseConfig(userConfig);
+  const ssrScope = createScopeAndRender(render, config);
 
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
@@ -30,33 +30,33 @@ const getRenderPromise = (render, userConfig) => {
     }, 2000);
 
     const after = () => {
-      if (controller.scope.openHandles > 0 && isDoingFetch(config)) return;
+      if (ssrScope.openHandles > 0 && isDoingFetch(config)) return;
 
-      resolve(controller);
+      resolve(ssrScope);
       clearTimeout(timeoutId);
     };
 
-    controller.hook('fetchResolve', after);
+    ssrScope.hook('fetchResolve', after);
     after();
   });
 };
 
-const renderToScreen = (render, userConfig) => {
-  const controller = getSyncController(render, userConfig);
-  return controller.screen;
-};
-
 const renderToString = (render, userConfig) => {
-  const controller = getSyncController(render, userConfig);
-  return controller.domString;
+  const ssrScope = getScope(render, userConfig);
+  return ssrScope.container.elem.innerHTML;
 };
 
-const renderToScreenAsync = (render, userConfig) => {
-  return getRenderPromise(render, userConfig).then(controller => controller.screen);
+const renderToScreen = (render, userConfig) => {
+  const ssrScope = getScope(render, userConfig);
+  return new Screen(ssrScope);
 };
 
 const renderToStringAsync = (render, userConfig) => {
-  return getRenderPromise(render, userConfig).then(controller => controller.domString);
+  return getScopeAsync(render, userConfig).then(scope => scope.container.elem.innerHTML);
 };
 
-export { renderToScreen, renderToString, renderToScreenAsync, renderToStringAsync };
+const renderToScreenAsync = (render, userConfig) => {
+  return getScopeAsync(render, userConfig).then(scope => new Screen(scope));
+};
+
+export { renderToString, renderToScreen, renderToStringAsync, renderToScreenAsync };

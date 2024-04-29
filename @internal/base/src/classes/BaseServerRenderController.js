@@ -2,9 +2,10 @@ import { abstract } from '@internal/oop';
 
 import { BaseRenderController } from './BaseRenderController';
 
+// TODO: should just become RenderController in @internal/ssr module
 const BaseServerRenderController = abstract(class extends BaseRenderController {
   constructor(render, ssrScope) {
-    super(render, ssrScope.body, ssrScope.services);
+    super(render, ssrScope.container, ssrScope.services);
 
     this.scope = ssrScope;
     this.scope.hook('fetchResolve', () => {

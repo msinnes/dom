@@ -18,17 +18,17 @@ describe('BaseServerRenderController', () => {
     let instance;
 
     let renderRef;
-    let bodyRef;
+    let containerRef;
     let servicesRef;
     let ssrScopeRef;
     beforeEach(() => {
       renderRef = {};
-      bodyRef = {};
+      containerRef = {};
       servicesRef = {
         digestEffects: jest.fn(),
       };
       ssrScopeRef = {
-        body: new DomRef(bodyRef),
+        container: new DomRef(containerRef),
         close: jest.fn(),
         digest: jest.fn(),
         enable: jest.fn(),
@@ -49,7 +49,7 @@ describe('BaseServerRenderController', () => {
 
     it('should have a renderer prop with the correct render and anchor', () => {
       expect(instance.renderer.root.root).toBe(renderRef);
-      expect(instance.renderer.root.elem.elem).toBe(bodyRef);
+      expect(instance.renderer.root.elem.elem).toBe(containerRef);
     });
 
     it('should have a hooks prop', () => {

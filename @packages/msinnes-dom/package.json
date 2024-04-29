@@ -22,7 +22,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "scripts": {
-    "build": "yarn rollup",
+    "build": "yarn rollup && yarn transform && yarn uglify",
     "build-dev": "yarn clean && yarn build && yarn pack",
     "clean": "rimraf dist",
     "lint": "eslint src/",

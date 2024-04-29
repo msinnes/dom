@@ -11,9 +11,10 @@ function getAllBy(fnName, results) {
   return results;
 }
 
+// TODO: make a base class for this in @internal/ssr and extend it here
 class Screen {
   constructor(controller) {
-    this.container = controller.scope.body.elem;
+    this.container = controller.scope.container.elem;
     const queries = new Queries(this.container);
 
     this.createEvent = (type, config) => controller.scope.createEvent(type, config);

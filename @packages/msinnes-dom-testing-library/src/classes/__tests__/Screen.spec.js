@@ -13,7 +13,7 @@ describe('Screen', () => {
 
     beforeEach(() => {
       container = { tagName: 'DIV' };
-      ssrScope = { body: { elem: container }, createEvent: jest.fn(), enable: jest.fn(), disable: jest.fn() };
+      ssrScope = { container: { elem: container }, createEvent: jest.fn(), enable: jest.fn(), disable: jest.fn() };
       renderController = { scope: ssrScope, digest: jest.fn(), processHandler: jest.fn() };
       instance = new Screen(renderController);
     });

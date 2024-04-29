@@ -1,7 +1,8 @@
+// TODO: make a class in @internal/ssr and just expose this class
 class Screen {
-  constructor(config) {
-    this.html = config.html;
-    this.url = config.url;
+  constructor(scope) {
+    this.html = scope.container.elem.innerHTML;
+    this.url = scope.url;
   }
 }
 

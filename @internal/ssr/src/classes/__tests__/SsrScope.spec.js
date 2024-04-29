@@ -1,3 +1,5 @@
+import { BaseAppRef } from '@internal/base';
+
 import { DigestibleScope } from '../base/DigestibleScope';
 import { DomScope } from '../dom/DomScope';
 import { FetchScope } from '../fetch/FetchScope';
@@ -5,6 +7,8 @@ import { InfraScope } from '../dom/InfraScope';
 import { TimeScope } from '../time/TimeScope';
 
 import { SsrScope } from '../SsrScope';
+
+class AppRef extends BaseAppRef {}
 
 describe('SsrScope', () => {
   it('should be a class', () => {
@@ -26,7 +30,7 @@ describe('SsrScope', () => {
     let fetchEnableMock;
     let fetchDisableMock;
     beforeEach(() => {
-      instance = new SsrScope({ dom: {}, fetch: {}, time: {} });
+      instance = new SsrScope({ dom: {}, fetch: {}, time: {} }, AppRef);
 
       domEnableMock = jest.spyOn(instance.dom, 'enable');
       domDisableMock = jest.spyOn(instance.dom, 'disable');
@@ -68,7 +72,11 @@ describe('SsrScope', () => {
     });
 
     it('should expose the body element on a body getter', () => {
-      expect(instance.body.elem).toBe(instance.dom.dom.window.document.body);
+      expect(instance.body).toBe(instance.dom.dom.window.document.body);
+    });
+
+    it('should expose the container on a container getter', () => {
+      expect(instance.container.elem).toBe(instance.dom.dom.window.document.body);
     });
 
     it('should expose infra.services on a services getter', () => {
@@ -76,33 +84,33 @@ describe('SsrScope', () => {
     });
 
     it('should pass config.dom to the DomScope', () => {
-      instance = new SsrScope({ dom: { url: 'http://url.com' }, fetch: {}, time: {} });
+      instance = new SsrScope({ dom: { url: 'http://url.com' }, fetch: {}, time: {} }, AppRef);
       expect(instance.dom.dom.window.location.href).toEqual('http://url.com/');
     });
 
     it('should pass config.fetch to the FetchScope', () => {
-      instance = new SsrScope({ dom: {}, fetch: { digestFetch: true }, time: {} });
+      instance = new SsrScope({ dom: {}, fetch: { digestFetch: true }, time: {} }, AppRef);
       expect(instance.fetch.digestFetch).toBe(true);
-      instance = new SsrScope({ dom: {}, fetch: { digestFetch: false }, time: {} });
+      instance = new SsrScope({ dom: {}, fetch: { digestFetch: false }, time: {} }, AppRef);
       expect(instance.fetch.digestFetch).toBe(false);
     });
 
     it('should pass config.time to the TimeScope', () => {
-      instance = new SsrScope({ dom: {}, fetch: {}, time: { digestExpiredTimers: true } });
+      instance = new SsrScope({ dom: {}, fetch: {}, time: { digestExpiredTimers: true } }, AppRef);
       expect(instance.time.digestExpiredTimers).toBe(true);
-      instance = new SsrScope({ dom: {}, fetch: {}, time: { digestExpiredTimers: false } });
+      instance = new SsrScope({ dom: {}, fetch: {}, time: { digestExpiredTimers: false } }, AppRef);
       expect(instance.time.digestExpiredTimers).toBe(false);
     });
 
     it('should have a url getter', () => {
       expect(instance.url).toBeUndefined();
-      instance = new SsrScope({ dom: { url: 'http://url.com' }, fetch: {}, time: {} });
+      instance = new SsrScope({ dom: { url: 'http://url.com' }, fetch: {}, time: {} }, AppRef);
       expect(instance.url).toEqual('http://url.com/');
     });
 
     it('should override config.fetch.fetch if it is passed', () => {
       const fetchMock = jest.fn();
-      instance = new SsrScope({ dom: {}, fetch: { fetch: fetchMock }, time: {} });
+      instance = new SsrScope({ dom: {}, fetch: { fetch: fetchMock }, time: {} }, AppRef);
       const enableMock = jest.spyOn(instance, 'enable').mockImplementation(() => {});
       const disableMock = jest.spyOn(instance, 'disable').mockImplementation(() => {});
       const doRequest = instance.fetch.doRequest;

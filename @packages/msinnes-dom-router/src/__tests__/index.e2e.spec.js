@@ -196,4 +196,55 @@ describe('e2e', () => {
       expect(screen.getAllByText('About').length).toEqual(2);
     });
   });
+
+  describe('app with a not found', () => {
+    const Home = () => DOM.createElement('div', {}, ['Home']);
+
+    const Nav = ({ children }) => {
+      return DOM.createElement('ul', {}, [children]);
+    };
+
+    const NavItem = ({ children, ...rest }) => DOM.createElement('li', {}, [
+      DOM.createElement(api.Link, {...rest}, [children]),
+    ]);
+
+    const Header = () => DOM.createElement(Nav, {}, [
+      DOM.createElement(NavItem, { to: '/' }, ['Home']),
+      DOM.createElement(NavItem, { to: '/about' }, ['About']),
+    ]);
+
+    const Content = () => DOM.createElement(api.Switch, {}, [
+      DOM.createElement(api.Case, { path: '/', render: DOM.createElement(Home), exact: true }),
+      DOM.createElement(api.NotFound),
+    ]);
+
+    const App = () => DOM.createElement(api.Router, {}, [
+      DOM.createElement(Header),
+      DOM.createElement(Content),
+    ]);
+
+    let screen;
+    beforeEach(() => {
+      screen = render(DOM.createElement(App), { url: 'http://url.com/'});
+    });
+
+    it('should render 2 links', () => {
+      const links = screen.getAllByRole('link');
+      expect(links.length).toEqual(2);
+      expect(links).toBeOn(screen);
+    });
+
+    it('should be on the home page', () => {
+      const LinkAndDiv = screen.getAllByText('Home');
+      expect(LinkAndDiv.length).toEqual(2);
+      expect(LinkAndDiv).toBeOn(screen);
+    });
+
+    it.skip('should throw an error if navigating to /about', () => {
+      expect(() => {
+        screen.getByText('About').click();
+      }).toThrow('404 Not Found');
+      expect(screen.container.innerHTML).toEqual('404 Not Found');
+    });
+  });
 });

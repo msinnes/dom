@@ -1,4 +1,3 @@
-import { DomRef } from '@internal/dom';
 import { Infra } from '@internal/infra';
 
 import { DigestibleScope } from './base/DigestibleScope';
@@ -11,6 +10,7 @@ import { TimeScope } from './time/TimeScope';
 // this is found in the jsdom configuration docs.
 const DEFAULT_JSDOM_URL = 'about:blank';
 
+// TODO: requires an ssr rebuild. Needs to take the controller instance and the AppRef constructor
 class SsrScope extends DigestibleScope {
   get openHandles() {
     return this.fetch.openRequests;
@@ -51,7 +51,8 @@ class SsrScope extends DigestibleScope {
     // Setup for ease of use. These refs are used for rendering and queries.
     this.window = this.dom.dom.window;
     this.document = this.window.document;
-    this.body = new DomRef(this.document.body);
+    this.body = this.document.body;
+    this.container = new AppRef(this.body, this);
     //Hook into fetch to trigger a rerender.
     this.fetch.hook('resolve', () => {
       this.trigger('fetchResolve');
