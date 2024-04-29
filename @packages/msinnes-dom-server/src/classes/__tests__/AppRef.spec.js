@@ -17,12 +17,12 @@ describe('AppRef', () => {
     let instance;
     let scope;
     beforeEach(() => {
-      scope = new SsrScope(parseConfig({}));
-      instance = new AppRef(scope.body.elem, scope);
+      scope = new SsrScope(parseConfig({}), AppRef);
+      instance = new AppRef(scope.container.elem, scope);
     });
 
     it('should have the DomRef elem prop', () => {
-      expect(instance.elem).toBe(scope.body.elem);
+      expect(instance.elem).toBe(scope.container.elem);
     });
 
     describe('hydrate', () => {
@@ -31,39 +31,39 @@ describe('AppRef', () => {
       });
 
       it('should hydrate an application with text children', () => {
-        scope.body.elem.appendChild(
+        scope.container.elem.appendChild(
           scope.document.createTextNode('text')
         );
-        expect(scope.body.elem.innerHTML).toEqual('text');
+        expect(scope.container.elem.innerHTML).toEqual('text');
         instance.hydrate(createElement('div'));
-        expect(scope.body.elem.innerHTML).toEqual('<div></div>');
+        expect(scope.container.elem.innerHTML).toEqual('<div></div>');
       });
 
       it('should hydrate an application to an element with existing element children', () => {
-        scope.body.elem.appendChild(
+        scope.container.elem.appendChild(
           scope.document.createElement('div')
         );
-        expect(scope.body.elem.innerHTML).toEqual('<div></div>');
+        expect(scope.container.elem.innerHTML).toEqual('<div></div>');
         instance.hydrate('text');
-        expect(scope.body.elem.innerHTML).toEqual('text');
+        expect(scope.container.elem.innerHTML).toEqual('text');
       });
 
       it('should return the instance', () => {
-        scope.body.elem.appendChild(
+        scope.container.elem.appendChild(
           scope.document.createElement('div')
         );
-        expect(scope.body.elem.innerHTML).toEqual('<div></div>');
+        expect(scope.container.elem.innerHTML).toEqual('<div></div>');
         expect(instance.hydrate('text')).toBe(instance);
-        expect(scope.body.elem.innerHTML).toEqual('text');
+        expect(scope.container.elem.innerHTML).toEqual('text');
       });
 
       it('should be repeatedly dottable', () => {
-        scope.body.elem.appendChild(
+        scope.container.elem.appendChild(
           scope.document.createElement('div')
         );
-        expect(scope.body.elem.innerHTML).toEqual('<div></div>');
+        expect(scope.container.elem.innerHTML).toEqual('<div></div>');
         instance.hydrate(createElement('div')).hydrate('text');
-        expect(scope.body.elem.innerHTML).toEqual('text');
+        expect(scope.container.elem.innerHTML).toEqual('text');
       });
     });
 
@@ -74,17 +74,17 @@ describe('AppRef', () => {
 
       it('should mount to the dom', () => {
         instance.render(createElement('div'));
-        expect(scope.body.elem.innerHTML).toEqual('<div></div>');
+        expect(scope.container.elem.innerHTML).toEqual('<div></div>');
       });
 
       it('should return the instance', () => {
         expect(instance.render('text')).toBe(instance);
-        expect(scope.body.elem.innerHTML).toEqual('text');
+        expect(scope.container.elem.innerHTML).toEqual('text');
       });
 
       it('should be repeatedly dottable', () => {
         instance.render('text').render(createElement('div'));
-        expect(scope.body.elem.innerHTML).toEqual('<div></div>');
+        expect(scope.container.elem.innerHTML).toEqual('<div></div>');
       });
     });
 
@@ -94,46 +94,46 @@ describe('AppRef', () => {
       });
 
       it('should unmount a text hydrated dom', () => {
-        scope.body.elem.appendChild(
+        scope.container.elem.appendChild(
           scope.document.createElement('div')
         );
-        expect(scope.body.elem.innerHTML).toEqual('<div></div>');
+        expect(scope.container.elem.innerHTML).toEqual('<div></div>');
         instance.hydrate('text');
-        expect(scope.body.elem.innerHTML).toEqual('text');
+        expect(scope.container.elem.innerHTML).toEqual('text');
         instance.unmount();
-        expect(scope.body.elem.innerHTML).toEqual('');
+        expect(scope.container.elem.innerHTML).toEqual('');
       });
 
       it('should unmount a text rendered dom', () => {
         instance.render('text');
-        expect(scope.body.elem.innerHTML).toEqual('text');
+        expect(scope.container.elem.innerHTML).toEqual('text');
         instance.unmount();
-        expect(scope.body.elem.innerHTML).toEqual('');
+        expect(scope.container.elem.innerHTML).toEqual('');
       });
 
       it('should unmount a div hydrated dom', () => {
-        scope.body.elem.appendChild(
+        scope.container.elem.appendChild(
           scope.document.createElement('div')
         );
-        expect(scope.body.elem.innerHTML).toEqual('<div></div>');
+        expect(scope.container.elem.innerHTML).toEqual('<div></div>');
         instance.hydrate(createElement('div'));
-        expect(scope.body.elem.innerHTML).toEqual('<div></div>');
+        expect(scope.container.elem.innerHTML).toEqual('<div></div>');
         instance.unmount();
-        expect(scope.body.elem.innerHTML).toEqual('');
+        expect(scope.container.elem.innerHTML).toEqual('');
       });
 
       it('should unmount a div rendered dom', () => {
         instance.render(createElement('div'));
-        expect(scope.body.elem.innerHTML).toEqual('<div></div>');
+        expect(scope.container.elem.innerHTML).toEqual('<div></div>');
         instance.unmount();
-        expect(scope.body.elem.innerHTML).toEqual('');
+        expect(scope.container.elem.innerHTML).toEqual('');
       });
 
       it('should return the instance', () => {
         instance.render(createElement('div'));
-        expect(scope.body.elem.innerHTML).toEqual('<div></div>');
+        expect(scope.container.elem.innerHTML).toEqual('<div></div>');
         expect(instance.unmount()).toBe(instance);
-        expect(scope.body.elem.innerHTML).toEqual('');
+        expect(scope.container.elem.innerHTML).toEqual('');
       });
 
       it('should not throw an error if there is no controller', () => {

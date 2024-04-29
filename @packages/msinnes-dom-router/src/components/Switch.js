@@ -1,12 +1,15 @@
 import * as DOM from '@msinnes/dom';
 
 import { CaseResolver } from '../classes/CaseResolver';
+import { NotFoundResolver } from '../classes/NotFoundResolver';
 import { RedirectResolver } from '../classes/RedirectResolver';
 import { RouterContext } from '../RouterContext';
 
 const createResolver = ({ signature, props, children }) => {
   if (signature === Case) {
     return new CaseResolver(props.path, props.exact, props.render || children);
+  } else if (signature === NotFound) {
+    return new NotFoundResolver();
   } else if (signature === Redirect) {
     return new RedirectResolver(props.path, props.exact, DOM.createElement(Redirect, { to: props.to }));
   }
@@ -28,6 +31,10 @@ const Case = () => {
   throw new Error('Case Components cannot be rendered');
 };
 
+const NotFound = () => {
+  throw new Error('NotFound Components cannot be rendered');
+};
+
 const Redirect = ({ to }) => {
   const ctx = DOM.useContext(RouterContext);
   DOM.useEffect(() => ctx.navigate(to));
@@ -41,4 +48,4 @@ const Switch = ({ children }) => {
   return child;
 };
 
-export { createResolver, findCurrentRouteChild, Case, Redirect, Switch };
+export { createResolver, findCurrentRouteChild, Case, NotFound, Redirect, Switch };

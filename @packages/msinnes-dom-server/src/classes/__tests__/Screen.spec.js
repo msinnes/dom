@@ -8,7 +8,7 @@ describe('Screen', () => {
   describe('instance', () => {
     let instance;
     beforeEach(() => {
-      instance = new Screen({ html: 'html', url: 'url' });
+      instance = new Screen({ container: { elem: { innerHTML: 'html' } }, url: 'url' });
     });
 
     it('should have an html prop', () => {

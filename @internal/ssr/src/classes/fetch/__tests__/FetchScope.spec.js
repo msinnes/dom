@@ -1,4 +1,4 @@
-import { HookableScope } from '../../base/HookableScope';
+import { DigestibleScope } from '../../base/DigestibleScope';
 import { SyncPromise } from '../../base/SyncPromise';
 
 import { Requests } from '../request/Requests';
@@ -11,8 +11,8 @@ describe('FetchScope', () => {
   });
 
 
-  it('should extends HookableScope', () => {
-    expect(FetchScope).toExtend(HookableScope);
+  it('should extends DigestibleScope', () => {
+    expect(FetchScope).toExtend(DigestibleScope);
   });
 
   describe('instance', () => {
@@ -90,6 +90,7 @@ describe('FetchScope', () => {
         resolveFn(mockData);
         expect(instance.openRequests).toEqual(0);
         expect(triggerSpy).toHaveBeenCalledTimes(1);
+        expect(triggerSpy).toHaveBeenCalledWith('resolve');
       });
 
       it('fetch should return a promise', () => {

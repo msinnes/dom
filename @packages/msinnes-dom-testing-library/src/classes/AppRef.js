@@ -4,9 +4,7 @@ import { RenderController } from './RenderController';
 
 class AppRef extends BaseAppRef {
   constructor(elem, SsrScope) {
-    super(elem);
-
-    this.create = render => new RenderController(render, SsrScope);
+    super(elem, render => new RenderController(render, SsrScope));
   }
 }
 

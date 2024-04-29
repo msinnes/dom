@@ -16,9 +16,7 @@ class TestableRenderController extends BaseRenderController {
 
 class TestableBaseAppRef extends BaseAppRef {
   constructor(ref) {
-    super(ref);
-
-    this.create = render => new TestableRenderController(render, this, new Infra().services);
+    super(ref, render => new TestableRenderController(render, this, new Infra().services));
   }
 }
 
@@ -52,6 +50,15 @@ describe('BaseAppRef', () => {
 
     it('should have the DomRef elem prop', () => {
       expect(instance.elem).toBe(document.body);
+    });
+
+    it('should hook into the RenderController and write an error to the dom, exiting and cleaning up the app before throwing the error', () => {
+      expect(() => {
+        instance.render(createElement(() => {
+          throw new Error('custom error');
+        }));
+      }).toThrow('custom error');
+      expect(document.body.innerHTML).toEqual('custom error');
     });
 
     describe('hydrate', () => {

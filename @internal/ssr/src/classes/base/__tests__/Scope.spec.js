@@ -1,3 +1,5 @@
+import { BaseHookable } from '@internal/base';
+
 import { Scope } from '../Scope';
 
 class TestableScope extends Scope {
@@ -12,6 +14,10 @@ describe('Scope', () => {
 
   it('should be abstract', () => {
     expect(Scope).toBeAbstract();
+  });
+
+  it('should extend BaseHookable', () => {
+    expect(Scope).toExtend(BaseHookable);
   });
 
   it('should have an abstract method enable', () => {

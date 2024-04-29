@@ -1,7 +1,7 @@
 import * as api from '..';
 
 import { useLocation, useNavigate, useParams } from '../hooks';
-import { Case, Redirect, Switch } from '../components/Switch';
+import { Case, NotFound, Redirect, Switch } from '../components/Switch';
 import { Link } from '../components/Link';
 import { Router } from '../components/Router';
 
@@ -10,9 +10,10 @@ describe('api', () => {
     expect(api.Router).toBe(Router);
   });
 
-  it('should expose a Switch, Case, and Redirect', () => {
+  it('should expose a Switch, Case, NotFound, and Redirect', () => {
     expect(api.Switch).toBe(Switch);
     expect(api.Case).toBe(Case);
+    expect(api.NotFound).toBe(NotFound);
     expect(api.Redirect).toBe(Redirect);
   });
 

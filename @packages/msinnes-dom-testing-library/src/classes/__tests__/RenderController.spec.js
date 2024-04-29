@@ -3,6 +3,8 @@ import { SsrScope } from '@internal/ssr';
 
 import { RenderController } from '../RenderController';
 
+import { AppRef } from '../AppRef';
+
 describe('RenderController', () => {
   it('should be a class', () => {
     expect(RenderController).toBeAClass();
@@ -20,13 +22,13 @@ describe('RenderController', () => {
 
     beforeEach(() => {
       renderRef = {};
-      ssrScope = new SsrScope({ dom: {}, fetch: {}, time: {} });
+      ssrScope = new SsrScope({ dom: {}, fetch: {}, time: {} }, AppRef);
       instance = new RenderController(renderRef, ssrScope);
     });
 
     it('should have a renderer prop', () => {
       expect(instance.renderer.root.root).toBe(renderRef);
-      expect(instance.renderer.root.elem.elem).toBe(ssrScope.body.elem);
+      expect(instance.renderer.root.elem.elem).toBe(ssrScope.container.elem);
     });
 
     describe('render', () => {
@@ -40,7 +42,7 @@ describe('RenderController', () => {
       it('should call wrapElement for all elements in the dom', () => {
         instance.render();
         expect(wrapElementMock).toHaveBeenCalledTimes(1);
-        expect(wrapElementMock).toHaveBeenCalledWith(ssrScope.body.elem);
+        expect(wrapElementMock).toHaveBeenCalledWith(ssrScope.container.elem);
       });
 
       it('should call processEffects', () => {

@@ -1,5 +1,5 @@
 import { isDefined } from '@internal/is';
-import { HookableScope } from '../base/HookableScope';
+import { DigestibleScope } from '../base/DigestibleScope';
 import { SyncPromise } from '../base/SyncPromise';
 
 import { Requests } from './request/Requests';
@@ -7,7 +7,7 @@ import { Requests } from './request/Requests';
 const fetchOriginal = global.fetch;
 Object.defineProperty(global, 'fetch', { writable: true });
 
-class FetchScope extends HookableScope {
+class FetchScope extends DigestibleScope {
   digestFetch = true;
   openRequests = 0;
   requests = new Requests();
@@ -35,7 +35,7 @@ class FetchScope extends HookableScope {
         if (this.closed) return;
         resolve(data);
         this.openRequests--;
-        this.trigger();
+        this.trigger('resolve');
       };
       this.requests.create(url, config, resolveCb, this.doRequest);
     });

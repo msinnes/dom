@@ -1,6 +1,6 @@
 import * as DOM from '@msinnes/dom';
 
-import { renderToScreen, renderToString, renderToScreenAsync, renderToStringAsync } from '../renderers';
+import { renderToString, renderToScreen, renderToStringAsync, renderToScreenAsync } from '../renderers';
 
 describe('renderToString', () => {
   it('should be a function', () => {
@@ -60,6 +60,7 @@ describe('renderToString', () => {
     expect(console.warn).toHaveBeenCalledTimes(1);
     expect(console.warn).toHaveBeenCalledWith('Open Handles Detected -- Open handles are ignored after a render is closed');
     console.warn = consoleWarnOriginal;
+    done();
   });
 
   it('should not log if fetch calls are supressed', () => {

@@ -3,6 +3,7 @@ import { elementEvents } from '@shared/json/elementEvents';
 
 import { traverse } from '../fns/traverse';
 
+//TODO: this should all be controlled in the SsrScop. BaseServerRenderController will just become RenderController in the @internal/ssr module
 class RenderController extends BaseServerRenderController {
   constructor(...args) {
     super(...args);
@@ -12,7 +13,7 @@ class RenderController extends BaseServerRenderController {
 
   render() {
     super.render();
-    traverse(this.scope.body.elem, elem => {
+    traverse(this.scope.container.elem, elem => {
       this.wrapElement(elem);
     });
   }

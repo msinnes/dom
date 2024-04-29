@@ -1,9 +1,13 @@
+/**
+ * @jest-environment jsdom
+ */
 import { DomRef } from '@internal/dom';
 
 import { Renderer } from '../Renderer';
 import { FrameQueue } from '../Frame';
 
 import { BaseRenderController, BaseRenderableComponent } from '../BaseRenderController';
+import { Hookable } from '../Hookable';
 
 class TestableRenderController extends BaseRenderController {}
 class TestableComponent extends BaseRenderableComponent {
@@ -19,6 +23,10 @@ describe('BaseRenderController', () => {
     expect(BaseRenderController).toBeAbstract();
   });
 
+  it('should extend hookable', () => {
+    expect(BaseRenderController).toExtend(Hookable);
+  });
+
   describe('instance', () => {
     let instance;
     let renderRef;
@@ -30,6 +38,8 @@ describe('BaseRenderController', () => {
       anchorRef = {};
       mockServices = {
         mockFn: jest.fn(),
+        registerInstance: jest.fn(),
+        setActiveHookInstance: jest.fn(),
       };
       instance = new TestableRenderController(renderRef, new DomRef(anchorRef), mockServices);
     });
@@ -100,6 +110,19 @@ describe('BaseRenderController', () => {
         instance.render();
         expect(renderMock).toHaveBeenCalledTimes(1);
         expect(renderMock).toHaveBeenCalledWith(componentRenderRef, instance.renderer.root, rootFirstChildRef);
+      });
+
+      it('should emit an error if one is caught during the render cycle', () => {
+        instance = new TestableRenderController({ signature: () => {
+          throw new Error('error');
+        } }, new DomRef(document.body), mockServices);
+        let expectedError;
+        instance.hook('error', e => {
+          expect(e).toBe(expectedError);
+        });
+        expect(() => {
+          instance.render();
+        }).toThrow('error');
       });
     });
 
