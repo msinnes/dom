@@ -12,10 +12,16 @@ describe('Screen', () => {
     let renderController;
 
     beforeEach(() => {
+      const handlers = [];
       container = { tagName: 'DIV' };
-      ssrScope = { container: { elem: container }, createEvent: jest.fn(), enable: jest.fn(), disable: jest.fn() };
-      renderController = { scope: ssrScope, digest: jest.fn(), processHandler: jest.fn() };
-      instance = new Screen(renderController);
+      ssrScope = { container: { elem: container }, createEvent: jest.fn(), enable: jest.fn(), disable: jest.fn(), hook: (event, fn) => {
+        if (event === 'bootstrap') handlers.push(fn);
+      }, trigger: (event, ...data) => {
+        if (event === 'bootstrap') handlers.forEach(handler => handler(...data));
+      } };
+      renderController = { scope: ssrScope, digest: jest.fn(), processHandler: jest.fn(), hook: jest.fn() };
+      instance = new Screen(ssrScope);
+      ssrScope.trigger('bootstrap', renderController);
     });
 
     it('should set the container prop from the input controller', () => {

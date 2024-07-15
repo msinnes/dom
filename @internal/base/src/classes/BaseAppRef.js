@@ -12,16 +12,15 @@ function emptyElementChildren(elem) {
 const BaseAppRef = abstract(class extends DomRef {
   constructor(ref, create) {
     super(ref);
-
     let controller = null;
     const bootstrap = render => {
       controller = create(render);
       controller.hook('error', e => {
         emptyElementChildren(document.body);
         document.body.appendChild(document.createTextNode(e.message));
-        throw e;
       });
       controller.render();
+      controller.trigger('bootstrap', controller);
     };
     this.hydrate = render => {
       emptyElementChildren(this.elem);

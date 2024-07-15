@@ -13,15 +13,24 @@ function getAllBy(fnName, results) {
 
 // TODO: make a base class for this in @internal/ssr and extend it here
 class Screen {
-  constructor(controller) {
-    this.container = controller.scope.container.elem;
+  constructor(scope) {
+    let controller;
+    scope.hook('bootstrap', cont => {
+      controller = cont;
+    });
+    this.container = scope.container.elem;
     const queries = new Queries(this.container);
 
-    this.createEvent = (type, config) => controller.scope.createEvent(type, config);
+    this.createEvent = (type, config) => scope.createEvent(type, config);
     this.dispatchEvent = (elem, event, targetMutation) => {
       Object.assign(elem, targetMutation);
       elem.dispatchEvent(event);
     };
+
+    Object.defineProperty(this, 'location', {
+      get: () => scope.url,
+    });
+
     this.getByLabelText = text => {
       const results = queries.byLabelText(text);
       return getBy('getByLabelText', results);
@@ -34,6 +43,7 @@ class Screen {
       const results = queries.byText(text);
       return getBy('getByText', results);
     };
+
     this.getAllByLabelText = text => {
       const results = queries.byLabelText(text);
       return getAllBy('getAllByLabelText', results);
@@ -46,43 +56,44 @@ class Screen {
       const results = queries.byText(text);
       return getAllBy('getAllByText', results);
     };
+
     this.queryAllByLabelText = text => queries.byLabelText(text);
     this.queryAllByRole = role => queries.byRole(role);
     this.queryAllByText = text => queries.byText(text);
 
     this.time = {
       next: () => {
-        controller.scope.enable();
-        const timer = controller.scope.time.getNext();
+        scope.enable();
+        const timer = scope.time.getNext();
         if (timer) controller.processHandler(timer);
-        controller.scope.disable();
+        scope.disable();
       },
       play: (ticks = 1) => {
         if (ticks <= 0) return;
         let i = 0;
         let len = ticks;
-        controller.scope.enable();
+        scope.enable();
         while(i < len) {
-          controller.scope.time.tick();
+          scope.time.tick();
           controller.digest();
           i++;
         }
-        controller.scope.disable();
+        scope.disable();
       },
       run: () => {
-        controller.scope.enable();
-        const timers = controller.scope.time.getAll();
+        scope.enable();
+        const timers = scope.time.getAll();
         timers.forEach(timer => {
           controller.processHandler(timer);
         });
-        controller.scope.disable();
+        scope.disable();
       },
       tick: (ticks = 1) => {
         if (ticks <= 0) return;
         let i = 0;
         let len = ticks;
         while(i < len) {
-          controller.scope.time.tick();
+          scope.time.tick();
           i++;
         }
       },
@@ -90,18 +101,18 @@ class Screen {
 
     this.fetch = {
       next: () => {
-        controller.scope.enable();
-        const fetchHandler = controller.scope.fetch.getNext();
+        scope.enable();
+        const fetchHandler = scope.fetch.getNext();
         if (fetchHandler) controller.processHandler(fetchHandler);
-        controller.scope.disable();
+        scope.disable();
       },
       run: () => {
-        controller.scope.enable();
-        const fetchHandlers = controller.scope.fetch.getAll();
+        scope.enable();
+        const fetchHandlers = scope.fetch.getAll();
         fetchHandlers.forEach(fetchHandler => {
           controller.processHandler(fetchHandler);
         });
-        controller.scope.disable();
+        scope.disable();
       },
     };
   }

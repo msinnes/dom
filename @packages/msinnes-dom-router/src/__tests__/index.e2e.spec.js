@@ -240,10 +240,10 @@ describe('e2e', () => {
       expect(LinkAndDiv).toBeOn(screen);
     });
 
-    it.skip('should throw an error if navigating to /about', () => {
+    it('should throw an error if navigating to /about', () => {
       expect(() => {
         screen.getByText('About').click();
-      }).toThrow('404 Not Found');
+      }).toThrow('Error: 404 Not Found');
       expect(screen.container.innerHTML).toEqual('404 Not Found');
     });
   });

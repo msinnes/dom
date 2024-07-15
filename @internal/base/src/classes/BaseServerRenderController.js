@@ -31,7 +31,7 @@ const BaseServerRenderController = abstract(class extends BaseRenderController {
 
   processEffects(trace = 0) {
     if (trace >= 50) throw new Error('ImplementationError: Maximum call depth exceeded for DOM Effects.');
-    this.scope.services.digestEffects();
+    this.services.digestEffects();
     if (this.queue.length) {
       while(this.queue.length) {
         this.renderFrame();
@@ -54,10 +54,19 @@ const BaseServerRenderController = abstract(class extends BaseRenderController {
 
   render() {
     this.scope.enable();
-    super.render();
-    this.processEffects();
-    this.digest();
-    this.scope.disable();
+    let error;
+    try {
+      super.render();
+      this.processEffects();
+      this.digest();
+    } catch (e) {
+      error = e;
+    } finally {
+      this.scope.disable();
+      if (error) {
+        throw error;
+      }
+    }
   }
 });
 

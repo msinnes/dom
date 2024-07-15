@@ -33,6 +33,7 @@ const BaseRenderController = abstract(class extends Hookable {
       this.renderer.rootRender();
     } catch (e) {
       this.trigger('error', e);
+      throw e;
     }
   }
 
