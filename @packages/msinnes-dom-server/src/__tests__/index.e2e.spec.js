@@ -115,183 +115,201 @@ describe('e2e', () => {
     expect(html).toEqual('');
   });
 
-  it('should render a component that has expired timers by default', () => {
-    const App = () => {
-      const [text, setText] = Dom.useState('default text');
-      Dom.useEffect(() => {
-        setTimeout(() => {
-          setText('async text');
-        });
-      }, []);
-      return text;
-    };
-    const html = api.renderToString(Dom.createElement(App));
-    expect(html).toEqual('async text');
+  it('should throw an error if one happens in the render cycle', () => {
+    const Comp = () => { throw new Error('My Custom Error'); };
+    expect(() => {
+      api.renderToString(Dom.createElement(Comp));
+    }).toThrow('My Custom Error');
+    expect(() => {
+      api.renderToScreen(Dom.createElement(Comp));
+    }).toThrow('My Custom Error');
+    expect(() => {
+      api.renderToStringAsync(Dom.createElement(Comp));
+    }).toThrow('My Custom Error');
+    expect(() => {
+      api.renderToScreenAsync(Dom.createElement(Comp));
+    }).toThrow('My Custom Error');
   });
 
-  it('should render a component with nested timers by default', () => {
-    const App = () => {
-      const [text, setText] = Dom.useState('default text');
-      Dom.useEffect(() => {
-        setTimeout(() => {
+  describe('timers', () => {
+    it('should render a component that has expired timers by default', () => {
+      const App = () => {
+        const [text, setText] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          setTimeout(() => {
+            setText('async text');
+          });
+        }, []);
+        return text;
+      };
+      const html = api.renderToString(Dom.createElement(App));
+      expect(html).toEqual('async text');
+    });
+
+    it('should render a component with nested timers by default', () => {
+      const App = () => {
+        const [text, setText] = Dom.useState('default text');
+        Dom.useEffect(() => {
           setTimeout(() => {
             setTimeout(() => {
-              setText('async text');
+              setTimeout(() => {
+                setText('async text');
+              });
             });
           });
+        }, []);
+        return text;
+      };
+      const html = api.renderToString(Dom.createElement(App));
+      expect(html).toEqual('async text');
+    });
+
+    it('should throw an error if an infinite loop occurs', () => {
+      const App = () => {
+        const [text, setText] = Dom.useState('default text');
+        setTimeout(() => {
+          setText('async text');
         });
-      }, []);
-      return text;
-    };
-    const html = api.renderToString(Dom.createElement(App));
-    expect(html).toEqual('async text');
-  });
+        return text;
+      };
+      expect(() => {
+        api.renderToString(Dom.createElement(App));
+      }).toThrow('ImplementationError: Maximum call depth exceeded for Asynchronous Processing.');
+    });
 
-  it('should throw an error if an infinite loop occurs', () => {
-    const App = () => {
-      const [text, setText] = Dom.useState('default text');
-      setTimeout(() => {
-        setText('async text');
-      });
-      return text;
-    };
-    expect(() => {
-      api.renderToString(Dom.createElement(App));
-    }).toThrow('ImplementationError: Maximum call depth exceeded for Asynchronous Processing.');
-  });
+    it('should throw the correct error if a hook is used asynchronously', () => {
+      const App = () => {
+        let text = 'text';
+        setTimeout(() => {
+          Dom.useEffect(() => {
+            text = 'new text';
+          });
+        });
+        return text;
+      };
+      expect(() => {
+        api.renderToString(Dom.createElement(App));
+      }).toThrow('InternalError: There is no active context on the controller');
+    });
 
-  it('should throw the correct error if a hook is used asynchronously', () => {
-    const App = () => {
-      let text = 'text';
-      setTimeout(() => {
+    it('should not run immediate timers if the app configuration is overridden', () => {
+      const App = () => {
+        const [text, setText] = Dom.useState('default text');
         Dom.useEffect(() => {
-          text = 'new text';
-        });
-      });
-      return text;
-    };
-    expect(() => {
-      api.renderToString(Dom.createElement(App));
-    }).toThrow('InternalError: There is no active context on the controller');
-  });
+          setTimeout(() => {
+            setText('async text');
+          });
+        }, []);
+        return text;
+      };
+      const html = api.renderToString(Dom.createElement(App), { digestExpiredTimers: false });
+      expect(html).toEqual('default text');
+    });
 
-  it('should not run immediate timers if the app configuration is overridden', () => {
-    const App = () => {
-      const [text, setText] = Dom.useState('default text');
-      Dom.useEffect(() => {
-        setTimeout(() => {
-          setText('async text');
-        });
-      }, []);
-      return text;
-    };
-    const html = api.renderToString(Dom.createElement(App), { digestExpiredTimers: false });
-    expect(html).toEqual('default text');
-  });
+    it('should not run any intervals with a delay', () => {
+      const App = () => {
+        const [text, setText] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setText('async text');
+          }, 10);
+        }, []);
+        return text;
+      };
+      const html = api.renderToString(Dom.createElement(App));
+      expect(html).toEqual('default text');
+    });
 
-  it('should not run any intervals with a delay', () => {
-    const App = () => {
-      const [text, setText] = Dom.useState('default text');
-      Dom.useEffect(() => {
-        setInterval(() => {
-          setText('async text');
-        }, 10);
-      }, []);
-      return text;
-    };
-    const html = api.renderToString(Dom.createElement(App));
-    expect(html).toEqual('default text');
-  });
+    it('should only run an interval once if it has no delay', () => {
+      const App = () => {
+        const [text, setText] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setText('async text');
+          });
+        }, []);
+        return text;
+      };
+      const html = api.renderToString(Dom.createElement(App));
+      expect(html).toEqual('async text');
+    });
 
-  it('should only run an interval once if it has no delay', () => {
-    const App = () => {
-      const [text, setText] = Dom.useState('default text');
-      Dom.useEffect(() => {
-        setInterval(() => {
-          setText('async text');
-        });
-      }, []);
-      return text;
-    };
-    const html = api.renderToString(Dom.createElement(App));
-    expect(html).toEqual('async text');
-  });
+    it('should execute multiple intervals', () => {
+      const App = () => {
+        const [text, setText] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setText('async text 1');
+          });
+        }, []);
 
-  it('should execute multiple intervals', () => {
-    const App = () => {
-      const [text, setText] = Dom.useState('default text');
-      Dom.useEffect(() => {
-        setInterval(() => {
-          setText('async text 1');
-        });
-      }, []);
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setText('async text 2');
+          }, 10);
+        }, []);
 
-      Dom.useEffect(() => {
-        setInterval(() => {
-          setText('async text 2');
-        }, 10);
-      }, []);
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setText('async text 3');
+          }, 0);
+        }, []);
+        return text;
+      };
+      const html = api.renderToString(Dom.createElement(App));
+      expect(html).toEqual('async text 3');
+    });
 
-      Dom.useEffect(() => {
-        setInterval(() => {
-          setText('async text 3');
-        }, 0);
-      }, []);
-      return text;
-    };
-    const html = api.renderToString(Dom.createElement(App));
-    expect(html).toEqual('async text 3');
-  });
+    it('should not execute an interval if digestExpiredTimers is configured as false', () => {
+      const App = () => {
+        const [text, setText] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setText('async text');
+          });
+        }, []);
+        return text;
+      };
+      const html = api.renderToString(Dom.createElement(App), { digestExpiredTimers: false });
+      expect(html).toEqual('default text');
+    });
 
-  it('should not execute an interval if digestExpiredTimers is configured as false', () => {
-    const App = () => {
-      const [text, setText] = Dom.useState('default text');
-      Dom.useEffect(() => {
-        setInterval(() => {
-          setText('async text');
-        });
-      }, []);
-      return text;
-    };
-    const html = api.renderToString(Dom.createElement(App), { digestExpiredTimers: false });
-    expect(html).toEqual('default text');
-  });
+    it('should run intervals and timeouts together', () => {
+      const App = () => {
+        const [text1, setText1] = Dom.useState('default text 1');
+        const [text2, setText2] = Dom.useState('default text 2');
+        Dom.useEffect(() => {
+          setInterval(() => {
+            setText1('async text 1');
+          });
+        }, []);
+        Dom.useEffect(() => {
+          setTimeout(() => {
+            setText2('async text 2');
+          });
+        }, []);
+        return Dom.createElement('div', {}, [
+          Dom.createElement('p', {}, [text1]),
+          Dom.createElement('p', {}, [text2]),
+        ]);
+      };
+      const html = api.renderToString(Dom.createElement(App));
+      expect(html).toEqual('<div><p>async text 1</p><p>async text 2</p></div>');
+    });
 
-  it('should run intervals and timeouts together', () => {
-    const App = () => {
-      const [text1, setText1] = Dom.useState('default text 1');
-      const [text2, setText2] = Dom.useState('default text 2');
-      Dom.useEffect(() => {
-        setInterval(() => {
-          setText1('async text 1');
-        });
-      }, []);
-      Dom.useEffect(() => {
-        setTimeout(() => {
-          setText2('async text 2');
-        });
-      }, []);
-      return Dom.createElement('div', {}, [
-        Dom.createElement('p', {}, [text1]),
-        Dom.createElement('p', {}, [text2]),
-      ]);
-    };
-    const html = api.renderToString(Dom.createElement(App));
-    expect(html).toEqual('<div><p>async text 1</p><p>async text 2</p></div>');
-  });
-
-  it('should not render any animationFrames', () => {
-    const App = () => {
-      const [text, setText] = Dom.useState('default text');
-      Dom.useEffect(() => {
-        requestAnimationFrame(() => {
-          setText('async text');
-        });
-      }, []);
-      return text;
-    };
-    const html = api.renderToString(Dom.createElement(App));
-    expect(html).toEqual('default text');
+    it('should not render any animationFrames', () => {
+      const App = () => {
+        const [text, setText] = Dom.useState('default text');
+        Dom.useEffect(() => {
+          requestAnimationFrame(() => {
+            setText('async text');
+          });
+        }, []);
+        return text;
+      };
+      const html = api.renderToString(Dom.createElement(App));
+      expect(html).toEqual('default text');
+    });
   });
 
   describe('fetch', () => {

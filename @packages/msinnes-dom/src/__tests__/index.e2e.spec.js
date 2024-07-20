@@ -276,6 +276,17 @@ describe('e2e.basic', () => {
     timeouts.runAll();
     expect(window.document.title).toEqual('default title');
   });
+
+  it('should render an error', () => {
+    const App = () => {
+      throw new Error('My Custom Error');
+    };
+
+    expect(() => {
+      ref.render(createElement(App));
+    }).toThrow('My Custom Error');
+    expect(document.body.innerHTML).toEqual('My Custom Error');
+  });
 });
 
 describe('e2e.hooks', () => {

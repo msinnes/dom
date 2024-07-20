@@ -18,17 +18,17 @@ describe('BaseServerRenderController', () => {
     let instance;
 
     let renderRef;
-    let bodyRef;
+    let containerRef;
     let servicesRef;
     let ssrScopeRef;
     beforeEach(() => {
       renderRef = {};
-      bodyRef = {};
+      containerRef = {};
       servicesRef = {
         digestEffects: jest.fn(),
       };
       ssrScopeRef = {
-        body: new DomRef(bodyRef),
+        container: new DomRef(containerRef),
         close: jest.fn(),
         digest: jest.fn(),
         enable: jest.fn(),
@@ -49,15 +49,16 @@ describe('BaseServerRenderController', () => {
 
     it('should have a renderer prop with the correct render and anchor', () => {
       expect(instance.renderer.root.root).toBe(renderRef);
-      expect(instance.renderer.root.elem.elem).toBe(bodyRef);
+      expect(instance.renderer.root.elem.elem).toBe(containerRef);
     });
 
     it('should have a hooks prop', () => {
-      expect(instance.hooks).toBeInstanceOf(Array);
+      expect(instance.hooks).toBeInstanceOf(Object);
+      expect(Object.keys(instance.hooks).length).toEqual(0);
     });
 
     it('should be hooked into the scope', () => {
-      const instanceHook = ssrScopeRef.hook.mock.calls[0][0];
+      const instanceHook = ssrScopeRef.hook.mock.calls[0][1];
 
       const renderMock = jest.spyOn(instance, 'render').mockImplementation(() => {});
       const triggerMock = jest.spyOn(instance, 'trigger').mockImplementation(() => {});
@@ -158,9 +159,9 @@ describe('BaseServerRenderController', () => {
 
       it('should add a function to the array of hooks', () => {
         const mockFn = jest.fn();
-        instance.hook(mockFn);
-        expect(instance.hooks.length).toEqual(1);
-        expect(instance.hooks[0]).toBe(mockFn);
+        instance.hook('key', mockFn);
+        expect(instance.hooks['key'].length).toEqual(1);
+        expect(instance.hooks['key'][0]).toBe(mockFn);
       });
     });
 
@@ -279,9 +280,9 @@ describe('BaseServerRenderController', () => {
 
       it('should fire all hooks', () => {
         const mockFn = jest.fn();
-        instance.hook(mockFn);
-        instance.hook(mockFn);
-        instance.trigger();
+        instance.hook('key', mockFn);
+        instance.hook('key', mockFn);
+        instance.trigger('key');
         expect(mockFn).toHaveBeenCalledTimes(2);
       });
     });

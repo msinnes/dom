@@ -1,6 +1,8 @@
 import { abstract, abstractMethod } from '@internal/oop';
 
-const Scope = abstract(class {
+import { BaseHookable } from '@internal/base';
+
+const Scope = abstract(class extends BaseHookable {
   children = [];
   open = true;
 
@@ -9,6 +11,8 @@ const Scope = abstract(class {
   }
 
   constructor() {
+    super();
+
     abstractMethod(this, 'enable');
     abstractMethod(this, 'disable');
   }

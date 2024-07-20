@@ -1,6 +1,7 @@
 import * as DOM from '@msinnes/dom';
 
 import { CaseResolver } from '../../classes/CaseResolver';
+import { NotFoundResolver } from '../../classes/NotFoundResolver';
 import { RedirectResolver } from '../../classes/RedirectResolver';
 
 import {
@@ -8,6 +9,7 @@ import {
   findCurrentRouteChild,
   Switch,
   Case,
+  NotFound,
   Redirect,
 } from '../Switch';
 
@@ -20,6 +22,12 @@ describe('createResolver', () => {
     const render = { signature: Case, props: {} };
     const resolver = createResolver(render);
     expect(resolver).toBeInstanceOf(CaseResolver);
+  });
+
+  it('should return a not found resolver if the input render has a case signature', () => {
+    const render = { signature: NotFound, props: {} };
+    const resolver = createResolver(render);
+    expect(resolver).toBeInstanceOf(NotFoundResolver);
   });
 
   it('should return a redirect resolver if the input render has a redirect signature', () => {
@@ -133,6 +141,18 @@ describe('Case', () => {
     expect(() => {
       Case({});
     }).toThrow('Case Components cannot be rendered');
+  });
+});
+
+describe('NotFound', () => {
+  it('should be a function', () => {
+    expect(NotFound).toBeInstanceOf(Function);
+  });
+
+  it('should throw an error if rendered', () => {
+    expect(() => {
+      NotFound({});
+    }).toThrow('NotFound Components cannot be rendered');
   });
 });
 

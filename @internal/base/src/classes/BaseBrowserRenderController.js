@@ -2,6 +2,7 @@ import { abstract } from '@internal/oop';
 
 import { BaseRenderController } from './BaseRenderController';
 
+// TODO: should just become RenderController in @msinnes/dom
 const BaseBrowserRenderController = abstract(class extends BaseRenderController {
   renderTimeoutId = null;
   trace = 0;

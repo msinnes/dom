@@ -1,5 +1,5 @@
 import * as DOM from '@msinnes/dom';
-import { useParams, Case, Redirect, Switch, Link, Router } from '@msinnes/dom-router';
+import { useParams, Case, NotFound, Switch, Link, Router } from '@msinnes/dom-router';
 
 const Home = () => <div>Home</div>;
 const About = () => <div>About</div>;
@@ -31,7 +31,7 @@ const Content = () => (
     <Case path="/subrouted" render={<Home />} exact />
     <Case path="/subrouted/about" render={<About />} />
     <Case path="/subrouted/param/:id" render={<Params />} />
-    <Redirect path="*" to="/subrouted/about" />
+    <NotFound />
   </Switch>
 );
 

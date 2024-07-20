@@ -16,9 +16,22 @@ const getFullUrl = (req, port) => {
 };
 
 router.use((req, res) => {
+  let error;
   const originalUrl = getFullUrl(req);
-  const { html, url } = renderToScreen(<App />, { url: originalUrl });
-  if (url !== originalUrl) {
+  let html, url;
+  try {
+    const screen = renderToScreen(<App />, { url: originalUrl });
+    html = screen.html, url = screen.url;
+  } catch (e) {
+    error = e;
+  }
+  if (error) {
+    if (error.message === '404 Not Found') {
+      res.status(404).send(error.message);
+    } else {
+      throw error;
+    }
+  } else if (url !== originalUrl) {
     res.redirect(301, url);
   } else {
     const page = renderPage('subrouted', html);

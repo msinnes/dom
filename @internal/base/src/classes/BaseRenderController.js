@@ -1,5 +1,6 @@
 import { abstract } from '@internal/oop';
 
+import { Hookable } from './Hookable';
 import { Renderer } from './Renderer';
 import { FrameQueue } from './Frame';
 
@@ -9,8 +10,10 @@ const BaseRenderableComponent = abstract(class {
   }
 });
 
-const BaseRenderController = abstract(class {
+const BaseRenderController = abstract(class extends Hookable {
   constructor(render, anchor, services) {
+    super();
+
     this.queue = new FrameQueue();
     this.services = {
       pushFrame: this.pushFrame.bind(this),
@@ -26,7 +29,12 @@ const BaseRenderController = abstract(class {
   }
 
   render() {
-    this.renderer.rootRender();
+    try {
+      this.renderer.rootRender();
+    } catch (e) {
+      this.trigger('error', e);
+      throw e;
+    }
   }
 
   renderFrame() {

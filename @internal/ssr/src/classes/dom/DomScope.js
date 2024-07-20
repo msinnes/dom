@@ -1,12 +1,18 @@
-import { JSDOM } from 'jsdom';
+import { JSDOM, VirtualConsole } from 'jsdom';
 
 import { Scope } from '../base/Scope';
+
+const virtualConsole = new VirtualConsole();
+virtualConsole.sendTo(console, { omitJSDOMErrors: true });
+virtualConsole.on("jsdomError", (err) => {
+  throw err;
+});
 
 // TODO: this will need to enable and disable all classes available on the window object, i.e. Request, Response, etc.
 class DomScope extends Scope {
   constructor(config, timeScope, fetchScope) {
     super();
-    this.dom = new JSDOM('', config);
+    this.dom = new JSDOM('', { ...config, virtualConsole});
     // Override timers on the window instance.
     this.dom.window.setTimeout = timeScope.timeouts.set.bind(timeScope.timeouts);
     this.dom.window.clearTimeout = timeScope.timeouts.clear.bind(timeScope.timeouts);
