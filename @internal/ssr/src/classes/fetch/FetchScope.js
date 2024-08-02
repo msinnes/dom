@@ -3,6 +3,7 @@ import { DigestibleScope } from '../base/DigestibleScope';
 import { SyncPromise } from '../base/SyncPromise';
 
 import { Requests } from './request/Requests';
+import { RequestContext, Response } from './request/NewRequest';
 
 const fetchOriginal = global.fetch;
 Object.defineProperty(global, 'fetch', { writable: true });
@@ -41,6 +42,20 @@ class FetchScope extends DigestibleScope {
     });
   }
 
+  newCreateRequest(url, config) {
+    return new SyncPromise((resolve, reject) => {
+      this.openRequests++;
+      const resolveCb = ctx => {
+        if(this.closed) return;
+        resolve(new Response(ctx));
+        this.openRequests--;
+        this.trigger('resolve');
+      };
+      const requestContext = new RequestContext(this.doRequest, resolveCb, reject);
+      this.requests.newCreate(url, config, requestContext);
+    });
+  }
+
   digest() {
     if (this.digestFetch) return this.requests.getAll();
     return [];
@@ -51,7 +66,7 @@ class FetchScope extends DigestibleScope {
   }
 
   enable() {
-    global.fetch = this.createRequest.bind(this);
+    global.fetch = this.newCreateRequest.bind(this);
   }
 }
 

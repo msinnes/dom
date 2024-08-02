@@ -1,4 +1,5 @@
 import { Request } from '../Request';
+import { Request as NewRequest } from '../NewRequest';
 
 import { Requests } from '../Requests';
 
@@ -35,6 +36,24 @@ describe('Requests', () => {
         expect(req.config).toBe(mockConfig);
         expect(req.resolve).toBe(mockResolve);
         expect(req.doRequest).toBe(mockDoRequest);
+      });
+    });
+
+    describe('newCreate', () => {
+      it('should be a function', () => {
+        expect(instance.newCreate).toBeInstanceOf(Function);
+      });
+
+      it('should create a request and add it to the list of requests', () => {
+        const mockConfig = {};
+        const mockContext = {};
+        instance.newCreate('url', mockConfig, mockContext);
+        expect(instance.requests.length).toEqual(1);
+        const req = instance.requests[0];
+        expect(req).toBeInstanceOf(NewRequest);
+        expect(req.fetchRequest.url).toEqual('url');
+        expect(req.fetchRequest.config).toBe(mockConfig);
+        expect(req.ctx).toBe(mockContext);
       });
     });
 

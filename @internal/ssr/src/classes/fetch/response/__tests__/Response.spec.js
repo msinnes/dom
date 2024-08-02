@@ -38,9 +38,5 @@ describe('Response', () => {
         instance.text().then(data => expect(data).toBe(mockData));
       });
     });
-
-    describe('text', () => {
-
-    });
   });
 });
