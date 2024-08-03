@@ -25,6 +25,10 @@ describe('FetchScope', () => {
       fetchOriginal = global.fetch;
     });
 
+    afterEach(() => {
+      instance.disable();
+    });
+
     it('should expose instance.requests.getAll on a getAll getter', () => {
       expect(instance.getAll).toBe(instance.requests.getAll);
     });
@@ -72,57 +76,38 @@ describe('FetchScope', () => {
         expect(instance.createRequest).toBeInstanceOf(Function);
       });
 
+      it('should return a promise', () => {
+        instance.doRequest = jest.fn();
+        instance.doRequest.mockImplementation((req, res) => {
+          expect(req.url).toEqual('url');
+          expect(req.config.method).toEqual('POST');
+          res.text('text');
+          res.close();
+        });
+        const promise = instance.createRequest('url', { method: 'POST' });
+        promise.then(response => response.text().then(data => expect(data).toEqual('text')));
+        instance.requests.requests[0].exec();
+      });
+
       it('should trigger the scope when the promise resolves', () => {
         const triggerSpy = jest.spyOn(instance, 'trigger');
         const mockConfig = {};
-        const mockFn = jest.fn();
-        instance.requests.create = (url, config, resolve, doRequest) => mockFn(url, config, resolve, doRequest);
         instance.createRequest('url', mockConfig);
-        expect(mockFn).toHaveBeenCalledTimes(1);
-        expect(mockFn.mock.calls[0][0]).toEqual('url');
-        expect(mockFn.mock.calls[0][1]).toEqual(mockConfig);
-        expect(mockFn.mock.calls[0][2]).toBeInstanceOf(Function);
-        expect(mockFn.mock.calls[0][3]).toBe(instance.doRequest);
 
-        const resolveFn = mockFn.mock.calls[0][2];
         expect(instance.openRequests).toEqual(1);
-        const mockData = {};
-        resolveFn(mockData);
+        instance.requests.requests[0].exec();
         expect(instance.openRequests).toEqual(0);
         expect(triggerSpy).toHaveBeenCalledTimes(1);
         expect(triggerSpy).toHaveBeenCalledWith('resolve');
       });
 
-      it('fetch should return a promise', () => {
-        const mockFn = jest.fn();
-        const mockData = {};
-        const promise = instance.createRequest('url');
-        promise.then(data => mockFn(data));
-        expect(promise).toBeInstanceOf(SyncPromise);
-        expect(instance.requests.requests[0].resolve).toBeInstanceOf(Function);
-        instance.requests.requests[0].resolve(mockData);
-        expect(mockFn).toHaveBeenCalledTimes(1);
-        expect(mockFn).toHaveBeenCalledWith(mockData);
-      });
-
       it('should ignore the promise if the scope is closed', () => {
         const triggerSpy = jest.spyOn(instance, 'trigger');
         const mockConfig = {};
-        const mockFn = jest.fn();
-        instance.requests.create = (url, config, resolve, doRequest) => mockFn(url, config, resolve, doRequest);
         instance.createRequest('url', mockConfig);
-        expect(mockFn).toHaveBeenCalledTimes(1);
-        expect(mockFn.mock.calls[0][0]).toEqual('url');
-        expect(mockFn.mock.calls[0][1]).toEqual(mockConfig);
-        expect(mockFn.mock.calls[0][2]).toBeInstanceOf(Function);
-        expect(mockFn.mock.calls[0][3]).toBe(instance.doRequest);
 
-        const resolveFn = mockFn.mock.calls[0][2];
-        expect(instance.openRequests).toEqual(1);
-        const mockData = {};
         instance.close();
-        resolveFn(mockData);
-        expect(instance.openRequests).toEqual(1);
+        instance.requests.requests[0].exec();
         expect(triggerSpy).toHaveBeenCalledTimes(0);
       });
     });
@@ -154,31 +139,27 @@ describe('FetchScope', () => {
 
       it('should set global.fetch to a bound requests.requests.create', () => {
         const mockConfig = {};
-        const mockFn = jest.fn();
-        instance.requests.create = (url, config, resolve, doRequest) => mockFn(url, config, resolve, doRequest);
         instance.enable();
         expect(fetch).toBeDefined();
         expect(fetch).toBeInstanceOf(Function);
         fetch('url', mockConfig);
-        expect(mockFn).toHaveBeenCalledTimes(1);
-        expect(mockFn.mock.calls[0][0]).toEqual('url');
-        expect(mockFn.mock.calls[0][1]).toEqual(mockConfig);
-        expect(mockFn.mock.calls[0][2]).toBeInstanceOf(Function);
-        expect(mockFn.mock.calls[0][3]).toBe(instance.doRequest);
+        expect(instance.requests.requests.length).toEqual(1);
         instance.disable();
       });
 
       it('fetch should return a promise', () => {
-        const mockFn = jest.fn();
-        const mockData = {};
+        instance.doRequest = jest.fn();
+        instance.doRequest.mockImplementation((req, res) => {
+          expect(req.url).toEqual('url');
+          res.text('text');
+          res.close();
+        });
         instance.enable();
         const promise = fetch('url');
-        promise.then(data => mockFn(data));
+        promise.then(response => response.text().then(data => expect(data).toEqual('text')));
         expect(promise).toBeInstanceOf(SyncPromise);
-        expect(instance.requests.requests[0].resolve).toBeInstanceOf(Function);
-        instance.requests.requests[0].resolve(mockData);
-        expect(mockFn).toHaveBeenCalledTimes(1);
-        expect(mockFn).toHaveBeenCalledWith(mockData);
+        expect(instance.requests.requests[0].exec).toBeInstanceOf(Function);
+        instance.requests.requests[0].exec();
         instance.disable();
       });
     });

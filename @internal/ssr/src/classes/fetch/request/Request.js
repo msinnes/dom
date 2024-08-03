@@ -1,19 +1,15 @@
-import { CompositeResponse } from '../response/CompositeResponse';
+import { FetchResponse } from '../response/FetchResponse';
+import { FetchRequest } from './FetchRequest';
 
 class Request {
-  resolved = false;
-
-  constructor(url, config = {}, resolve, doRequest) {
-    this.url = url;
-    this.config = config;
-    this.resolve = resolve;
-    this.doRequest = doRequest;
+  constructor(url, config, ctx) {
+    this.fetchRequest = new FetchRequest(url, config);
+    this.fetchResponse = new FetchResponse(ctx);
+    this.ctx = ctx;
   }
 
   exec() {
-    const req = { url: this.url, config: this.config };
-    const res = new CompositeResponse(this.doRequest.bind(this), this.resolve.bind(this));
-    res.executeRequest(req);
+    this.ctx.executeRequest(this.fetchRequest, this.fetchResponse);
   }
 }
 

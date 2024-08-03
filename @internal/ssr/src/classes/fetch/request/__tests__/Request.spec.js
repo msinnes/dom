@@ -1,5 +1,5 @@
 import { FetchResponse } from '../../response/FetchResponse';
-import { Response } from '../../response/Response';
+import { FetchRequest } from '../FetchRequest';
 
 import { Request } from '../Request';
 
@@ -10,36 +10,30 @@ describe('Request', () => {
 
   describe('instance', () => {
     let instance;
+    let configRef;
+    let contextRef;
 
-    let mockConfig;
-    let mockResolve;
-    let mockDoRequest;
     beforeEach(() => {
-      mockConfig = {};
-      mockResolve = jest.fn();
-      mockDoRequest = jest.fn().mockImplementation((req, res) => {
-        res.text('text');
-        res.close();
-      });
-      instance = new Request('url', mockConfig, mockResolve, mockDoRequest);
+      configRef = {};
+      contextRef = {};
+      instance = new Request('url', configRef, contextRef);
     });
 
-    it('should set the url prop', () => {
-      expect(instance.url).toEqual('url');
+    it('should have a fetchRequest prop', () => {
+      expect(instance.fetchRequest).toBeDefined();
+      expect(instance.fetchRequest).toBeInstanceOf(FetchRequest);
+      expect(instance.fetchRequest.url).toEqual('url');
+      expect(instance.fetchRequest.config).toBeDefined();
+      expect(instance.fetchRequest.config).toBe(configRef);
     });
 
-    it('should set the config prop and default to an empty object', () => {
-      expect(instance.config).toBe(mockConfig);
-      instance = new Request('url');
-      expect(instance.config).toBeInstanceOf(Object);
+    it('should have a fetchResponse prop', () => {
+      expect(instance.fetchResponse).toBeDefined();
+      expect(instance.fetchResponse).toBeInstanceOf(FetchResponse);
     });
 
-    it('should set the doRequest prop', () => {
-      expect(instance.doRequest).toBe(mockDoRequest);
-    });
-
-    it('should set the resolve prop', () => {
-      expect(instance.resolve).toBe(mockResolve);
+    it('shold have a ctx prop', () => {
+      expect(instance.ctx).toBe(contextRef);
     });
 
     describe('exec', () => {
@@ -47,17 +41,11 @@ describe('Request', () => {
         expect(instance.exec).toBeInstanceOf(Function);
       });
 
-      it('should call doRequest with a request and response', () => {
+      it('should call the ctx.executeRequest mock with the fetchRequest and fetchResponse', () => {
+        contextRef.executeRequest = jest.fn();
         instance.exec();
-        expect(mockDoRequest).toHaveBeenCalledTimes(1);
-        expect(mockDoRequest.mock.calls[0][0]).toMatchObject({ url: 'url', config: mockConfig });
-        expect(mockDoRequest.mock.calls[0][1]).toBeInstanceOf(FetchResponse);
-      });
-
-      it('should resolve the request', () => {
-        instance.exec();
-        expect(mockResolve).toHaveBeenCalledTimes(1);
-        expect(mockResolve.mock.calls[0][0]).toBeInstanceOf(Response);
+        expect(contextRef.executeRequest).toHaveBeenCalledTimes(1);
+        expect(contextRef.executeRequest).toHaveBeenCalledWith(instance.fetchRequest, instance.fetchResponse);
       });
     });
   });

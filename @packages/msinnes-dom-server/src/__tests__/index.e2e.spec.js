@@ -412,7 +412,7 @@ describe('e2e', () => {
       expect(screen.html).toEqual('async name');
     });
 
-    it('should resolve a string promise if fetch is not being digested', async () => {
+    it('should not resolve a string promise if fetch is not being digested', async () => {
       const MiniAsyncApp = () => {
         const [name, setName] = Dom.useState('default text');
         if (!name) fetch('name').then(data => data.text()).then(setName);
@@ -430,7 +430,7 @@ describe('e2e', () => {
       expect(html).toEqual('default text');
     });
 
-    it('should resolve a screen promise if fetch is not being digested', async () => {
+    it('should not resolve a screen promise if fetch is not being digested', async () => {
       const MiniAsyncApp = () => {
         const [name, setName] = Dom.useState('default text');
         if (!name) fetch('name').then(data => data.text()).then(setName);
@@ -446,6 +446,25 @@ describe('e2e', () => {
         },
       });
       expect(screen.html).toEqual('default text');
+    });
+
+    it('should resolve a fetch handler and check if a response is okay', async () => {
+      const MiniAsyncApp = () => {
+        const [name, setName] = Dom.useState();
+        if (!name) fetch('name').then(data => {
+          if (data.ok) return data.text();
+        }).then(setName);
+        return name;
+      };
+      const screen = await api.renderToScreenAsync(Dom.createElement(MiniAsyncApp), {
+        fetch: (req, res) => {
+          setTimeout(() => {
+            res.text('async name');
+            res.close();
+          });
+        },
+      });
+      expect(screen.html).toEqual('async name');
     });
   });
 });

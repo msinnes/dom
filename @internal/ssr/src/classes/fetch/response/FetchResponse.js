@@ -1,17 +1,17 @@
 class FetchResponse {
-  hasSet = false;
-
-  constructor(setter) {
-    this.json = value => {
-      if (this.hasSet) throw new Error('ImplementationError: Data can only be set once on a response.');
-      setter(value);
-      this.hasSet = true;
+  constructor(ctx) {
+    this.close = function() {
+      ctx.close();
     };
 
-    this.text = value => {
-      if (this.hasSet) throw new Error('ImplementationError: Data can only be set once on a response.');
-      setter(value);
-      this.hasSet = true;
+    this.json = function(value) {
+      if (ctx.isDataSet) throw new Error('ImplementationError: Data can only be set once on a response.');
+      ctx.setData(value);
+    };
+
+    this.text = function(value) {
+      if (ctx.isDataSet) throw new Error('ImplementationError: Data can only be set once on a response.');
+      ctx.setData(value);
     };
   }
 }

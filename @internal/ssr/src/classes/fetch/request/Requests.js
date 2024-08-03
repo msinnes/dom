@@ -8,8 +8,8 @@ class Requests {
     this.getNext = this.getNext.bind(this);
   }
 
-  create(url, config, resolve, doRequest) {
-    this.requests.push(new Request(url, config, resolve, doRequest));
+  create(url, config, ctx) {
+    this.requests.push(new Request(url, config, ctx));
   }
 
   getAll() {
