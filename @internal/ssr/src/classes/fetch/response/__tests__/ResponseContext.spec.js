@@ -22,6 +22,17 @@ describe('ResponseContext', () => {
       expect(instance.isDataSet).toBe(false);
     });
 
+    describe('ok', () => {
+      it('should return false by default', () => {
+        expect(instance.ok).toBe(false);
+      });
+
+      it('should return true if the data has been set', () => {
+        instance.setData('data');
+        expect(instance.ok).toBe(true);
+      });
+    });
+
     describe('close', () => {
       it('should be a function', () => {
         expect(instance.close).toBeInstanceOf(Function);

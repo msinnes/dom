@@ -1,5 +1,6 @@
 class ResponseContext {
   isDataSet = false;
+  ok = false;
 
   constructor(doRequest, resolve, reject) {
     let data;
@@ -23,6 +24,7 @@ class ResponseContext {
     this.setData = function(value) {
       data = value;
       this.isDataSet = true;
+      this.ok = true;
     };
   }
 }

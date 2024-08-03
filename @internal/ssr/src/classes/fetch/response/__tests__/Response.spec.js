@@ -12,9 +12,24 @@ describe('Response', () => {
     beforeEach(() => {
       mockContext = {
         getData: jest.fn(),
+        ok: false,
       };
 
       instance = new Response(mockContext);
+    });
+
+    describe('ok', () => {
+      it('should return the ok value from the mock context', () => {
+        expect(instance.ok).toBe(false);
+        mockContext.ok = true;
+        expect(instance.ok).toBe(true);
+      });
+
+      it('should be a read-only prop', () => {
+        expect(() => {
+          instance.ok = true;
+        }).toThrow();
+      });
     });
 
     describe('json', () => {

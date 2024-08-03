@@ -1667,7 +1667,9 @@ describe('fetch', () => {
   const Name = () => {
     const [name, setName] = Dom.useState();
     Dom.useEffect(() => {
-      if (!name) getName().then(data => data.text()).then(name => setName(name));
+      if (!name) getName().then(data => {
+        if (data.ok) return data.text();
+      }).then(name => setName(name));
     }, []);
     return name && name.length ? name : 'no name';
   };

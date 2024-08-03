@@ -9,6 +9,10 @@ class Response {
     this.text = () => new SyncPromise(resolve => {
       resolve(ctx.getData());
     });
+
+    Object.defineProperty(this, 'ok', {
+      get: () => ctx.ok,
+    });
   }
 }
 
