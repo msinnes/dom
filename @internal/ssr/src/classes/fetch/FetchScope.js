@@ -3,7 +3,7 @@ import { DigestibleScope } from '../base/DigestibleScope';
 import { SyncPromise } from '../base/SyncPromise';
 
 import { Requests } from './request/Requests';
-import { RequestContext, Response } from './request/NewRequest';
+import { RequestContext, Response } from './request/Request';
 
 const fetchOriginal = global.fetch;
 Object.defineProperty(global, 'fetch', { writable: true });
@@ -30,19 +30,6 @@ class FetchScope extends DigestibleScope {
   }
 
   createRequest(url, config) {
-    return new SyncPromise(resolve => {
-      this.openRequests++;
-      const resolveCb = data => {
-        if (this.closed) return;
-        resolve(data);
-        this.openRequests--;
-        this.trigger('resolve');
-      };
-      this.requests.create(url, config, resolveCb, this.doRequest);
-    });
-  }
-
-  newCreateRequest(url, config) {
     return new SyncPromise((resolve, reject) => {
       this.openRequests++;
       const resolveCb = ctx => {
@@ -52,7 +39,7 @@ class FetchScope extends DigestibleScope {
         this.trigger('resolve');
       };
       const requestContext = new RequestContext(this.doRequest, resolveCb, reject);
-      this.requests.newCreate(url, config, requestContext);
+      this.requests.create(url, config, requestContext);
     });
   }
 
@@ -66,7 +53,7 @@ class FetchScope extends DigestibleScope {
   }
 
   enable() {
-    global.fetch = this.newCreateRequest.bind(this);
+    global.fetch = this.createRequest.bind(this);
   }
 }
 

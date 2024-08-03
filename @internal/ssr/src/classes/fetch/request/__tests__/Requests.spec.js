@@ -1,5 +1,4 @@
 import { Request } from '../Request';
-import { Request as NewRequest } from '../NewRequest';
 
 import { Requests } from '../Requests';
 
@@ -26,31 +25,11 @@ describe('Requests', () => {
 
       it('should create a request and add it to the list of requests', () => {
         const mockConfig = {};
-        const mockResolve = jest.fn();
-        const mockDoRequest = jest.fn();
-        instance.create('url', mockConfig, mockResolve, mockDoRequest);
+        const mockContext = {};
+        instance.create('url', mockConfig, mockContext);
         expect(instance.requests.length).toEqual(1);
         const req = instance.requests[0];
         expect(req).toBeInstanceOf(Request);
-        expect(req.url).toEqual('url');
-        expect(req.config).toBe(mockConfig);
-        expect(req.resolve).toBe(mockResolve);
-        expect(req.doRequest).toBe(mockDoRequest);
-      });
-    });
-
-    describe('newCreate', () => {
-      it('should be a function', () => {
-        expect(instance.newCreate).toBeInstanceOf(Function);
-      });
-
-      it('should create a request and add it to the list of requests', () => {
-        const mockConfig = {};
-        const mockContext = {};
-        instance.newCreate('url', mockConfig, mockContext);
-        expect(instance.requests.length).toEqual(1);
-        const req = instance.requests[0];
-        expect(req).toBeInstanceOf(NewRequest);
         expect(req.fetchRequest.url).toEqual('url');
         expect(req.fetchRequest.config).toBe(mockConfig);
         expect(req.ctx).toBe(mockContext);
@@ -66,7 +45,7 @@ describe('Requests', () => {
         instance.create('a');
         instance.create('b');
         instance.create('c');
-        expect(instance.getAll()).toMatchObject([{ url: 'a' }, { url: 'b' }, { url: 'c' }]);
+        expect(instance.getAll().map(item => item.fetchRequest)).toMatchObject([{ url: 'a' }, { url: 'b' }, { url: 'c' }]);
         expect(instance.requests.length).toEqual(0);
       });
     });
@@ -80,11 +59,11 @@ describe('Requests', () => {
         instance.create('a');
         instance.create('b');
         instance.create('c');
-        expect(instance.getNext()).toMatchObject({ url: 'a' });
+        expect(instance.getNext().fetchRequest).toMatchObject({ url: 'a' });
         expect(instance.requests.length).toEqual(2);
-        expect(instance.getNext()).toMatchObject({ url: 'b' });
+        expect(instance.getNext().fetchRequest).toMatchObject({ url: 'b' });
         expect(instance.requests.length).toEqual(1);
-        expect(instance.getNext()).toMatchObject({ url: 'c' });
+        expect(instance.getNext().fetchRequest).toMatchObject({ url: 'c' });
         expect(instance.requests.length).toEqual(0);
       });
     });

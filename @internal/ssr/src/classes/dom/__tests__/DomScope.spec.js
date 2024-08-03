@@ -61,8 +61,8 @@ describe('DomScope', () => {
       const mockConfig = {};
       instance.dom.window.fetch('url', mockConfig);
       expect(mockFetchScope.requests.requests.length).toEqual(1);
-      expect(mockFetchScope.requests.requests[0].url).toEqual('url');
-      expect(mockFetchScope.requests.requests[0].config).toBe(mockConfig);
+      expect(mockFetchScope.requests.requests[0].fetchRequest.url).toEqual('url');
+      expect(mockFetchScope.requests.requests[0].fetchRequest.config).toBe(mockConfig);
     });
 
     describe('enable', () => {
