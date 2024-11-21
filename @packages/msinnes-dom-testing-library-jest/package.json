@@ -1,6 +1,6 @@
 {
   "name": "@msinnes/dom-testing-library-jest",
-  "version": "0.0.21-alpha.0",
+  "version": "0.0.22-alpha.0",
   "description": "A set of jest helpers for @msinnes/dom-testing-library.",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "https://github.com/msinnes/dom/@packages/msinnes-dom-testing-library-jest/#readme",
