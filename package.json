@@ -5,12 +5,20 @@
     "type": "git",
     "url": "ssh://git@github.com:msinnes/dom.git"
   },
-  "scripts": {
-
-  },
   "keywords": [
-    "dom", "renderer"
+    "dom",
+    "renderer"
   ],
   "author": "Michael Sinnes",
-  "private": true
+  "private": true,
+  "workspaces": [
+    "@e2e/*",
+    "@internal/*",
+    "@packages/*",
+    "@shared/*"
+  ],
+  "scripts": {},
+  "devDependencies": {
+    "lerna": "^8.1.9"
+  }
 }
