@@ -66,19 +66,6 @@ describe('BaseElementNode', () => {
       expect(instance.tag).toEqual('div');
     });
 
-    describe('setAttribute', () => {
-      it('should be a function', () => {
-        expect(instance.setAttribute).toBeInstanceOf(Function);
-      });
-
-      it('should call setAttribute on the node elem', () => {
-        const data = {};
-        instance.setAttribute('attr', data);
-        expect(setAttributeMock).toHaveBeenCalledTimes(1);
-        expect(setAttributeMock).toHaveBeenCalledWith('attr', data);
-      });
-    });
-
     describe('update', () => {
       it('should be a function', () => {
         expect(instance.update).toBeInstanceOf(Function);

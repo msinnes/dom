@@ -4,8 +4,6 @@ import { BaseElementNode } from './BaseElementNode';
 import { DomRef } from './DomRef';
 
 class HtmlNode extends BaseElementNode {
-  lastProps = {};
-
   create(ref) {
     return isString(ref) ? new DomRef(ref) : ref;
   }
