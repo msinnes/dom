@@ -44,13 +44,11 @@ describe('BaseElementNode', () => {
   });
 
   describe('instance', () => {
-    let setAttributeMock;
     let elem;
     let ref;
     let instance;
     beforeEach(() => {
-      setAttributeMock = jest.fn();
-      elem = { tagName: 'DIV', style: {}, setAttribute: setAttributeMock };
+      elem = { tagName: 'DIV', style: {} };
       ref = { elem };
       createMock.mockReturnValue(ref);
       instance = new TestableBaseElementNode(ref);
