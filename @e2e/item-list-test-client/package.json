@@ -1,6 +1,6 @@
 {
   "name": "@e2e/item-list-test-client",
-  "version": "0.0.20-alpha.0",
+  "version": "0.0.23-alpha.0",
   "description": "> TODO: description",
   "author": "msinnes <michael.sinnes@gmail.com>",
   "homepage": "",
@@ -23,7 +23,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "@msinnes/dom": "^0.0.20-alpha.0",
+    "@msinnes/dom": "^0.0.23-alpha.0",
     "classnames": "^2.3.2"
   }
 }
