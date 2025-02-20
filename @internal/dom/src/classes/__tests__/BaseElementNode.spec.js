@@ -64,6 +64,12 @@ describe('BaseElementNode', () => {
       expect(instance.tag).toEqual('div');
     });
 
+
+    it('should have a lastProps property', () => {
+      expect(instance.lastProps).toBeInstanceOf(Object);
+      expect(Object.keys(instance.lastProps).length).toEqual(0);
+    });
+
     describe('update', () => {
       it('should be a function', () => {
         expect(instance.update).toBeInstanceOf(Function);

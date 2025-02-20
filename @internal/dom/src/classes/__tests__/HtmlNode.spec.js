@@ -38,11 +38,6 @@ describe('HtmlNode', () => {
       expect(instance.elem).toBe(ref.elem);
     });
 
-    it('should have a lastProps property', () => {
-      expect(instance.lastProps).toBeInstanceOf(Object);
-      expect(Object.keys(instance.lastProps).length).toEqual(0);
-    });
-
     describe('create', () => {
       it('should be a function', () => {
         expect(instance.create).toBeInstanceOf(Function);
