@@ -58,40 +58,8 @@ describe('HtmlNode', () => {
 
 
     describe('updateProps', () => {
-      let ObjectAssignMock;
-      let ObjectAssignOriginal;
-
-      beforeEach(() => {
-        ObjectAssignOriginal = Object.assign;
-        ObjectAssignMock = jest.fn();
-        Object.assign = ObjectAssignMock;
-      });
-
-      afterEach(() => {
-        Object.assign = ObjectAssignOriginal;
-      });
-
       it('should be a function', () => {
         expect(instance.updateProps).toBeInstanceOf(Function);
-      });
-
-      it('should call Object.assign with a separate style call', () => {
-        const styleProp = {};
-        const props = { style: styleProp };
-        instance.updateProps(props);
-        expect(ObjectAssignMock).toHaveBeenCalledTimes(2);
-        expect(ObjectAssignMock.mock.calls[0][0]).toEqual(instance.elem.style);
-        expect(ObjectAssignMock.mock.calls[0][1]).toEqual(styleProp);
-
-        expect(ObjectAssignMock.mock.calls[1][0]).toEqual(instance.elem);
-        // make sure style is not assigned to element
-        expect(ObjectAssignMock.mock.calls[1][1].style).toBeUndefined();
-      });
-
-      it('should not call Object.assign if there is no style prop', () => {
-        const props = {};
-        instance.updateProps(props);
-        expect(ObjectAssignMock).toHaveBeenCalledTimes(1);
       });
 
       it('it should set the list attribute if one is passed', () => {
@@ -107,6 +75,33 @@ describe('HtmlNode', () => {
         const props = {};
         instance.updateProps(props);
         expect(spy).toHaveBeenCalledTimes(0);
+      });
+
+      it('should not set the list attribute if the attribute is not changing', () => {
+        const spy = jest.spyOn(instance.elem, 'setAttribute');
+        const props = { list: 'datalist' };
+        instance.updateProps(props);
+        expect(spy).toHaveBeenCalledTimes(1);
+        instance.updateProps(props);
+        expect(spy).toHaveBeenCalledTimes(1);
+      });
+
+      it('should set props on the elem', () => {
+        instance.updateProps({ required: true, id: 'elementId' });
+        expect(instance.elem.required).toBe(true);
+        expect(instance.elem.id).toBe('elementId');
+      });
+
+      it('should clear any stale props', () => {
+        const props = { list: 'datalist', required: true, onclick: function() {} };
+        instance.updateProps(props);
+        expect(instance.elem.getAttribute('list')).toBe('datalist');
+        expect(instance.elem.required).toBe(true);
+        expect(instance.elem.onclick).toBeInstanceOf(Function);
+        instance.updateProps({});
+        expect(instance.elem.getAttribute('list')).toBe(null);
+        expect(instance.elem.required).toBe(null);
+        expect(instance.elem.onclick).toBe(null);
       });
     });
   });

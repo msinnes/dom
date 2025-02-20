@@ -17,8 +17,21 @@ class SvgNode extends BaseElementNode {
   }
 
   updateProps({ xmlns, ...props }) {
-    if (xmlns) this.setXMLNS(xmlns);
-    Object.keys(props).forEach(key => this.elem.setAttributeNS(null, key.replace(reg, ''), props[key]));
+    if (xmlns && this.elem.getAttributeNS(xmlnsNs, xmlnsAttr) !== xmlns) this.setXMLNS(xmlns);
+    Object.keys(props).forEach(key => {
+      const data = props[key];
+      if (this.elem.getAttributeNS(null, key) !== data) {
+        this.elem.setAttributeNS(null, key.replace(reg, ''), props[key]);
+      }
+    });
+
+    const keys = Object.keys(props);
+    Object.keys(this.lastProps).forEach(key => {
+      if (!keys.includes(key)) {
+        this.elem.removeAttributeNS(null, key);
+      }
+    });
+    this.lastProps = props;
   }
 }
 

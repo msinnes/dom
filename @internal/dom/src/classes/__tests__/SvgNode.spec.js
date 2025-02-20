@@ -84,6 +84,10 @@ describe('SvgNode', () => {
         setAttributeNSMock = jest.spyOn(instance.elem, 'setAttributeNS');
       });
 
+      afterEach(() => {
+        jest.resetAllMocks();
+      });
+
       it('should be a function', () => {
         expect(instance.updateProps).toBeInstanceOf(Function);
       });
@@ -102,6 +106,26 @@ describe('SvgNode', () => {
         expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key1', 'value1');
         expect(setXMLNSMock).toHaveBeenCalledTimes(1);
         expect(setXMLNSMock).toHaveBeenCalledWith('xmlns');
+      });
+
+      it('should not make duplicate calls to either setAttributeNS or setXMLNS', () => {
+        const setXMLNSMock = jest.spyOn(instance, 'setXMLNS');
+        instance.updateProps({ xmlns: 'xmlns', key1: 'value1' });
+        expect(setAttributeNSMock).toHaveBeenCalledTimes(2);
+        expect(setAttributeNSMock).toHaveBeenCalledWith('http://www.w3.org/2000/xmlns/', 'xmlns', 'xmlns');
+        expect(setAttributeNSMock).toHaveBeenCalledWith(null, 'key1', 'value1');
+        expect(setXMLNSMock).toHaveBeenCalledTimes(1);
+        expect(setXMLNSMock).toHaveBeenCalledWith('xmlns');
+        instance.updateProps({ xmlns: 'xmlns', key1: 'value1' });
+        expect(setAttributeNSMock).toHaveBeenCalledTimes(2);
+        expect(setXMLNSMock).toHaveBeenCalledTimes(1);
+      });
+
+      it('should remove stale props', () => {
+        instance.updateProps({ xmlns: 'xmlns', key1: 'value1' });
+        expect(instance.elem.getAttributeNS(null, 'key1')).toEqual('value1');
+        instance.updateProps({ xmlns: 'xmlns' });
+        expect(instance.elem.getAttributeNS(null, 'key1')).toBe(null);
       });
     });
   });

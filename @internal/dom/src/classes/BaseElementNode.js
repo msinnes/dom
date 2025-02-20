@@ -4,6 +4,8 @@ import { abstract, abstractMethod } from '@internal/oop';
 import { BaseDomNode } from './BaseDomNode';
 
 const BaseElementNode = abstract(class extends BaseDomNode {
+  lastProps = {};
+
   constructor(...args) {
     super();
     abstractMethod(this, 'create');
