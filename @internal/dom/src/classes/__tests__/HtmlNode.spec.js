@@ -38,6 +38,11 @@ describe('HtmlNode', () => {
       expect(instance.elem).toBe(ref.elem);
     });
 
+    it('should have a lastProps property', () => {
+      expect(instance.lastProps).toBeInstanceOf(Object);
+      expect(Object.keys(instance.lastProps).length).toEqual(0);
+    });
+
     describe('create', () => {
       it('should be a function', () => {
         expect(instance.create).toBeInstanceOf(Function);
@@ -90,6 +95,18 @@ describe('HtmlNode', () => {
         instance.updateProps({ required: true, id: 'elementId' });
         expect(instance.elem.required).toBe(true);
         expect(instance.elem.id).toBe('elementId');
+      });
+
+      it('should clear any stale props', () => {
+        const props = { list: 'datalist', required: true, onclick: function() {} };
+        instance.updateProps(props);
+        expect(instance.elem.getAttribute('list')).toBe('datalist');
+        expect(instance.elem.required).toBe(true);
+        expect(instance.elem.onclick).toBeInstanceOf(Function);
+        instance.updateProps({});
+        expect(instance.elem.getAttribute('list')).toBe(null);
+        expect(instance.elem.required).toBe(null);
+        expect(instance.elem.onclick).toBe(null);
       });
     });
   });
