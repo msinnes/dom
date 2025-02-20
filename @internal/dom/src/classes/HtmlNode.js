@@ -8,10 +8,15 @@ class HtmlNode extends BaseElementNode {
     return isString(ref) ? new DomRef(ref) : ref;
   }
 
-  updateProps({ list, style, ...rest }) {
-    if (list) this.elem.setAttribute('list', list);
-    if (style) Object.assign(this.elem.style, style);
-    Object.assign(this.elem, rest);
+  // TODO: this should remove stale props
+  updateProps({ list, ...rest }) {
+    if (list && list !== this.elem.getAttribute('list')) this.elem.setAttribute('list', list);
+    Object.keys(rest).forEach(key => {
+      const data = rest[key];
+      if (this.elem[key] !== data) {
+        this.elem[key] = data;
+      }
+    });
   }
 }
 

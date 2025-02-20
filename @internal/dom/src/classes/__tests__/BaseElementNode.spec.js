@@ -44,11 +44,13 @@ describe('BaseElementNode', () => {
   });
 
   describe('instance', () => {
+    let setAttributeMock;
     let elem;
     let ref;
     let instance;
     beforeEach(() => {
-      elem = { tagName: 'DIV', style: {} };
+      setAttributeMock = jest.fn();
+      elem = { tagName: 'DIV', style: {}, setAttribute: setAttributeMock };
       ref = { elem };
       createMock.mockReturnValue(ref);
       instance = new TestableBaseElementNode(ref);
@@ -62,6 +64,19 @@ describe('BaseElementNode', () => {
 
     it('should have a tag prop', () => {
       expect(instance.tag).toEqual('div');
+    });
+
+    describe('setAttribute', () => {
+      it('should be a function', () => {
+        expect(instance.setAttribute).toBeInstanceOf(Function);
+      });
+
+      it('should call setAttribute on the node elem', () => {
+        const data = {};
+        instance.setAttribute('attr', data);
+        expect(setAttributeMock).toHaveBeenCalledTimes(1);
+        expect(setAttributeMock).toHaveBeenCalledWith('attr', data);
+      });
     });
 
     describe('update', () => {

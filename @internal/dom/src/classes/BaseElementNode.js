@@ -13,13 +13,17 @@ const BaseElementNode = abstract(class extends BaseDomNode {
     this.tag = this.elem.tagName.toLowerCase();
   }
 
+  setAttribute(prop, data) {
+    this.elem.setAttribute(prop, data);
+  }
+
   update({ style, ...props }) {
     this.updateStyle(style);
     this.updateProps(props);
   }
 
   updateStyle(style) {
-    if (isString(style)) this.elem.setAttribute('style', style);
+    if (isString(style)) this.setAttribute('style', style);
     else Object.assign(this.elem.style, style);
   }
 });
